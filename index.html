@@ -2648,6 +2648,17 @@ var VIDEOS = {
   }
   function inc(n) { return db ? firebase.firestore.FieldValue.increment(n) : n; }
   function union(v) { return db ? firebase.firestore.FieldValue.arrayUnion(v) : v; }
+  var SUNHYE_WORD_GIFT_MARKER = 'word_coin_gift_sunhye_20261029_v1';
+  function grantSunhyeWordCoinsOnce() {
+    var account = String(user || '').replace(/\\s+/g, '');
+    if (account !== '선혜' && account !== '최선혜') return;
+    P.gr = Array.isArray(P.gr) ? P.gr : [];
+    if (P.gr.indexOf(SUNHYE_WORD_GIFT_MARKER) >= 0) return;
+    P.wc = Number(P.wc || 0) + 8;
+    P.wtot = Number(P.wtot || 0) + 8;
+    P.tot = Number(P.tot || 0) + 8;
+    P.gr.push(SUNHYE_WORD_GIFT_MARKER);
+  }
   var SC_FIX_MARKER = 'sc_accidental_6998_removed_v1';
   function removeAccidentalSuccessCoins() {
     if (!P) return;
@@ -2705,10 +2716,12 @@ var VIDEOS = {
           }
         }
         restoreRequestedProfile();
+        grantSunhyeWordCoinsOnce();
         saveLocal();
         ref.set({ wc: P.wc, gc: P.gc, sc: P.sc, tot: P.tot, wtot: P.wtot, gtot: P.gtot, stot: P.stot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach }, { merge: true }).catch(function () {});
       } else {
         if (isCoinCleanupAccount && P.gr.indexOf(SC_FIX_MARKER) < 0) removeAccidentalSuccessCoins();
+        grantSunhyeWordCoinsOnce();
         ref.set(Object.assign({ wc: P.wc, gc: P.gc, sc: P.sc, tot: P.tot, wtot: P.wtot, gtot: P.gtot, stot: P.stot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, bibleCoinResetV1:true }, P)).catch(function () {});
         welcome();
       }
@@ -3292,7 +3305,18 @@ var VIDEOS = {
   // ---- 꾸미기 상점 (나무 상점 팝업) ----
   var shopTab = 'ch', pend = '', boardType = 'wc', boardTok = 0;
   var TABS = [['ch', '캐릭터'], ['hat', '모자'], ['face', '얼굴'], ['neck', '목'], ['theme', '테마'], ['font', '글꼴'], ['ach', '업적'], ['rank', '순위']];
-  function openShop() { document.getElementById('shopOv').hidden = false; document.body.style.overflow = 'hidden'; pend = ''; meMsg(''); renderAcct(); renderShop(); }
+  function openShop() {
+    var ov = document.getElementById('shopOv'); if (!ov) return;
+    if (!P) { loadProfile(); window.setTimeout(openShop, 300); return; }
+    P = mergeProfile(blank(), P); normEq();
+    ov.hidden = false; document.body.style.overflow = 'hidden'; pend = ''; meMsg('');
+    try { renderAcct(); renderShop(); }
+    catch (e) {
+      console.error('나무 상점 렌더링 오류:', e);
+      var body = document.querySelector('.shop-body');
+      if (body) body.innerHTML = '<p style="padding:16px;text-align:center">상점을 불러오는 중 문제가 발생했어요. 닫았다가 다시 열어 주세요.</p>';
+    }
+  }
   function closeShop() { if (new URLSearchParams(location.search).get('shop') === '1') { try { window.parent.postMessage('close-tree-shop', '*'); } catch(e) {} return; } document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
   function renderBoard() {
     var b = document.getElementById('sboard'), tok = ++boardTok;
