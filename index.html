@@ -2670,6 +2670,7 @@ var VIDEOS = {
     saveLocal();
   }
   function loadProfile() {
+    if (!P) { loadLocal(); restoreRequestedProfile(); }
     applyTheme(); renderAcct(); renderShop();
     if (!db || !user) { initAch(); renderAcct(); renderShop(); return; }
     var ref = db.collection('users').doc(uid(user));
