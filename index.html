@@ -476,7 +476,7 @@
   .fish-help{text-align:center;font-size:.68rem;line-height:1.3;color:var(--muted)}
   @media(max-width:390px){.race-top>div{padding:6px}.race-rank-row{grid-template-columns:18px 9px 53px minmax(24px,1fr) 29px;gap:4px}.race-controls button{min-height:54px}.fish-codex{grid-template-columns:repeat(3,minmax(0,1fr))}.fish-book-item{font-size:.54rem;padding:3px 2px}}
 
-.shop-only main,.shop-only body>main{display:none!important}.shop-only body{margin:0!important;padding:0!important;min-height:100vh!important;background:var(--bg)!important}.shop-only .shop-ov{display:block!important}.shop-only .shop-ov{position:fixed!important;inset:0!important;z-index:99999!important;display:block!important;overflow:auto!important;padding:0!important;background:var(--bg)!important}.shop-only .shop-ov[hidden]{display:block!important}.shop-only .shop-win{width:100%!important;max-width:760px!important;min-height:100vh!important;max-height:none!important;margin:0 auto!important;border-radius:0!important}.shop-only .shop-x{display:none!important}
+html.shop-only,html.shop-only body{background:transparent!important;margin:0!important;padding:0!important;min-height:100vh!important}.shop-only #app,.shop-only main{display:none!important}.shop-only .shop-ov{display:flex!important;position:fixed!important;inset:0!important;z-index:99999!important;overflow:auto!important;background:radial-gradient(80% 60% at 50% 30%,rgba(120,80,40,.5),rgba(18,10,5,.85))!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important;padding:14px 10px!important}.shop-only .shop-ov[hidden]{display:flex!important}
 </style>
 <script>if(new URLSearchParams(location.search).get("shop")==="1"){document.documentElement.classList.add("shop-only");document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("shop-only");});}</script>
 </head>
@@ -499,7 +499,7 @@
 
   <article id="text"></article>
 
-  <section id="weeklyQuiz" class="game" aria-label="주간 말씀 퀴즈"><h2>주간 말씀 퀴즈</h2><p class="sub">일주일에 한 번, 말씀을 기억하고 있는지 확인해 보세요.</p><div id="weeklyQuizArea"></div></section>
+  <section id="weeklyQuiz" class="game" aria-label="말씀 퀴즈" hidden><h2>말씀 퀴즈</h2><p class="sub">해당 장의 말씀을 바탕으로 풀어 보세요. 말씀 코인은 당일 장의 퀴즈만 인정됩니다.</p><div id="weeklyQuizArea"></div></section>
 
   <nav class="chnav" aria-label="장 이동">
     <a id="chPrev" aria-label="이전 장"><span data-ic="left"></span><span id="chPrevT"></span></a>
@@ -2685,6 +2685,7 @@ var VIDEOS = {
         var localAlreadyFixed = Array.isArray(P.gr) && P.gr.indexOf(SC_FIX_MARKER) >= 0;
         var cloudAlreadyFixed = Array.isArray(d.gr) && d.gr.indexOf(SC_FIX_MARKER) >= 0;
         P = mergeProfile(P, d); normEq();
+        if (d.bibleCoinResetV1 !== true) { P.wc=0; P.gc=0; P.sc=0; P.coins=0; P.bibleCoinResetV1=true; cloud({wc:0,gc:0,sc:0,coins:0,bibleCoinResetV1:true}); }
         if (localEq && localEq.ch && localEq.ch !== 'c0') P.eq.ch = localEq.ch;
         if (isCoinCleanupAccount) {
           if (!cloudAlreadyFixed) {
@@ -2708,7 +2709,7 @@ var VIDEOS = {
         ref.set({ wc: P.wc, gc: P.gc, sc: P.sc, tot: P.tot, wtot: P.wtot, gtot: P.gtot, stot: P.stot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach }, { merge: true }).catch(function () {});
       } else {
         if (isCoinCleanupAccount && P.gr.indexOf(SC_FIX_MARKER) < 0) removeAccidentalSuccessCoins();
-        ref.set(Object.assign({ wc: P.wc, gc: P.gc, sc: P.sc, tot: P.tot, wtot: P.wtot, gtot: P.gtot, stot: P.stot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach }, P)).catch(function () {});
+        ref.set(Object.assign({ wc: P.wc, gc: P.gc, sc: P.sc, tot: P.tot, wtot: P.wtot, gtot: P.gtot, stot: P.stot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, bibleCoinResetV1:true }, P)).catch(function () {});
         welcome();
       }
       applyTheme(); renderAcct(); renderShop(); initAch();
@@ -3292,7 +3293,7 @@ var VIDEOS = {
   var shopTab = 'ch', pend = '', boardType = 'wc', boardTok = 0;
   var TABS = [['ch', '캐릭터'], ['hat', '모자'], ['face', '얼굴'], ['neck', '목'], ['theme', '테마'], ['font', '글꼴'], ['ach', '업적'], ['rank', '순위']];
   function openShop() { document.getElementById('shopOv').hidden = false; document.body.style.overflow = 'hidden'; pend = ''; meMsg(''); renderAcct(); renderShop(); }
-  function closeShop() { document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
+  function closeShop() { if (new URLSearchParams(location.search).get('shop') === '1') { try { window.parent.postMessage('close-tree-shop', '*'); } catch(e) {} return; } document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
   function renderBoard() {
     var b = document.getElementById('sboard'), tok = ++boardTok;
     b.innerHTML = '<div class="bsw"><button data-t="wc"' + (boardType === 'wc' ? ' class="on"' : '') + '>' + IC.book + '말씀 코인</button><button data-t="gc"' + (boardType === 'gc' ? ' class="on"' : '') + '>' + IC.game + '코인</button><button data-t="sc"' + (boardType === 'sc' ? ' class="on"' : '') + '>' + IC.trophy + '완료 코인</button></div><div id="blist"></div>';
@@ -3513,34 +3514,42 @@ var VIDEOS = {
     show();
   }
 
+  // 말씀 퀴즈: 잠언 1·10·20·30장에서만 표시. 코인 보상은 당일 장에서만 가능.
+  (function initChapterQuiz() {
+    var section=document.getElementById('weeklyQuiz'), area=document.getElementById('weeklyQuizArea');
+    if(!section||!area)return;
+    var bank={
+      1:{ref:'잠언 1장 7절',q:'잠언 1장은 여호와를 경외하는 것을 무엇의 근본이라고 가르치나요?',a:'지식',opts:['지식','재물','명예','힘'],context:'잠언 1장은 하나님을 경외하는 태도와 지혜로운 가르침을 받아들이는 마음을 강조합니다.'},
+      10:{ref:'잠언 10장 1절',q:'잠언 10장은 지혜로운 아들이 누구를 기쁘게 한다고 하나요?',a:'아버지',opts:['아버지','이웃의 왕','장사꾼','군대의 장수'],context:'잠언 10장은 지혜와 의로운 삶이 가정과 이웃에게 미치는 영향을 여러 대조로 설명합니다.'},
+      20:{ref:'잠언 20장 27절',q:'잠언 20장은 사람의 속마음을 살피는 무엇을 말하나요?',a:'여호와의 등불',opts:['여호와의 등불','금으로 된 왕관','성벽의 횃불','바다의 별'],context:'잠언 20장은 사람의 마음과 행동을 살피시는 하나님의 빛을 비유로 설명합니다.'},
+      30:{ref:'잠언 30장 8–9절',q:'아굴은 지나치게 가난하거나 부하지 않게 해 달라고 구하며 무엇을 원했나요?',a:'필요한 양식',opts:['필요한 양식','많은 보석','높은 지위','긴 수명'],context:'잠언 30장에서 아굴은 거짓을 멀리하고, 지나친 가난과 부가 아닌 필요한 양식을 구합니다.'}
+    };
+    var item=bank[day];
+    if(!item){section.hidden=true;return;}
+    section.hidden=false;
+    section.querySelector('h2').textContent='잠언 '+day+'장 말씀 퀴즈';
+    section.querySelector('.sub').textContent=item.ref+' · 말씀 코인은 당일 장의 퀴즈만 인정됩니다.';
+    var key='chapter-quiz:'+now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate()+':'+day;
+    if(localStorage.getItem(key)==='done'){area.textContent='이 퀴즈는 이미 완료했어요.';return;}
+    area.innerHTML='<p class="sub" style="line-height:1.8"></p><p style="font-weight:700;line-height:1.8;margin:12px 0"></p><div id="chapterQuizOptions" style="display:grid;gap:8px"></div><button id="chapterQuizSubmit" style="margin-top:14px;padding:11px 18px;border-radius:999px;background:var(--accent);color:var(--bg);font-weight:700">답안 확인</button><p id="chapterQuizResult" class="sub" aria-live="polite"></p>';
+    area.children[0].textContent=item.context;
+    area.children[1].textContent=item.q;
+    var chosen='',list=area.querySelector('#chapterQuizOptions');
+    item.opts.forEach(function(opt){var btn=document.createElement('button');btn.type='button';btn.textContent=opt;btn.style.cssText='padding:11px 13px;border:1px solid var(--line);border-radius:10px;text-align:left;background:var(--card);color:var(--fg)';btn.onclick=function(){chosen=opt;Array.prototype.forEach.call(list.children,function(x){x.style.outline='none'});btn.style.outline='2px solid var(--accent)'};list.appendChild(btn);});
+    area.querySelector('#chapterQuizSubmit').onclick=function(){
+      var out=area.querySelector('#chapterQuizResult');
+      if(!chosen){out.textContent='답을 하나 선택해 주세요.';return;}
+      if(chosen!==item.a){out.textContent='아쉬워요. 말씀을 다시 읽고 도전해 보세요.';return;}
+      localStorage.setItem(key,'done');
+      var earned=false;try{earned=day===today&&awardQuiz();}catch(e){}
+      out.textContent=earned?'정답이에요! 말씀 코인 1개를 받았어요.':(day===today?'정답이에요! 오늘 퀴즈 보상은 이미 받았어요.':'정답이에요! 다른 날짜의 장이므로 말씀 코인은 지급되지 않아요.');
+      area.querySelector('#chapterQuizSubmit').disabled=true;
+    };
+  })();
   window.addEventListener('pagehide', function () { if (api) api.pause(); });
 })();
 </script>
-<script>(function(){
-var area=document.getElementById('weeklyQuizArea');if(!area)return;
-if([1,10,20,30].indexOf(day)<0){var sec=document.getElementById('weeklyQuiz');if(sec)sec.hidden=true;return;}
-var title=document.querySelector('#weeklyQuiz h2');if(title)title.textContent='잠언 '+day+'장 말씀 퀴즈';
-var sub=document.querySelector('#weeklyQuiz .sub');if(sub)sub.textContent='이 장의 말씀을 읽고 빈칸에 들어갈 말을 골라 보세요.';
-var key='affinity-quiz-chapter:'+day+':'+now.getFullYear()+':'+now.getMonth()+':'+now.getDate();
-if(localStorage.getItem(key)==='done'){area.textContent='오늘의 퀴즈를 완료했어요.';return;}
-function build(){
-var article=document.getElementById('text'),raw=article?(article.innerText||article.textContent||''):'';
-var words=(raw.match(/[가-힣]{2,}/g)||[]).filter(function(w){return !/^(잠언|장|절|오늘|말씀|듣기|재생|이전|다음|성경)$/.test(w)}),seen={};
-words=words.filter(function(w){if(seen[w])return false;seen[w]=1;return true;});if(words.length<5)return false;
-var seed=0;for(var i=0;i<key.length;i++)seed=(seed*31+key.charCodeAt(i))>>>0;
-var answer=words[seed%words.length],pool=words.filter(function(w){return w!==answer}),opts=[answer];
-while(opts.length<4&&pool.length){var idx=seed%pool.length;opts.push(pool.splice(idx,1)[0]);seed=(seed*1664525+1013904223)>>>0;}
-if(opts.length<2)return false;
-opts.sort(function(x,y){return ((x.charCodeAt(0)*17+key.length)%13)-((y.charCodeAt(0)*17+key.length)%13);});
-area.innerHTML='<div style="padding:14px 0"><p style="line-height:1.8;margin-bottom:12px">오늘의 말씀을 읽고 빈칸에 들어갈 말을 골라 보세요.</p><blockquote style="padding:12px 14px;border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;line-height:1.9;margin-bottom:14px"></blockquote><div id="weeklyChoices" style="display:grid;gap:8px"></div><button id="submitWeeklyQuiz" style="margin-top:14px;padding:11px 18px;border-radius:999px;background:var(--accent);color:var(--bg);font-weight:700">답안 확인</button><p id="weeklyQuizResult" class="sub"></p></div>';
-area.querySelector('blockquote').textContent=raw.replace(answer,'＿＿＿').slice(0,500);
-var selected='',choices=document.getElementById('weeklyChoices');
-opts.forEach(function(o){var btn=document.createElement('button');btn.textContent=o;btn.style.cssText='padding:10px 12px;border-radius:10px;text-align:left;background:var(--card);color:var(--fg)';btn.onclick=function(){selected=o;Array.prototype.forEach.call(choices.children,function(c){c.style.outline='none'});btn.style.outline='2px solid var(--accent)'};choices.appendChild(btn);});
-document.getElementById('submitWeeklyQuiz').onclick=function(){var result=document.getElementById('weeklyQuizResult');if(!selected){result.textContent='답을 하나 선택해 주세요.';return;}if(selected===answer){localStorage.setItem(key,'done');var got=false;try{got=typeof awardQuiz==='function'&&awardQuiz();}catch(e){}result.textContent=got?'정답이에요! 말씀 코인 1개를 받았어요.':(day===today?'정답이에요! 오늘 퀴즈 보상은 이미 받았어요.':'정답이에요! 오늘의 장이 아니어서 코인은 지급되지 않아요.');}else result.textContent='아쉬워요. 정답은 '+answer+'였어요. 다시 읽고 도전해 보세요.';document.getElementById('submitWeeklyQuiz').disabled=true;};
-return true;
-}
-var tries=0,timer=setInterval(function(){tries++;if(build()||tries>25)clearInterval(timer);if(tries>25&&area.innerHTML==='')area.textContent='말씀을 불러오지 못했어요. 페이지를 새로고침해 주세요.';},300);
-})();</script>
+
 
 <script>(function(){if(new URLSearchParams(location.search).get("shop")!=="1")return;window.addEventListener("load",function(){setTimeout(function(){var ov=document.getElementById("shopOv");if(ov){ov.hidden=false;document.body.style.overflow="hidden";if(typeof openShop==="function")openShop()}},250)})})();</script>
 </body>
