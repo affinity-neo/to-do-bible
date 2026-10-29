@@ -3433,7 +3433,7 @@ var VIDEOS = {
   document.getElementById('prev').onclick = function () { jump(-1); };
   document.getElementById('next').onclick = function () { jump(1); };
 
-  var speeds = [0.75, 1, 1.25, 1.5, 1.75, 2];
+  var speeds = [0.75, 1, 1.25];
   function setSpeed(r) {
     rate = r;
     if (api) api.setRate(r);
