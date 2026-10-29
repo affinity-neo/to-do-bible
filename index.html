@@ -3331,6 +3331,13 @@ var VIDEOS = {
     if (shopTab === 'ch') list = CHARS.filter(function (c) { return !c.h; }).concat(CHARS.filter(function (c) { return c.h; }).sort(function (a, b) { return a.p - b.p; }));
     else if (shopTab === 'theme') list = THEMES; else if (shopTab === 'font') list = FONTS;
     else list = [{ id: '', v: '', n: '없음', p: 0 }].concat(ITEMS.filter(function (i) { return i.s === shopTab; }));
+    // 각 상점 카테고리의 첫 유료 상품 3개는 입문 할인으로 저렴하게 제공해 성취감을 빠르게 느끼게 해요.
+    var introPrices = [5, 8, 10], introCount = 0;
+    list = list.map(function (item) {
+      var copy = Object.assign({}, item);
+      if (copy.p > 0 && introCount < 3) { copy.p = introPrices[introCount]; copy.introDeal = true; introCount++; }
+      return copy;
+    });
     list.forEach(function (it) {
       var owned = it.p === 0 || P.own.indexOf(it.id) >= 0, rk = rarity(it, cur);
       var successPrice = rk === 'leg' ? (shopTab === 'ch' && it.id === 'h6' ? 100 : 25) : rk === 'epic' ? 8 : 0;
@@ -3339,7 +3346,7 @@ var VIDEOS = {
       var card = document.createElement('div'); card.className = 'sc' + (on ? ' on' : '') + (owned && it.p > 0 ? ' owned' : '') + (rk ? ' r-' + rk : '');
       card.appendChild(pvNode(it, shopTab));
       if (rk) card.insertAdjacentHTML('afterbegin', '<span class="rb">' + RLAB[rk] + '</span>');
-      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + '</div>');
+      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + (it.introDeal ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '') + '</div>');
       var b = document.createElement('button');
       b.innerHTML = on ? '사용 중' : owned ? '사용하기' : (pend && pend === it.id ? '한 번 더!' : payType === 'sc' ? IC.trophy + payPrice + ' 성공' : payPrice + (payType === 'gc' ? IC.game : IC.book)); b.disabled = on;
       b.className = (pend && pend === it.id) ? 'conf' : (owned && it.p > 0 ? 'own' : '');
