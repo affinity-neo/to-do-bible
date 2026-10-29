@@ -476,9 +476,9 @@
   .fish-help{text-align:center;font-size:.68rem;line-height:1.3;color:var(--muted)}
   @media(max-width:390px){.race-top>div{padding:6px}.race-rank-row{grid-template-columns:18px 9px 53px minmax(24px,1fr) 29px;gap:4px}.race-controls button{min-height:54px}.fish-codex{grid-template-columns:repeat(3,minmax(0,1fr))}.fish-book-item{font-size:.54rem;padding:3px 2px}}
 
-.shop-only main{display:none!important}.shop-only .shop-ov{position:fixed!important;inset:0!important;z-index:99999!important;display:block!important;overflow:auto!important;padding:0!important;background:var(--bg)!important}.shop-only .shop-ov[hidden]{display:block!important}.shop-only .shop-win{width:100%!important;max-width:760px!important;min-height:100vh!important;max-height:none!important;margin:0 auto!important;border-radius:0!important}.shop-only .shop-x{display:none!important}
+.shop-only main,.shop-only body>main{display:none!important}.shop-only body{margin:0!important;padding:0!important;min-height:100vh!important;background:var(--bg)!important}.shop-only .shop-ov{display:block!important}.shop-only .shop-ov{position:fixed!important;inset:0!important;z-index:99999!important;display:block!important;overflow:auto!important;padding:0!important;background:var(--bg)!important}.shop-only .shop-ov[hidden]{display:block!important}.shop-only .shop-win{width:100%!important;max-width:760px!important;min-height:100vh!important;max-height:none!important;margin:0 auto!important;border-radius:0!important}.shop-only .shop-x{display:none!important}
 </style>
-<script>if(new URLSearchParams(location.search).get("shop")==="1")document.documentElement.classList.add("shop-only");</script>
+<script>if(new URLSearchParams(location.search).get("shop")==="1"){document.documentElement.classList.add("shop-only");document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("shop-only");});}</script>
 </head>
 <body>
 <main>
@@ -2736,6 +2736,7 @@ var VIDEOS = {
   function monthKey() { return now.getFullYear() + '-' + (now.getMonth() + 1) + ':' + day; }
   // 말씀을 끝까지 들으면 말씀 코인 (같은 장은 한 달에 한 번)
   function awardWord() {
+    if (day !== today) { toast('오늘의 장이 아니어서 말씀 코인은 받을 수 없어요.'); return; }
     var key = monthKey();
     if (P.wk.indexOf(key) >= 0) { toast('이번 달 잠언 ' + day + '장의 말씀 코인은 이미 받았어요.'); return; }
     P.wk.push(key); cloud({ wk: union(key) });
@@ -2751,6 +2752,7 @@ var VIDEOS = {
     checkAch();
   }
   function awardQuiz() {
+    if (day !== today) { toast('오늘의 장이 아니어서 퀴즈 코인은 받을 수 없어요.'); return false; }
     var key = 'q:' + monthKey();
     if (P.wk.indexOf(key) >= 0) return false;
     P.wk.push(key); saveLocal(); cloud({ wk: union(key) }); gain('wc', 1);
@@ -2897,14 +2899,14 @@ var VIDEOS = {
   var loginOpen = false;
   function renderAcct() {
     var a = document.getElementById('shopAcct'); if (!a || !P) return;
-    var h = profHtml() + '<div class="acrow"><span class="chip">' + IC.book + '말씀 코인 <b>' + P.wc.toLocaleString() + '</b></span><span class="chip">' + IC.game + '게임 <b>' + P.gc.toLocaleString() + '</b></span><span class="chip">' + IC.trophy + '완료 코인 <b>' + (P.sc || 0).toLocaleString() + '</b></span><span class="grow"></span>';
+    var h = profHtml() + '<div class="acrow"><span class="chip">' + IC.book + '말씀 코인 <b>' + P.wc.toLocaleString() + '</b></span><span class="chip">' + IC.game + '코인 <b>' + P.gc.toLocaleString() + '</b></span><span class="chip">' + IC.trophy + '완료 코인 <b>' + (P.sc || 0).toLocaleString() + '</b></span><span class="grow"></span>';
     if (user) h += '<span class="chip">' + IC.user + esc(user) + '님</span><button class="lnk" id="acOut">로그아웃</button>';
     else if (!loginOpen) h += '<button class="lnk" id="acIn">로그인 · 회원가입</button>';
     h += '</div>';
     if (!user && loginOpen) h += '<div class="acrow"><div class="acform" style="display:grid;gap:8px"><input id="acName" maxlength="40" placeholder="이름" autocomplete="username"><input id="acPassword" type="password" placeholder="비밀번호" autocomplete="current-password"><input id="acEmail" type="email" placeholder="회원가입할 때만 이메일 입력" autocomplete="email"><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="acOk">이름으로 로그인</button><button id="acSignUp">회원가입</button><button id="acNo" style="background:#efe5d2;color:#4a3b2e">취소</button></div><p id="acError" class="acnote"></p></div></div>';
     if (!user) h += '<div class="acnote">기존 회원은 이름과 비밀번호만 입력하세요. 회원가입할 때는 이름·이메일·비밀번호가 필요합니다.</div>';
     a.innerHTML = h;
-    var pvh = document.getElementById('profPv'); if (pvh) pvh.appendChild(previewEl(heroChar(), P.eq));
+    var pvh = document.getElementById('profPv'); if (pvh) { var avatarCanvas=previewEl(heroChar(),P.eq); pvh.appendChild(avatarCanvas); try { var avatarData=avatarCanvas.toDataURL('image/png'); if(P.avatarData!==avatarData){P.avatarData=avatarData;saveLocal();cloud({avatarData:avatarData});} } catch(e) {} }
     var q = function (id, f) { var e = document.getElementById(id); if (e) e.onclick = f; };
     q('acIn', function () { loginOpen = true; renderAcct(); });
     q('acNo', function () { loginOpen = false; renderAcct(); });
@@ -3516,27 +3518,28 @@ var VIDEOS = {
 </script>
 <script>(function(){
 var area=document.getElementById('weeklyQuizArea');if(!area)return;
-function wk(d){var x=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-W'+Math.ceil((((d-x)/86400000)+x.getDay()+1)/7)}
-var now=new Date(),key='affinity-weekly-quiz:'+wk(now);
-if(now.getDay()!==1){area.innerHTML='<p class="sub">주간 말씀 퀴즈는 매주 월요일에 열립니다. 월요일에 오늘의 말씀으로 새로운 문제가 출제돼요.</p>';return}
-if(localStorage.getItem(key)==='done'){area.innerHTML='<p class="sub">이번 주 퀴즈를 완료했어요. 다음 월요일에 오늘의 말씀으로 새 문제가 열립니다.</p>';return}
+if([1,10,20,30].indexOf(day)<0){var sec=document.getElementById('weeklyQuiz');if(sec)sec.hidden=true;return;}
+var title=document.querySelector('#weeklyQuiz h2');if(title)title.textContent='잠언 '+day+'장 말씀 퀴즈';
+var sub=document.querySelector('#weeklyQuiz .sub');if(sub)sub.textContent='이 장의 말씀을 읽고 빈칸에 들어갈 말을 골라 보세요.';
+var key='affinity-quiz-chapter:'+day+':'+now.getFullYear()+':'+now.getMonth()+':'+now.getDate();
+if(localStorage.getItem(key)==='done'){area.textContent='오늘의 퀴즈를 완료했어요.';return;}
 function build(){
 var article=document.getElementById('text'),raw=article?(article.innerText||article.textContent||''):'';
 var words=(raw.match(/[가-힣]{2,}/g)||[]).filter(function(w){return !/^(잠언|장|절|오늘|말씀|듣기|재생|이전|다음|성경)$/.test(w)}),seen={};
-words=words.filter(function(w){if(seen[w])return false;seen[w]=1;return true});if(words.length<5)return false;
+words=words.filter(function(w){if(seen[w])return false;seen[w]=1;return true;});if(words.length<5)return false;
 var seed=0;for(var i=0;i<key.length;i++)seed=(seed*31+key.charCodeAt(i))>>>0;
 var answer=words[seed%words.length],pool=words.filter(function(w){return w!==answer}),opts=[answer];
-while(opts.length<4&&pool.length){var idx=seed%pool.length;opts.push(pool.splice(idx,1)[0]);seed=(seed*1664525+1013904223)>>>0}
+while(opts.length<4&&pool.length){var idx=seed%pool.length;opts.push(pool.splice(idx,1)[0]);seed=(seed*1664525+1013904223)>>>0;}
 if(opts.length<2)return false;
-var masked=raw.replace(answer,'＿＿＿');
-area.innerHTML='<div style="padding:14px 0"><p style="line-height:1.8;margin-bottom:12px">오늘의 말씀을 읽고 빈칸에 들어갈 말을 골라 보세요.</p><blockquote style="padding:12px 14px;border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;line-height:1.9;margin-bottom:14px"></blockquote><div id="weeklyChoices" style="display:grid;gap:8px"></div><button id="submitWeeklyQuiz" style="margin-top:14px;padding:11px 18px;border-radius:999px;background:var(--accent);color:var(--bg);font-weight:700">정답 확인</button><p id="weeklyQuizResult" class="sub"></p></div>';
-area.querySelector('blockquote').textContent=masked.slice(0,500);
-opts.sort(function(x,y){return ((x.charCodeAt(0)*17+key.length)%13)-((y.charCodeAt(0)*17+key.length)%13)});var selected='',choices=document.getElementById('weeklyChoices');
-opts.forEach(function(o){var btn=document.createElement('button');btn.textContent=o;btn.style.cssText='padding:10px 12px;border-radius:10px;text-align:left;background:var(--card);color:var(--fg)';btn.onclick=function(){selected=o;Array.prototype.forEach.call(choices.children,function(c){c.style.outline='none'});btn.style.outline='2px solid var(--accent)'};choices.appendChild(btn)});
-document.getElementById('submitWeeklyQuiz').onclick=function(){var result=document.getElementById('weeklyQuizResult');if(!selected){result.textContent='답을 하나 선택해 주세요.';return}localStorage.setItem(key,'done');if(selected===answer){result.textContent='정답이에요! 말씀 코인 1개를 받았어요.';try{if(typeof gain==='function')gain('wc',1)}catch(e){}}else result.textContent='아쉬워요. 정답은 '+answer+'였어요. 다음 월요일에 새 문제에 도전해 보세요.';document.getElementById('submitWeeklyQuiz').disabled=true};
-return true
+opts.sort(function(x,y){return ((x.charCodeAt(0)*17+key.length)%13)-((y.charCodeAt(0)*17+key.length)%13);});
+area.innerHTML='<div style="padding:14px 0"><p style="line-height:1.8;margin-bottom:12px">오늘의 말씀을 읽고 빈칸에 들어갈 말을 골라 보세요.</p><blockquote style="padding:12px 14px;border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;line-height:1.9;margin-bottom:14px"></blockquote><div id="weeklyChoices" style="display:grid;gap:8px"></div><button id="submitWeeklyQuiz" style="margin-top:14px;padding:11px 18px;border-radius:999px;background:var(--accent);color:var(--bg);font-weight:700">답안 확인</button><p id="weeklyQuizResult" class="sub"></p></div>';
+area.querySelector('blockquote').textContent=raw.replace(answer,'＿＿＿').slice(0,500);
+var selected='',choices=document.getElementById('weeklyChoices');
+opts.forEach(function(o){var btn=document.createElement('button');btn.textContent=o;btn.style.cssText='padding:10px 12px;border-radius:10px;text-align:left;background:var(--card);color:var(--fg)';btn.onclick=function(){selected=o;Array.prototype.forEach.call(choices.children,function(c){c.style.outline='none'});btn.style.outline='2px solid var(--accent)'};choices.appendChild(btn);});
+document.getElementById('submitWeeklyQuiz').onclick=function(){var result=document.getElementById('weeklyQuizResult');if(!selected){result.textContent='답을 하나 선택해 주세요.';return;}if(selected===answer){localStorage.setItem(key,'done');var got=false;try{got=typeof awardQuiz==='function'&&awardQuiz();}catch(e){}result.textContent=got?'정답이에요! 말씀 코인 1개를 받았어요.':(day===today?'정답이에요! 오늘 퀴즈 보상은 이미 받았어요.':'정답이에요! 오늘의 장이 아니어서 코인은 지급되지 않아요.');}else result.textContent='아쉬워요. 정답은 '+answer+'였어요. 다시 읽고 도전해 보세요.';document.getElementById('submitWeeklyQuiz').disabled=true;};
+return true;
 }
-var tries=0,timer=setInterval(function(){tries++;if(build()||tries>20)clearInterval(timer);if(tries>20&&area.innerHTML==='')area.textContent='오늘의 말씀을 불러오지 못했어요. 페이지를 새로고침해 주세요.'},300)
+var tries=0,timer=setInterval(function(){tries++;if(build()||tries>25)clearInterval(timer);if(tries>25&&area.innerHTML==='')area.textContent='말씀을 불러오지 못했어요. 페이지를 새로고침해 주세요.';},300);
 })();</script>
 
 <script>(function(){if(new URLSearchParams(location.search).get("shop")!=="1")return;window.addEventListener("load",function(){setTimeout(function(){var ov=document.getElementById("shopOv");if(ov){ov.hidden=false;document.body.style.overflow="hidden";if(typeof openShop==="function")openShop()}},250)})})();</script>
