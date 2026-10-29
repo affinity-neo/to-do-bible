@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Gothic:wght@400;700&family=Gaegu:wght@400;700&family=Hi+Melody&family=Yeon+Sung&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   :root { --bg:#f7f4ee; --fg:#27302c; --muted:#78837d; --accent:#3d6b5b; --line:#e5e0d3; --hl:#e3eee7;
@@ -478,10 +479,7 @@
 </head>
 <body>
 <main>
-  <header>
-    <div class="date" id="date"></div>
-    <h1 id="title"></h1>
-  </header>
+  <header><div class="date" id="date"></div><h1 id="title"></h1><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px"><a href="https://affinity-neo.github.io/to-do/" style="display:inline-block;padding:9px 14px;border-radius:999px;background:var(--hl);color:var(--fg);text-decoration:none;font:600 .85rem var(--ui)">To do 쓰러 가기</a><a href="https://affinity-neo.github.io/to-do-bible/" style="display:inline-block;padding:9px 14px;border-radius:999px;background:var(--hl);color:var(--fg);text-decoration:none;font:600 .85rem var(--ui)">말씀 읽으러 가기</a></div></header>
 
   <div class="player">
     <div class="row">
@@ -498,19 +496,7 @@
 
   <article id="text"></article>
 
-  <section id="game" class="game">
-    <p id="gameLock" class="lock">끝까지 들으면 미니 게임이 열려요.</p>
-    <div id="gameBox" hidden>
-      <div class="ghead"><h2 id="gameName"></h2><button class="ibtn" id="gameInfo" aria-label="게임 방법 보기" aria-expanded="false" data-ic="info"></button></div>
-      <p class="sub" id="gameDesc" hidden></p>
-      <div id="gameArea"></div>
-      <div id="goBox" class="gobox" hidden>
-        <div class="gotitle" id="goTitle"></div>
-        <p class="godesc" id="goDesc"></p>
-        <button class="go" id="goAgain">다시 도전</button>
-      </div>
-    </div>
-  </section>
+  <section id="weeklyQuiz" class="game" aria-label="주간 말씀 퀴즈"><h2>주간 말씀 퀴즈</h2><p class="sub">일주일에 한 번, 말씀을 기억하고 있는지 확인해 보세요.</p><div id="weeklyQuizArea"></div></section>
 
   <nav class="chnav" aria-label="장 이동">
     <a id="chPrev" aria-label="이전 장"><span data-ic="left"></span><span id="chPrevT"></span></a>
@@ -754,12 +740,7 @@ var VIDEOS = {
     }
     lastCur = c;
   }
-  function onEnded() {
-    var d = api ? api.dur() : 0;
-    if (d > 0 && listened >= d * 0.85) { awardWord(); openGame(); }
-    else say('영상을 건너뛰지 않고 처음부터 끝까지 들으셔야 미니 게임이 열립니다.');
-  }
-  if (forceUnlock) setTimeout(openGame, 800);
+  function onEnded(){var d=api?api.dur():0;if(d>0&&listened>=d*.85)awardWord();else say('영상을 건너뛰지 않고 처음부터 끝까지 들으셔야 말씀 읽기가 완료됩니다.');}
 
   // ======== 미니 게임 모음: 장 번호에 따라 매일 다른 게임이 열립니다 ========
   // 1장=방주 쌓기, 2장=만나 받기, 3장=오병이어, 4장=요나, 5장=짝 맞추기, 6장=홍해, 7장=다니엘, 8장=여리고, 9장=다시 방주 쌓기 ...
@@ -2460,22 +2441,15 @@ var VIDEOS = {
   };
 
   // ======== 프로필 · 코인 · 꾸미기 (로그인은 선택: 안 해도 읽기/게임/꾸미기 모두 가능) ========
-  var FIREBASE_CONFIG = {
-    apiKey: 'AIzaSyBaBL968mgvyDT_Qqb6Hf-sd0bNEkLGR6k',
-    authDomain: 'proverbs-67527.firebaseapp.com',
-    projectId: 'proverbs-67527',
-    storageBucket: 'proverbs-67527.firebasestorage.app',
-    messagingSenderId: '903659208401',
-    appId: '1:903659208401:web:7f4cde1dd54bda78734ff0'
-  };
-  var user = lsGet('user', ''), db = null, P = null;
+  var FIREBASE_CONFIG = {apiKey:'AIzaSyDO4NtgbQQplIzjHtPONED8fOAHuFWd8Ho',authDomain:'todo-20be6.firebaseapp.com',projectId:'todo-20be6',storageBucket:'todo-20be6.firebasestorage.app',messagingSenderId:'685125018838',appId:'1:685125018838:web:1871862ce07bcc662cd577'};
+  var user = '', authUser = null, auth = null, db = null, P = null;
   // ---- 코인 설정 (여기 숫자만 바꾸면 균형을 조절할 수 있어요) ----
   var WORD_COIN = 2;      // 말씀을 끝까지 들으면 받는 말씀 코인 (같은 장은 한 달에 한 번)
   var STREAK_BONUS = 1;   // 7일 연속으로 들을 때마다 말씀 코인 보너스
   var GC_RATE = 0.08;      // 게임 점수 대비 코인 지급을 낮춰 과도한 코인 획득 방지
   var GC_MAX = 5;         // 한 판당 게임 코인 최대 5개
   var GC_DAY = Number.MAX_SAFE_INTEGER; // 하루 지급 한도 없음
-  try { if (window.firebase && FIREBASE_CONFIG.apiKey) { firebase.initializeApp(FIREBASE_CONFIG); db = firebase.firestore(); } } catch (e) { db = null; }
+  try { if (window.firebase && FIREBASE_CONFIG.apiKey) { if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); db = firebase.firestore(); auth = firebase.auth(); auth.onAuthStateChanged(function(u){authUser=u||null;user=u?(u.displayName||(u.email||'').split('@')[0]):'';lsSet('user',user);if(typeof loadProfile==='function')loadProfile();}); } } catch(e) { db=null; auth=null; }
 
   // 캐릭터·테마·글꼴은 게임 코인, 꾸미기 아이템은 말씀 코인으로 삽니다. 가격은 모두 다릅니다.
   var ANAMES = ['곰', '토끼', '고양이', '펭귄', '아기 돼지', '병아리', '판다', '개구리', '여우', '양', '오리', '강아지', '코알라', '하마', '기린', '호랑이', '햄스터', '파랑새', '올빼미', '비둘기', '낙타', '당나귀', '염소', '코끼리', '사슴', '너구리', '거북이', '사자'];
@@ -2664,10 +2638,9 @@ var VIDEOS = {
     return true;
   }
   function saveLocal() { lsSet(pkey(), JSON.stringify(P)); }
-  function uid(n) { return n.replace(/[\/\\.#$\[\]\s]+/g, '_').slice(0, 20); }
+  function uid(n) { return authUser ? authUser.uid : n.replace(/[\/\\.#$\[\]\s]+/g, '_').slice(0, 20); }
   function cloud(f) {
     if (!db || !user) return;
-    f.name = user;
     db.collection('users').doc(uid(user)).set(f, { merge: true }).catch(function () {});
   }
   function inc(n) { return db ? firebase.firestore.FieldValue.increment(n) : n; }
@@ -2923,23 +2896,16 @@ var VIDEOS = {
     if (user) h += '<span class="chip">' + IC.user + esc(user) + '님</span><button class="lnk" id="acOut">로그아웃</button>';
     else if (!loginOpen) h += '<button class="lnk" id="acIn">로그인 · 회원가입</button>';
     h += '</div>';
-    if (!user && loginOpen) h += '<div class="acrow"><div class="acform"><input id="acName" maxlength="12" placeholder="이름 입력" autocomplete="off"><button id="acOk">시작</button><button id="acNo" style="background:#efe5d2;color:#4a3b2e">취소</button></div></div>';
-    if (!user) h += '<div class="acnote">처음 로그인하면 말씀 코인 2개를 드려요. 로그인하지 않아도 이용할 수 있고, 이 기기에만 저장돼요.</div>';
+    if (!user && loginOpen) h += '<div class="acrow"><div class="acform" style="display:grid;gap:8px"><input id="acName" maxlength="20" placeholder="회원가입 시 이름" autocomplete="name"><input id="acEmail" type="email" placeholder="이메일" autocomplete="email"><input id="acPassword" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="current-password"><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="acOk">로그인</button><button id="acSignUp">회원가입</button><button id="acNo" style="background:#efe5d2;color:#4a3b2e">취소</button></div><p id="acError" class="acnote"></p></div></div>';
+    if (!user) h += '<div class="acnote">To do와 같은 이메일·비밀번호로 로그인하면 계정이 연동됩니다.</div>';
     a.innerHTML = h;
     var pvh = document.getElementById('profPv'); if (pvh) pvh.appendChild(previewEl(heroChar(), P.eq));
     var q = function (id, f) { var e = document.getElementById(id); if (e) e.onclick = f; };
     q('acIn', function () { loginOpen = true; renderAcct(); });
     q('acNo', function () { loginOpen = false; renderAcct(); });
-    q('acOk', function () {
-      var n = document.getElementById('acName').value.trim(); if (!n) return;
-      var isNew = lsGet('prof:' + n, '') === '';
-      if (isNew) lsSet('prof:' + n, lsGet('prof:', ''));   // 처음이면 손님 때 모은 것을 가져옴
-      user = n; lsSet('user', n); loginOpen = false; pend = ''; loadProfile();
-      if (!db && isNew) welcome();
-    });
-    var inp = document.getElementById('acName');
-    if (inp) { inp.focus(); inp.onkeydown = function (e) { if (e.key === 'Enter') document.getElementById('acOk').click(); }; }
-    q('acOut', function () { user = ''; lsSet('user', ''); pend = ''; loadProfile(); meMsg('로그아웃했어요.'); });
+    q('acOk',function(){var email=(document.getElementById('acEmail')||{}).value||'',pw=(document.getElementById('acPassword')||{}).value||'',err=document.getElementById('acError');if(!auth){if(err)err.textContent='Firebase 연결을 확인해 주세요.';return;}auth.signInWithEmailAndPassword(email.trim(),pw).then(function(){loginOpen=false;pend='';}).catch(function(e){if(err)err.textContent=e.code==='auth/invalid-credential'?'이메일 또는 비밀번호를 확인해 주세요.':'로그인 오류: '+e.code;});});
+    q('acSignUp',function(){var n=(document.getElementById('acName')||{}).value||'',email=(document.getElementById('acEmail')||{}).value||'',pw=(document.getElementById('acPassword')||{}).value||'',err=document.getElementById('acError');if(!auth){if(err)err.textContent='Firebase 연결을 확인해 주세요.';return;}if(!n.trim()){if(err)err.textContent='이름을 입력해 주세요.';return;}auth.createUserWithEmailAndPassword(email.trim(),pw).then(function(r){return r.user.updateProfile({displayName:n.trim()});}).then(function(){loginOpen=false;pend='';}).catch(function(e){if(err)err.textContent=e.code==='auth/email-already-in-use'?'이미 가입된 이메일입니다.':e.code==='auth/weak-password'?'비밀번호는 6자 이상이어야 해요.':'회원가입 오류: '+e.code;});});
+    q('acNo',function(){loginOpen=false;renderAcct();});var inp=document.getElementById('acPassword');if(inp)inp.onkeydown=function(e){if(e.key==='Enter')document.getElementById('acOk').click();};q('acOut',function(){if(auth)auth.signOut();user='';lsSet('user','');pend='';});
   }
 
   // ---- 장신구 그리기 / 내 캐릭터 ----
@@ -3526,5 +3492,6 @@ var VIDEOS = {
   window.addEventListener('pagehide', function () { if (api) api.pause(); });
 })();
 </script>
+<script>(function(){var bank=[{q:'노아가 만든 것은 무엇인가요?',a:['방주','성전','망대'],c:0},{q:'다윗이 물리친 블레셋 장수는 누구인가요?',a:['사울','골리앗','삼손'],c:1},{q:'예수님이 태어나신 곳은 어디인가요?',a:['나사렛','베들레헴','예루살렘'],c:1},{q:'모세가 이스라엘 백성을 이끌고 건넌 바다는?',a:['갈릴리 바다','홍해','사해'],c:1},{q:'잠언이 강조하는 지혜의 시작은 무엇인가요?',a:['재물','여호와를 경외함','명예'],c:1},{q:'예수님의 제자 중 세 번 모른다고 말한 사람은?',a:['베드로','요한','도마'],c:0},{q:'예수님이 광야에서 금식하신 기간은?',a:['7일','12일','40일'],c:2}];function wk(){var d=new Date(),x=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-W'+Math.ceil((((d-x)/86400000)+x.getDay()+1)/7)}var key='affinity-weekly-quiz:'+wk(),area=document.getElementById('weeklyQuizArea');if(!area)return;if(localStorage.getItem(key)==='done'){area.innerHTML='<p class="sub">이번 주 퀴즈를 완료했어요. 다음 주에 새로운 퀴즈가 열립니다.</p>';return}var qs=bank.slice().sort(function(){return Math.random()-.5}).slice(0,3),answers={};function draw(){area.innerHTML=qs.map(function(x,i){return '<div style="padding:14px 0;border-bottom:1px solid var(--line)"><strong>'+(i+1)+'. '+x.q+'</strong><div style="display:grid;gap:7px;margin-top:10px">'+x.a.map(function(a,j){return '<button data-q="'+i+'" data-a="'+j+'" style="padding:10px 12px;border-radius:10px;text-align:left;background:'+(answers[i]===j?'var(--hl)':'var(--card)')+';color:var(--fg)">'+a+'</button>').join('')+'</div></div>'}).join('')+'<button id="submitWeeklyQuiz" style="margin-top:14px;padding:11px 18px;border-radius:999px;background:var(--accent);color:var(--bg);font-weight:700">답안 확인</button><p id="weeklyQuizResult" class="sub"></p>';area.querySelectorAll('[data-q]').forEach(function(b){b.onclick=function(){answers[b.dataset.q]=Number(b.dataset.a);draw()}});document.getElementById('submitWeeklyQuiz').onclick=function(){if(Object.keys(answers).length<qs.length){document.getElementById('weeklyQuizResult').textContent='세 문제 모두 선택해 주세요.';return}var score=qs.reduce(function(n,x,i){return n+(answers[i]===x.c?1:0)},0);localStorage.setItem(key,'done');area.innerHTML='<div style="padding:16px;border-radius:14px;background:var(--hl);text-align:center"><strong>이번 주 퀴즈 완료</strong><p style="margin-top:8px">3문제 중 '+score+'문제를 맞혔어요.</p><p class="sub">다음 주에 다시 도전할 수 있어요.</p></div>'}}draw()})();</script>
 </body>
 </html>
