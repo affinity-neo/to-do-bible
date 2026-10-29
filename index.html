@@ -3546,6 +3546,18 @@ var VIDEOS = {
       area.querySelector('#chapterQuizSubmit').disabled=true;
     };
   })();
+  if (new URLSearchParams(window.location.search).get('shop') === '1') {
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var ov = document.getElementById('shopOv');
+        if (ov) {
+          ov.hidden = false;
+          document.body.style.overflow = 'hidden';
+          openShop();
+        }
+      }, 350);
+    });
+  }
   window.addEventListener('pagehide', function () { if (api) api.pause(); });
 })();
 </script>
