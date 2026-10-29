@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>오늘의 잠언</title>
+<title>오늘의 잠언 · 나무 상점</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%233d6b5b%27/%3E%3Cpath d=%27M12 15q12-4 20 4v31q-8-8-20-4zM52 15q-12-4-20 4v31q8-8 20-4z%27 fill=%27none%27 stroke=%27%23fff8e8%27 stroke-width=%274%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Gothic:wght@400;700&family=Gaegu:wght@400;700&family=Hi+Melody&family=Yeon+Sung&display=swap" rel="stylesheet">
@@ -256,7 +257,7 @@
     background:rgba(25,12,4,.5); border:1px solid rgba(240,196,110,.5); border-radius:14px; box-shadow:inset 0 2px 5px rgba(0,0,0,.35),0 1px 0 rgba(255,225,170,.2); }
   .shop-msg:empty { visibility:hidden; }
 
-  /* 테마 (게임 코인으로 구매) */
+  /* 테마 (코인으로 구매) */
   :root[data-theme="light"]  { --bg:#f7f4ee; --fg:#27302c; --muted:#78837d; --accent:#3d6b5b; --line:#e5e0d3; --hl:#e3eee7; }
   :root[data-theme="dark"]   { --bg:#161b19; --fg:#e5ebe7; --muted:#8f9a94; --accent:#8cc4ad; --line:#2a3330; --hl:#22342d; --card:color-mix(in srgb,var(--bg),white 7%); color-scheme:dark; }
   :root[data-theme="spring"] { --bg:#f5f9ef; --fg:#2a3526; --muted:#7d8a70; --accent:#5a8f43; --line:#e0e9d2; --hl:#e6f0d3; }
@@ -475,7 +476,9 @@
   .fish-help{text-align:center;font-size:.68rem;line-height:1.3;color:var(--muted)}
   @media(max-width:390px){.race-top>div{padding:6px}.race-rank-row{grid-template-columns:18px 9px 53px minmax(24px,1fr) 29px;gap:4px}.race-controls button{min-height:54px}.fish-codex{grid-template-columns:repeat(3,minmax(0,1fr))}.fish-book-item{font-size:.54rem;padding:3px 2px}}
 
+.shop-only main{display:none!important}.shop-only .shop-ov{position:fixed!important;inset:0!important;z-index:99999!important;display:block!important;overflow:auto!important;padding:0!important;background:var(--bg)!important}.shop-only .shop-ov[hidden]{display:block!important}.shop-only .shop-win{width:100%!important;max-width:760px!important;min-height:100vh!important;max-height:none!important;margin:0 auto!important;border-radius:0!important}.shop-only .shop-x{display:none!important}
 </style>
+<script>if(new URLSearchParams(location.search).get("shop")==="1")document.documentElement.classList.add("shop-only");</script>
 </head>
 <body>
 <main>
@@ -1133,15 +1136,15 @@ var VIDEOS = {
         } else {
           P.stat.successGameWins = successGameWins;
           toast(alreadyCounted
-            ? '이 게임은 이번 성공 코인 진행도에 이미 기록됐어요. 다른 게임을 성공해 보세요. ('+successGameWins.length+'/3종)'
-            : '성공 코인 진행도 '+successGameWins.length+'/3종 · 서로 다른 게임 '+(3-successGameWins.length)+'종을 더 성공하면 1개를 받아요.');
+            ? '이 게임은 이번 완료 코인 진행도에 이미 기록됐어요. 다른 게임을 성공해 보세요. ('+successGameWins.length+'/3종)'
+            : '완료 코인 진행도 '+successGameWins.length+'/3종 · 서로 다른 게임 '+(3-successGameWins.length)+'종을 더 성공하면 1개를 받아요.');
         }
         P.stat.successWinProgress = 0;
         saveLocal();
         cloud({ stat: P.stat });
       }
       document.getElementById('goTitle').textContent = title;
-      document.getElementById('goDesc').textContent = desc + (gg.n ? ' · 게임 코인 +' + gg.n : '') + (sc ? ' · 성공 코인 +' + sc : '') + (gg.msg ? ' ' + gg.msg : '');
+      document.getElementById('goDesc').textContent = desc + (gg.n ? ' · 코인 +' + gg.n : '') + (sc ? ' · 완료 코인 +' + sc : '') + (gg.msg ? ' ' + gg.msg : '');
       var card = document.getElementById('sharedMissionCard'); if (card) card.remove();
       document.getElementById('goAgain').style.display = curGame.once ? 'none' : '';
       document.getElementById('goBox').hidden = false;
@@ -2447,11 +2450,11 @@ var VIDEOS = {
   var WORD_COIN = 2;      // 말씀을 끝까지 들으면 받는 말씀 코인 (같은 장은 한 달에 한 번)
   var STREAK_BONUS = 1;   // 7일 연속으로 들을 때마다 말씀 코인 보너스
   var GC_RATE = 0.08;      // 게임 점수 대비 코인 지급을 낮춰 과도한 코인 획득 방지
-  var GC_MAX = 5;         // 한 판당 게임 코인 최대 5개
+  var GC_MAX = 5;         // 한 판당 코인 최대 5개
   var GC_DAY = Number.MAX_SAFE_INTEGER; // 하루 지급 한도 없음
-  try { if (window.firebase && FIREBASE_CONFIG.apiKey) { if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); db = firebase.firestore(); auth = firebase.auth(); auth.onAuthStateChanged(function(u){authUser=u||null;if(!u){user='';lsSet('user','');if(typeof loadProfile==='function')loadProfile();return;}db.collection('users').doc(u.uid).get().then(function(s){var d=s.exists?s.data():{};user=(d.name||u.displayName||(u.email||'').split('@')[0]);lsSet('user',user);if(typeof loadProfile==='function')loadProfile();}).catch(function(){user=u.displayName||(u.email||'').split('@')[0];lsSet('user',user);if(typeof loadProfile==='function')loadProfile();});}); } } catch(e) { db=null; auth=null; }
+  try { if (window.firebase && FIREBASE_CONFIG.apiKey) { if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); db = firebase.firestore(); auth = firebase.auth(); auth.onAuthStateChanged(function(u){authUser=u||null;if(!u){user='';lsSet('user','');if(typeof loadProfile==='function')loadProfile();return;}db.collection('users').doc(u.uid).get().then(function(s){var d=s.exists?s.data():{};user=(d.name||'');if(!user||user===(u.email||'').split('@')[0])user=((u.email||'').toLowerCase().startsWith('affinityuniverse.neo@')?'선혜':(u.displayName||'').trim()||(u.email||'').split('@')[0]);lsSet('user',user);if(typeof loadProfile==='function')loadProfile();}).catch(function(){user=((u.email||'').toLowerCase().startsWith('affinityuniverse.neo@')?'선혜':(u.displayName||'').trim()||(u.email||'').split('@')[0]);lsSet('user',user);if(typeof loadProfile==='function')loadProfile();});}); } } catch(e) { db=null; auth=null; }
 
-  // 캐릭터·테마·글꼴은 게임 코인, 꾸미기 아이템은 말씀 코인으로 삽니다. 가격은 모두 다릅니다.
+  // 캐릭터·테마·글꼴은 코인, 꾸미기 아이템은 말씀 코인으로 삽니다. 가격은 모두 다릅니다.
   var ANAMES = ['곰', '토끼', '고양이', '펭귄', '아기 돼지', '병아리', '판다', '개구리', '여우', '양', '오리', '강아지', '코알라', '하마', '기린', '호랑이', '햄스터', '파랑새', '올빼미', '비둘기', '낙타', '당나귀', '염소', '코끼리', '사슴', '너구리', '거북이', '사자'];
   var APRICE = [0, 30, 36, 42, 48, 54, 60, 66, 72, 0, 78, 84, 90, 96, 102, 108, 114, 120, 126, 132, 138, 144, 150, 156, 162, 168, 174, 190];
   var CHARS = KINDS.map(function (K, i) { var n = parseInt(K.id.slice(1), 10); return { id: K.id, k: i, n: ANAMES[n], p: APRICE[n] }; });
@@ -2719,7 +2722,7 @@ var VIDEOS = {
     renderAcct(); renderShop();
   }
   function addGame(n) { gain('gc', n); }
-  function gainCoinSafe(n) { gain('sc', n); toast('도전 성공! 성공 코인 ' + n + '개를 받았어요.'); }
+  function gainCoinSafe(n) { gain('sc', n); toast('도전 성공! 완료 코인 ' + n + '개를 받았어요.'); }
   function meMsg(t) {
     var ov = document.getElementById('shopOv');
     if (ov && !ov.hidden) document.getElementById('shopMsg').textContent = t || ''; else if (t) toast(t);
@@ -2754,7 +2757,7 @@ var VIDEOS = {
     checkAch();
     return true;
   }
-  // 게임 코인: 점수를 줄여서 지급하고, 하루 총량에 한도를 둡니다.
+  // 코인: 점수를 줄여서 지급하고, 하루 총량에 한도를 둡니다.
   function grantGame(raw) {
     if (!P) return { n: 0, msg: '' };
     var st = P.stat, t = dayStr(), want = Math.min(GC_MAX, Math.round(raw * GC_RATE));
@@ -2836,7 +2839,7 @@ var VIDEOS = {
       P.ach = P.ach.concat(ids); saveLocal(); cloud({ ach: unionMany(ids) });
       if (!silent) {
         got.forEach(function (a) { if (a.r) rw[a.r[0]] += a.r[1]; });
-        msgs.push('업적 달성! ' + got.map(function (a) { return a.n; }).join(', ') + ((rw.wc || rw.gc) ? ' (' + (rw.wc ? '말씀 코인 +' + rw.wc : '') + (rw.wc && rw.gc ? ', ' : '') + (rw.gc ? '게임 코인 +' + rw.gc : '') + ')' : ''));
+        msgs.push('업적 달성! ' + got.map(function (a) { return a.n; }).join(', ') + ((rw.wc || rw.gc) ? ' (' + (rw.wc ? '말씀 코인 +' + rw.wc : '') + (rw.wc && rw.gc ? ', ' : '') + (rw.gc ? '코인 +' + rw.gc : '') + ')' : ''));
         if (rw.wc) gain('wc', rw.wc);
         if (rw.gc) gain('gc', rw.gc);
       }
@@ -2886,7 +2889,7 @@ var VIDEOS = {
       var done = P.ach.indexOf(a.id) >= 0, val = Math.min(a.v(), a.m), pc = Math.round(val / a.m * 100);
       h += '<div class="arow' + (done ? ' done' : '') + '"><div class="ai">' + IC.trophy + '</div><div class="at"><b>' + a.n + '</b><span>' + a.d + '</span>' +
         (done ? '' : '<div class="xpbar"><i style="width:' + pc + '%"></i></div>') + '</div><div class="ar">' + (done ? '달성!' : val + '/' + a.m) +
-        (a.r ? '<br>' + (a.r[0] === 'wc' ? '말씀 +' : '게임 +') + a.r[1] : '') + '</div></div>';
+        (a.r ? '<br>' + (a.r[0] === 'wc' ? '말씀 +' : '코인 +') + a.r[1] : '') + '</div></div>';
     });
     b.innerHTML = h;
   }
@@ -2894,7 +2897,7 @@ var VIDEOS = {
   var loginOpen = false;
   function renderAcct() {
     var a = document.getElementById('shopAcct'); if (!a || !P) return;
-    var h = profHtml() + '<div class="acrow"><span class="chip">' + IC.book + '말씀 <b>' + P.wc.toLocaleString() + '</b></span><span class="chip">' + IC.game + '게임 <b>' + P.gc.toLocaleString() + '</b></span><span class="chip">' + IC.trophy + '성공 <b>' + (P.sc || 0).toLocaleString() + '</b></span><span class="grow"></span>';
+    var h = profHtml() + '<div class="acrow"><span class="chip">' + IC.book + '말씀 코인 <b>' + P.wc.toLocaleString() + '</b></span><span class="chip">' + IC.game + '게임 <b>' + P.gc.toLocaleString() + '</b></span><span class="chip">' + IC.trophy + '완료 코인 <b>' + (P.sc || 0).toLocaleString() + '</b></span><span class="grow"></span>';
     if (user) h += '<span class="chip">' + IC.user + esc(user) + '님</span><button class="lnk" id="acOut">로그아웃</button>';
     else if (!loginOpen) h += '<button class="lnk" id="acIn">로그인 · 회원가입</button>';
     h += '</div>';
@@ -3290,7 +3293,7 @@ var VIDEOS = {
   function closeShop() { document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
   function renderBoard() {
     var b = document.getElementById('sboard'), tok = ++boardTok;
-    b.innerHTML = '<div class="bsw"><button data-t="wc"' + (boardType === 'wc' ? ' class="on"' : '') + '>' + IC.book + '말씀 코인</button><button data-t="gc"' + (boardType === 'gc' ? ' class="on"' : '') + '>' + IC.game + '게임 코인</button><button data-t="sc"' + (boardType === 'sc' ? ' class="on"' : '') + '>' + IC.trophy + '성공 코인</button></div><div id="blist"></div>';
+    b.innerHTML = '<div class="bsw"><button data-t="wc"' + (boardType === 'wc' ? ' class="on"' : '') + '>' + IC.book + '말씀 코인</button><button data-t="gc"' + (boardType === 'gc' ? ' class="on"' : '') + '>' + IC.game + '코인</button><button data-t="sc"' + (boardType === 'sc' ? ' class="on"' : '') + '>' + IC.trophy + '완료 코인</button></div><div id="blist"></div>';
     Array.prototype.forEach.call(b.querySelectorAll('.bsw button'), function (x) { x.onclick = function () { boardType = x.getAttribute('data-t'); renderBoard(); }; });
     var L = document.getElementById('blist');
     if (!db) { L.textContent = '인터넷에 연결되면 순위를 볼 수 있어요.'; return; }
@@ -3313,8 +3316,8 @@ var VIDEOS = {
       b.innerHTML = t[1] + (c ? '<span class="tc">' + c + '</span>' : ''); if (t[0] === shopTab) b.className = 'on';
       b.onclick = function () { shopTab = t[0]; pend = ''; meMsg(''); renderShop(); }; tb.appendChild(b);
     });
-    var INFO = { ch: '영웅·전설 캐릭터는 성공 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 성공 코인 1개를 받아요.', theme: '영웅·전설 테마는 성공 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 성공 코인 1개를 받아요.', font: '등급에 따라 구매 코인이 달라져요.', ach: '업적을 달성하면 레벨이 올라요.', rank: '지금까지 모은 코인을 기준으로 한 순위예요.' };
-    document.getElementById('sinfo').textContent = INFO[shopTab] || '영웅·전설 등급은 성공 코인으로 구매해요. 예수님은 특별 전설 캐릭터입니다. 서로 다른 게임 3종을 성공할 때마다 성공 코인 1개를 받아요.';
+    var INFO = { ch: '영웅·전설 캐릭터는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', theme: '영웅·전설 테마는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', font: '등급에 따라 구매 코인이 달라져요.', ach: '업적을 달성하면 레벨이 올라요.', rank: '지금까지 모은 코인을 기준으로 한 순위예요.' };
+    document.getElementById('sinfo').textContent = INFO[shopTab] || '영웅·전설 등급은 완료 코인으로 구매해요. 예수님은 특별 전설 캐릭터입니다. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.';
     var grid = document.getElementById('sgrid'), board = document.getElementById('sboard'), sc = document.getElementById('scol');
     if (shopTab === 'rank' || shopTab === 'ach') { sc.hidden = true; grid.hidden = true; board.hidden = false; if (shopTab === 'rank') renderBoard(); else renderAch(); return; }
     var cc = tabCount(shopTab), pc = cc[1] ? Math.round(cc[0] / cc[1] * 100) : 0, full = cc[1] > 0 && cc[0] >= cc[1];
@@ -3340,7 +3343,7 @@ var VIDEOS = {
       b.onclick = function () {
         var bought = false;
         if (!owned) {
-          if (P[payType] < payPrice) { meMsg((payType === 'sc' ? '성공 코인' : '코인') + '이 ' + (payPrice - P[payType]) + '개 모자라요.'); return; }
+          if (P[payType] < payPrice) { meMsg((payType === 'sc' ? '완료 코인' : '코인') + '이 ' + (payPrice - P[payType]) + '개 모자라요.'); return; }
           if (pend !== it.id) { pend = it.id; meMsg(it.n + ' - 한 번 더 누르면 구매해요.'); renderShop(); return; }
           pend = ''; P[payType] -= payPrice; P.own.push(it.id); var f = { own: union(it.id) }; f[payType] = inc(-payPrice); cloud(f);
           meMsg(it.n + ' 구매 완료!'); bought = true;
@@ -3511,12 +3514,31 @@ var VIDEOS = {
   window.addEventListener('pagehide', function () { if (api) api.pause(); });
 })();
 </script>
-<script>(function(){var bank=[{q:'노아가 만든 것은 무엇인가요?',a:['방주','성전','망대'],c:0},{q:'다윗이 물리친 블레셋 장수는 누구인가요?',a:['사울','골리앗','삼손'],c:1},{q:'예수님이 태어나신 곳은 어디인가요?',a:['나사렛','베들레헴','예루살렘'],c:1},{q:'모세가 이스라엘 백성을 이끌고 건넌 바다는?',a:['갈릴리 바다','홍해','사해'],c:1},{q:'잠언이 강조하는 지혜의 시작은 무엇인가요?',a:['재물','여호와를 경외함','명예'],c:1},{q:'예수님의 제자 중 세 번 모른다고 말한 사람은?',a:['베드로','요한','도마'],c:0},{q:'예수님이 광야에서 금식하신 기간은?',a:['7일','12일','40일'],c:2}];function wk(){var d=new Date(),x=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-W'+Math.ceil((((d-x)/86400000)+x.getDay()+1)/7)}var key='affinity-weekly-quiz:'+wk(),area=document.getElementById('weeklyQuizArea');if(!area)return;if(localStorage.getItem(key)==='done'){area.innerHTML='<p class="sub">이번 주 퀴즈를 완료했어요. 다음 주에 새로운 퀴즈가 열립니다.</p>';return}var qs=bank.slice().sort(function(){return Math.random()-.5}).slice(0,3),answers={};function draw(){area.innerHTML=qs.map(function(x,i){return '<div style="padding:14px 0;border-bottom:1px solid var(--line)"><strong>'+(i+1)+'. '+x.q+'</strong><div style="display:grid;gap:7px;margin-top:10px">'+x.a.map(function(a,j){return '<button data-q="'+i+'" data-a="'+j+'" style="padding:10px 12px;border-radius:10px;text-align:left;background:'+(answers[i]===j?'var(--hl)':'var(--card)')+';color:var(--fg)">'+a+'</button>';}).join('')+'</div></div>'}).join('')+'<button id="submitWeeklyQuiz" style="margin-top:14px;padding:11px 18px;border-radius:999px;background:var(--accent);color:var(--bg);font-weight:700">답안 확인</button><p id="weeklyQuizResult" class="sub"></p>';area.querySelectorAll('[data-q]').forEach(function(b){b.onclick=function(){answers[b.dataset.q]=Number(b.dataset.a);draw()}});document.getElementById('submitWeeklyQuiz').onclick=function(){if(Object.keys(answers).length<qs.length){document.getElementById('weeklyQuizResult').textContent='세 문제 모두 선택해 주세요.';return}var score=qs.reduce(function(n,x,i){return n+(answers[i]===x.c?1:0)},0);localStorage.setItem(key,'done');area.innerHTML='<div style="padding:16px;border-radius:14px;background:var(--hl);text-align:center"><strong>이번 주 퀴즈 완료</strong><p style="margin-top:8px">3문제 중 '+score+'문제를 맞혔어요.</p><p class="sub">다음 주에 다시 도전할 수 있어요.</p></div>'}}draw()})();</script>
+<script>(function(){
+var area=document.getElementById('weeklyQuizArea');if(!area)return;
+function wk(d){var x=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-W'+Math.ceil((((d-x)/86400000)+x.getDay()+1)/7)}
+var now=new Date(),key='affinity-weekly-quiz:'+wk(now);
+if(now.getDay()!==1){area.innerHTML='<p class="sub">주간 말씀 퀴즈는 매주 월요일에 열립니다. 월요일에 오늘의 말씀으로 새로운 문제가 출제돼요.</p>';return}
+if(localStorage.getItem(key)==='done'){area.innerHTML='<p class="sub">이번 주 퀴즈를 완료했어요. 다음 월요일에 오늘의 말씀으로 새 문제가 열립니다.</p>';return}
+function build(){
+var article=document.getElementById('text'),raw=article?(article.innerText||article.textContent||''):'';
+var words=(raw.match(/[가-힣]{2,}/g)||[]).filter(function(w){return !/^(잠언|장|절|오늘|말씀|듣기|재생|이전|다음|성경)$/.test(w)}),seen={};
+words=words.filter(function(w){if(seen[w])return false;seen[w]=1;return true});if(words.length<5)return false;
+var seed=0;for(var i=0;i<key.length;i++)seed=(seed*31+key.charCodeAt(i))>>>0;
+var answer=words[seed%words.length],pool=words.filter(function(w){return w!==answer}),opts=[answer];
+while(opts.length<4&&pool.length){var idx=seed%pool.length;opts.push(pool.splice(idx,1)[0]);seed=(seed*1664525+1013904223)>>>0}
+if(opts.length<2)return false;
+var masked=raw.replace(answer,'＿＿＿');
+area.innerHTML='<div style="padding:14px 0"><p style="line-height:1.8;margin-bottom:12px">오늘의 말씀을 읽고 빈칸에 들어갈 말을 골라 보세요.</p><blockquote style="padding:12px 14px;border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0;line-height:1.9;margin-bottom:14px"></blockquote><div id="weeklyChoices" style="display:grid;gap:8px"></div><button id="submitWeeklyQuiz" style="margin-top:14px;padding:11px 18px;border-radius:999px;background:var(--accent);color:var(--bg);font-weight:700">정답 확인</button><p id="weeklyQuizResult" class="sub"></p></div>';
+area.querySelector('blockquote').textContent=masked.slice(0,500);
+var selected='',choices=document.getElementById('weeklyChoices');
+opts.forEach(function(o){var btn=document.createElement('button');btn.textContent=o;btn.style.cssText='padding:10px 12px;border-radius:10px;text-align:left;background:var(--card);color:var(--fg)';btn.onclick=function(){selected=o;Array.prototype.forEach.call(choices.children,function(c){c.style.outline='none'});btn.style.outline='2px solid var(--accent)'};choices.appendChild(btn)});
+document.getElementById('submitWeeklyQuiz').onclick=function(){var result=document.getElementById('weeklyQuizResult');if(!selected){result.textContent='답을 하나 선택해 주세요.';return}localStorage.setItem(key,'done');if(selected===answer){result.textContent='정답이에요! 말씀 코인 1개를 받았어요.';try{if(typeof gain==='function')gain('wc',1)}catch(e){}}else result.textContent='아쉬워요. 정답은 '+answer+'였어요. 다음 월요일에 새 문제에 도전해 보세요.';document.getElementById('submitWeeklyQuiz').disabled=true};
+return true
+}
+var tries=0,timer=setInterval(function(){tries++;if(build()||tries>20)clearInterval(timer);if(tries>20&&area.innerHTML==='')area.textContent='오늘의 말씀을 불러오지 못했어요. 페이지를 새로고침해 주세요.'},300)
+})();</script>
 
-  if (new URLSearchParams(window.location.search).get('shop') === '1') {
-    var shopOpened = false;
-    var originalLoadProfile = loadProfile;
-    loadProfile = function () { originalLoadProfile(); if (!shopOpened) { shopOpened = true; setTimeout(function(){ if (typeof openShop === 'function') openShop(); }, 700); } };
-  }
+<script>(function(){if(new URLSearchParams(location.search).get("shop")!=="1")return;window.addEventListener("load",function(){setTimeout(function(){var ov=document.getElementById("shopOv");if(ov){ov.hidden=false;document.body.style.overflow="hidden";if(typeof openShop==="function")openShop()}},250)})})();</script>
 </body>
 </html>
