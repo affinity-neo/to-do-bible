@@ -2456,23 +2456,23 @@ var VIDEOS = {
 
   // 캐릭터·테마·글꼴은 코인, 꾸미기 아이템은 말씀 코인으로 삽니다. 가격은 모두 다릅니다.
   var ANAMES = ['곰', '토끼', '고양이', '펭귄', '아기 돼지', '병아리', '판다', '개구리', '여우', '양', '오리', '강아지', '코알라', '하마', '기린', '호랑이', '햄스터', '파랑새', '올빼미', '비둘기', '낙타', '당나귀', '염소', '코끼리', '사슴', '너구리', '거북이', '사자'];
-  var APRICE = [0, 30, 36, 42, 48, 54, 60, 66, 72, 0, 78, 84, 90, 96, 102, 108, 114, 120, 126, 132, 138, 144, 150, 156, 162, 168, 174, 190];
+  var APRICE = [0, 8, 10, 12, 14, 16, 18, 20, 22, 0, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 60];
   var CHARS = KINDS.map(function (K, i) { var n = parseInt(K.id.slice(1), 10); return { id: K.id, k: i, n: ANAMES[n], p: APRICE[n] }; });
-  [['다윗', 200, { skin: '#f5d2ab', hair: '#9a4f22', style: 'short' }], ['에스더', 215, { skin: '#f8dcbc', hair: '#2b1d14', style: 'long' }],
-   ['노아', 230, { skin: '#f1caa0', hair: '#f0f0f0', style: 'short', beard: '#f7f7f7' }], ['룻', 245, { skin: '#f3cfa8', hair: '#6a3d1f', style: 'long', scarf: '#e07a5f' }],
-   ['다니엘', 260, { skin: '#e9bd8f', hair: '#3a2415', style: 'short' }], ['모세', 275, { skin: '#e8bb8a', hair: '#d4d4d4', style: 'long', beard: '#dcdcdc' }],
-   ['예수님', 500, { skin: '#f2d0a8', hair: '#6a4630', style: 'long', beard: '#6a4630', glow: true }],
-   ['사무엘', 210, { skin: '#f5d5b2', hair: '#6a4630', style: 'short', robe: '#f2f2f2' }],
-   ['요나', 205, { skin: '#e9bd8f', hair: '#3a2415', style: 'short', robe: '#5fb3c4' }],
-   ['이삭', 225, { skin: '#f3d0a8', hair: '#7a4a28', style: 'short', stache: '#7a4a28' }],
-   ['야곱', 235, { skin: '#e9c095', hair: '#4a2d18', style: 'short', beard: '#4a2d18', cloth: '#d9c7a0', stripe: '#a5502c' }],
-   ['한나', 240, { skin: '#f6dcc0', hair: '#6a3d1f', style: 'long', cloth: '#f6e3e8', stripe: '#c4577f' }],
-   ['미리암', 250, { skin: '#e8bb8a', hair: '#2b1d14', style: 'long', cloth: '#7cc4b8', stripe: '#2a7f9e' }],
-   ['욥', 255, { skin: '#e4b88c', hair: '#cfcfcf', style: 'short', bald: true, beard: '#d9d9d9' }],
-   ['여호수아', 265, { skin: '#e4b185', hair: '#3a2415', style: 'short', scarf: '#c0392b', stache: '#3a2415' }],
-   ['드보라', 270, { skin: '#f0cba3', hair: '#5a3a22', style: 'long', cloth: '#c9a6e8', stripe: '#6d28b8' }],
-   ['요셉', 285, { skin: '#e9bd8f', hair: '#2e1c10', style: 'long', robe: 'stripe' }],
-   ['아브라함', 290, { skin: '#ecc79c', hair: '#e8e8e8', style: 'short', beard: '#f0f0f0', cloth: '#efe6d0', stripe: '#8a5a2c' }],
+  [['다윗', 35, { skin: '#f5d2ab', hair: '#9a4f22', style: 'short' }], ['에스더', 38, { skin: '#f8dcbc', hair: '#2b1d14', style: 'long' }],
+   ['노아', 40, { skin: '#f1caa0', hair: '#f0f0f0', style: 'short', beard: '#f7f7f7' }], ['룻', 42, { skin: '#f3cfa8', hair: '#6a3d1f', style: 'long', scarf: '#e07a5f' }],
+   ['다니엘', 44, { skin: '#e9bd8f', hair: '#3a2415', style: 'short' }], ['모세', 46, { skin: '#e8bb8a', hair: '#d4d4d4', style: 'long', beard: '#dcdcdc' }],
+   ['예수님', 80, { skin: '#f2d0a8', hair: '#6a4630', style: 'long', beard: '#6a4630', glow: true }],
+   ['사무엘', 36, { skin: '#f5d5b2', hair: '#6a4630', style: 'short', robe: '#f2f2f2' }],
+   ['요나', 34, { skin: '#e9bd8f', hair: '#3a2415', style: 'short', robe: '#5fb3c4' }],
+   ['이삭', 39, { skin: '#f3d0a8', hair: '#7a4a28', style: 'short', stache: '#7a4a28' }],
+   ['야곱', 41, { skin: '#e9c095', hair: '#4a2d18', style: 'short', beard: '#4a2d18', cloth: '#d9c7a0', stripe: '#a5502c' }],
+   ['한나', 42, { skin: '#f6dcc0', hair: '#6a3d1f', style: 'long', cloth: '#f6e3e8', stripe: '#c4577f' }],
+   ['미리암', 43, { skin: '#e8bb8a', hair: '#2b1d14', style: 'long', cloth: '#7cc4b8', stripe: '#2a7f9e' }],
+   ['욥', 44, { skin: '#e4b88c', hair: '#cfcfcf', style: 'short', bald: true, beard: '#d9d9d9' }],
+   ['여호수아', 45, { skin: '#e4b185', hair: '#3a2415', style: 'short', scarf: '#c0392b', stache: '#3a2415' }],
+   ['드보라', 46, { skin: '#f0cba3', hair: '#5a3a22', style: 'long', cloth: '#c9a6e8', stripe: '#6d28b8' }],
+   ['요셉', 48, { skin: '#e9bd8f', hair: '#2e1c10', style: 'long', robe: 'stripe' }],
+   ['아브라함', 50, { skin: '#ecc79c', hair: '#e8e8e8', style: 'short', beard: '#f0f0f0', cloth: '#efe6d0', stripe: '#8a5a2c' }],
    ['베드로', 295, { skin: '#e0b085', hair: '#9a9a9a', style: 'short', curly: true, beard: '#a8a8a8', robe: '#4d73a6' }],
    ['사라', 300, { skin: '#f5d8b8', hair: '#8d8d8d', style: 'long', cloth: '#cfe3ee', stripe: '#5a86a8' }],
    ['바울', 305, { skin: '#e8bd90', hair: '#5a4636', style: 'short', bald: true, beard: '#5a4636' }],
@@ -3365,7 +3365,7 @@ var VIDEOS = {
     });
     list.forEach(function (it) {
       var owned = it.p === 0 || P.own.indexOf(it.id) >= 0, rk = rarity(it, cur);
-      var successPrice = rk === 'leg' ? (shopTab === 'ch' && it.id === 'h6' ? 100 : 25) : rk === 'epic' ? 8 : 0;
+      var successPrice = rk === 'leg' ? (shopTab === 'ch' && it.id === 'h6' ? 20 : 5) : rk === 'epic' ? 3 : 0;
       var payType = successPrice ? 'sc' : cur, payPrice = successPrice || it.p;
       var on = shopTab === 'ch' ? P.eq.ch === it.id : shopTab === 'theme' ? (P.eq.theme || 'auto') === it.t : shopTab === 'font' ? (P.eq.font || 'default') === it.f : P.eq[shopTab] === it.v;
       var card = document.createElement('div'); card.className = 'sc' + (on ? ' on' : '') + (owned && it.p > 0 ? ' owned' : '') + (rk ? ' r-' + rk : '');
