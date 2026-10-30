@@ -2584,7 +2584,8 @@ var VIDEOS = {
     ['wc','gc','sc','tot','wtot','gtot','stot'].forEach(function(k) {
       var fallback = k === 'gc' ? (b.coins != null ? b.coins : 0) : k === 'sc' ? (b.completeCoins != null ? b.completeCoins : 0) : 0;
       var av = Number(out[k] || 0), bv = Number(b[k] != null ? b[k] : fallback) || 0;
-      out[k] = Math.max(av, bv);
+      if ((k === 'gc' && (b.gc != null || b.coins != null)) || (k === 'sc' && (b.sc != null || b.completeCoins != null))) out[k] = bv;
+      else out[k] = Math.max(av, bv);
     });
     ['own','wk','gr','ach'].forEach(function(k) {
       var aa = Array.isArray(out[k]) ? out[k] : [], bb = Array.isArray(b[k]) ? b[k] : [];
@@ -3357,13 +3358,6 @@ var VIDEOS = {
     if (shopTab === 'ch') list = CHARS.filter(function (c) { return !c.h; }).concat(CHARS.filter(function (c) { return c.h; }).sort(function (a, b) { return a.p - b.p; }));
     else if (shopTab === 'theme') list = THEMES; else if (shopTab === 'font') list = FONTS;
     else list = [{ id: '', v: '', n: '없음', p: 0 }].concat(ITEMS.filter(function (i) { return i.s === shopTab; }));
-    // 각 상점 카테고리의 첫 유료 상품 3개는 입문 할인으로 저렴하게 제공해 성취감을 빠르게 느끼게 해요.
-    var introPrices = [5, 8, 10], introCount = 0;
-    list = list.map(function (item) {
-      var copy = Object.assign({}, item);
-      if (copy.p > 0 && introCount < 3) { copy.p = introPrices[introCount]; copy.introDeal = true; introCount++; }
-      return copy;
-    });
     list.forEach(function (it) {
       var owned = it.p === 0 || P.own.indexOf(it.id) >= 0, rk = rarity(it, cur);
       var premiumChars = CHARS.filter(function (c) { return !!c.h; }).sort(function (a, b) { if (a.id === 'h6') return 1; if (b.id === 'h6') return -1; return CHARS.indexOf(a) - CHARS.indexOf(b); });
