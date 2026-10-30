@@ -2445,7 +2445,7 @@ var VIDEOS = {
 
   // ======== 프로필 · 코인 · 꾸미기 (로그인은 선택: 안 해도 읽기/게임/꾸미기 모두 가능) ========
   var FIREBASE_CONFIG = {apiKey:'AIzaSyDO4NtgbQQplIzjHtPONED8fOAHuFWd8Ho',authDomain:'todo-20be6.firebaseapp.com',projectId:'todo-20be6',storageBucket:'todo-20be6.firebasestorage.app',messagingSenderId:'685125018838',appId:'1:685125018838:web:1871862ce07bcc662cd577'};
-  var user = '', authUser = null, auth = null, db = null, P = null;
+  var user = '', authUser = null, auth = null, db = null, P = null; var profileWatch = null;
   // ---- 코인 설정 (여기 숫자만 바꾸면 균형을 조절할 수 있어요) ----
   var WORD_COIN = 2;      // 말씀을 끝까지 들으면 받는 말씀 코인 (같은 장은 한 달에 한 번)
   var STREAK_BONUS = 1;   // 7일 연속으로 들을 때마다 말씀 코인 보너스
@@ -2676,6 +2676,14 @@ var VIDEOS = {
     applyTheme(); renderAcct(); renderShop();
     if (!db || !user) { initAch(); renderAcct(); renderShop(); return; }
     var ref = db.collection('users').doc(uid(user));
+    if (profileWatch) { profileWatch(); profileWatch = null; }
+    profileWatch = ref.onSnapshot(function (snap) {
+      if (!snap.exists || !P) return;
+      var d = snap.data() || {}, changed = false;
+      if (d.coins != null || d.gc != null) { var gc = Number(d.coins != null ? d.coins : d.gc) || 0; if (P.gc !== gc) { P.gc = gc; changed = true; } }
+      if (d.completeCoins != null || d.sc != null) { var sc = Number(d.completeCoins != null ? d.completeCoins : d.sc) || 0; if (P.sc !== sc) { P.sc = sc; changed = true; } }
+      if (changed) { saveLocal(); renderAcct(); renderShop(); }
+    }, function () {});
     var isCoinCleanupAccount = String(user || '').replace(/\s+/g, '') === '최선혜';
     if (String(user || '').replace(/\s+/g, '') === '최선혜') {
       try { localStorage.removeItem('prof:최 선혜'); } catch (e) {}
@@ -3362,7 +3370,9 @@ var VIDEOS = {
       var owned = it.p === 0 || P.own.indexOf(it.id) >= 0, rk = rarity(it, cur);
       var premiumChars = CHARS.filter(function (c) { return !!c.h; }).sort(function (a, b) { if (a.id === 'h6') return 1; if (b.id === 'h6') return -1; return CHARS.indexOf(a) - CHARS.indexOf(b); });
       var premiumIndex = premiumChars.findIndex(function (c) { return c.id === it.id; });
-      var successPrice = shopTab === 'ch' && premiumIndex >= 0 ? 6 + premiumIndex : (rk === 'leg' ? 25 : rk === 'epic' ? 8 : 0);
+      var introPrices = [5, 8, 10];
+      var successPrice = shopTab === 'ch' && premiumIndex >= 0 ? (premiumIndex < introPrices.length ? introPrices[premiumIndex] : 11 + premiumIndex - introPrices.length) : (rk === 'leg' ? 25 : rk === 'epic' ? 8 : 0);
+      if (shopTab === 'ch' && premiumIndex === premiumChars.length - 1) successPrice = 31;
       var payType = successPrice ? 'sc' : cur, payPrice = successPrice || it.p;
       var on = shopTab === 'ch' ? P.eq.ch === it.id : shopTab === 'theme' ? (P.eq.theme || 'auto') === it.t : shopTab === 'font' ? (P.eq.font || 'default') === it.f : P.eq[shopTab] === it.v;
       var card = document.createElement('div'); card.className = 'sc' + (on ? ' on' : '') + (owned && it.p > 0 ? ' owned' : '') + (rk ? ' r-' + rk : '');
