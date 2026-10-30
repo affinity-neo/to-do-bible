@@ -2629,8 +2629,8 @@ var VIDEOS = {
   }
   function restoreLostCharactersAndSprout() {
     var who = String(user || '').replace(/\\s+/g, '');
-    if (who !== '최선혜' && who !== '최선희') return false;
-    var marker = 'restore_characters_sprout_20261030_v2';
+    if (who !== '최선혜' && who !== '최선희' && who !== '선혜') return false;
+    var marker = 'restore_characters_sprout_20261030_v3';
     P.gr = Array.isArray(P.gr) ? P.gr : [];
     if (P.gr.indexOf(marker) >= 0) return false;
     P.own = Array.isArray(P.own) ? P.own : [];
@@ -2716,12 +2716,12 @@ var VIDEOS = {
       if (s.exists) {
         var d = s.data();
         if (d.name) { user = d.name; lsSet('user', user); }
-        loadLocal(); restoreRequestedProfile(); restoreLostCharactersAndSprout();
+        loadLocal(); restoreRequestedProfile();
         if (d.gc == null && d.coins != null) d.gc = d.coins;
         var localEq = P && P.eq ? Object.assign({}, P.eq) : null;
         var localAlreadyFixed = Array.isArray(P.gr) && P.gr.indexOf(SC_FIX_MARKER) >= 0;
         var cloudAlreadyFixed = Array.isArray(d.gr) && d.gr.indexOf(SC_FIX_MARKER) >= 0;
-        P = mergeProfile(P, d); normEq();
+        P = mergeProfile(P, d); normEq(); restoreLostCharactersAndSprout();
         if (d.bibleCoinResetV1 !== true) { P.bibleCoinResetV1=true; cloud({bibleCoinResetV1:true}); }
         if (localEq && localEq.ch && localEq.ch !== 'c0') P.eq.ch = localEq.ch;
         if (isCoinCleanupAccount) {
