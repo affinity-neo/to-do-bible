@@ -3377,7 +3377,7 @@ var VIDEOS = {
       var card = document.createElement('div'); card.className = 'sc' + (on ? ' on' : '') + (owned && it.p > 0 ? ' owned' : '') + (rk ? ' r-' + rk : '');
       card.appendChild(pvNode(it, shopTab));
       if (rk) card.insertAdjacentHTML('afterbegin', '<span class="rb">' + RLAB[rk] + '</span>');
-      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + (it.introDeal ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '') + '</div>');
+      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '') + '</div>');
       var b = document.createElement('button');
       b.innerHTML = on ? '사용 중' : owned ? '사용하기' : (pend && pend === it.id ? '한 번 더!' : payType === 'sc' ? IC.trophy + payPrice + ' 성공' : payPrice + (payType === 'gc' ? IC.game : IC.book)); b.disabled = on;
       b.className = (pend && pend === it.id) ? 'conf' : (owned && it.p > 0 ? 'own' : '');
