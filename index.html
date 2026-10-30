@@ -3371,8 +3371,7 @@ var VIDEOS = {
       var premiumChars = CHARS.filter(function (c) { return !!c.h; }).sort(function (a, b) { if (a.id === 'h6') return 1; if (b.id === 'h6') return -1; return CHARS.indexOf(a) - CHARS.indexOf(b); });
       var premiumIndex = premiumChars.findIndex(function (c) { return c.id === it.id; });
       var introPrices = [5, 8, 10];
-      var successPrice = shopTab === 'ch' && premiumIndex >= 0 ? (premiumIndex < introPrices.length ? introPrices[premiumIndex] : 11 + premiumIndex - introPrices.length) : (rk === 'leg' ? 25 : rk === 'epic' ? 8 : 0);
-      if (shopTab === 'ch' && premiumIndex === premiumChars.length - 1) successPrice = 31;
+      var successPrice = shopTab === 'ch' && premiumIndex >= 0 ? (premiumIndex < 3 ? introPrices[premiumIndex] : premiumIndex === premiumChars.length - 1 ? 31 : premiumIndex === 3 ? 6 : premiumIndex === 4 ? 7 : premiumIndex === 5 ? 9 : premiumIndex + 5) : (rk === 'leg' ? 25 : rk === 'epic' ? 8 : 0);
       var payType = successPrice ? 'sc' : cur, payPrice = successPrice || it.p;
       var on = shopTab === 'ch' ? P.eq.ch === it.id : shopTab === 'theme' ? (P.eq.theme || 'auto') === it.t : shopTab === 'font' ? (P.eq.font || 'default') === it.f : P.eq[shopTab] === it.v;
       var card = document.createElement('div'); card.className = 'sc' + (on ? ' on' : '') + (owned && it.p > 0 ? ' owned' : '') + (rk ? ' r-' + rk : '');
