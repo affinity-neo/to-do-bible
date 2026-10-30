@@ -2627,6 +2627,21 @@ var VIDEOS = {
     if (!found) { try { merged = mergeProfile(blank(), JSON.parse(lsGet(pkey(), 'null')) || {}); } catch (e) {} }
     P = merged; normEq();
   }
+  function restoreLostCharactersAndSprout() {
+    var who = String(user || '').replace(/\\s+/g, '');
+    if (who !== '최선혜' && who !== '최선희') return false;
+    var marker = 'restore_characters_sprout_20261030_v2';
+    P.gr = Array.isArray(P.gr) ? P.gr : [];
+    if (P.gr.indexOf(marker) >= 0) return false;
+    P.own = Array.isArray(P.own) ? P.own : [];
+    CHARS.forEach(function (c) { if (P.own.indexOf(c.id) < 0) P.own.push(c.id); });
+    ['h5','f_glasses','n_scarf','n_cross','t_sakura','t_parch','h_straw','h_santa','h_crown','c4','c10','c11','h_sprout'].forEach(function (id) { if (P.own.indexOf(id) < 0) P.own.push(id); });
+    P.eq = Object.assign({ch:'c0',hat:'',face:'',neck:'',theme:'auto',font:'default'}, P.eq || {});
+    P.eq.hat = 'sprout';
+    P.gr.push(marker); saveLocal();
+    cloud({own:P.own,eq:P.eq,gr:union(marker)});
+    return true;
+  }
   function restoreRequestedProfile() {
     var who = String(user || '').replace(/\s+/g, '');
     if (who !== '최선혜' && who !== '최선희') return false;
@@ -2701,7 +2716,7 @@ var VIDEOS = {
       if (s.exists) {
         var d = s.data();
         if (d.name) { user = d.name; lsSet('user', user); }
-        loadLocal(); restoreRequestedProfile();
+        loadLocal(); restoreRequestedProfile(); restoreLostCharactersAndSprout();
         if (d.gc == null && d.coins != null) d.gc = d.coins;
         var localEq = P && P.eq ? Object.assign({}, P.eq) : null;
         var localAlreadyFixed = Array.isArray(P.gr) && P.gr.indexOf(SC_FIX_MARKER) >= 0;
@@ -2729,7 +2744,7 @@ var VIDEOS = {
         restoreRequestedProfile();
         grantSunhyeWordCoinsOnce();
         saveLocal();
-        ref.set({ wc: P.wc, gc: P.gc, sc: P.sc, coins: P.gc, completeCoins: P.sc, tot: P.tot, wtot: P.wtot, gtot: P.gtot, stot: P.stot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach }, { merge: true }).catch(function () {});
+        ref.set({ wc: P.wc, wtot: P.wtot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach }, { merge: true }).catch(function () {});
       } else {
         if (isCoinCleanupAccount && P.gr.indexOf(SC_FIX_MARKER) < 0) removeAccidentalSuccessCoins();
         grantSunhyeWordCoinsOnce();
