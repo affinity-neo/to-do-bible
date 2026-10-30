@@ -2732,7 +2732,7 @@ var VIDEOS = {
         var localAlreadyFixed = Array.isArray(P.gr) && P.gr.indexOf(SC_FIX_MARKER) >= 0;
         var cloudAlreadyFixed = Array.isArray(d.gr) && d.gr.indexOf(SC_FIX_MARKER) >= 0;
         P = mergeProfile(P, d); normEq(); restoreLostCharactersAndSprout();
-        if (repairedCoinBalance) ref.set({gc:P.gc,coins:P.gc,sc:P.sc,completeCoins:P.sc,coinSyncRepairV1:true},{merge:true}).catch(function () {});
+
         if (d.bibleCoinResetV1 !== true) { P.bibleCoinResetV1=true; cloud({bibleCoinResetV1:true}); }
         if (localEq && localEq.ch && localEq.ch !== 'c0') P.eq.ch = localEq.ch;
         if (isCoinCleanupAccount) {
@@ -2755,7 +2755,9 @@ var VIDEOS = {
         restoreRequestedProfile();
         grantSunhyeWordCoinsOnce();
         saveLocal();
-        ref.set({ wc: P.wc, wtot: P.wtot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, coinSyncRepairV1: true }, { merge: true }).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
+        var hydratePayload = { wc: P.wc, wtot: P.wtot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, coinSyncRepairV1: true };
+        if (repairedCoinBalance) { hydratePayload.gc=P.gc; hydratePayload.coins=P.gc; hydratePayload.sc=P.sc; hydratePayload.completeCoins=P.sc; }
+        ref.set(hydratePayload, { merge: true }).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
       } else {
         if (isCoinCleanupAccount && P.gr.indexOf(SC_FIX_MARKER) < 0) removeAccidentalSuccessCoins();
         restoreLostCharactersAndSprout();
