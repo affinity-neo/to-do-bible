@@ -3654,6 +3654,7 @@ var VIDEOS = {
  function closeTodo(){panel.classList.remove('open');panel.setAttribute('aria-hidden','true');openBtn.setAttribute('aria-expanded','false');document.body.style.overflow='';}
  openBtn.addEventListener('click',openTodo);closeBtn.addEventListener('click',closeTodo);
  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&panel.classList.contains('open'))closeTodo();});
+ window.addEventListener('message',function(e){if(e.origin!==location.origin)return;if(e.data&&e.data.type==='todo-bible-close')closeTodo();});
  // Keep the Todo view mounted when hidden so its Firebase session and live coin updates remain active.
  frame.addEventListener('load',function(){try{frame.contentWindow.postMessage({type:'todo-bible-integrated'},location.origin);}catch(e){}});
 })();
