@@ -2591,6 +2591,7 @@ var VIDEOS = {
       var aa = Array.isArray(out[k]) ? out[k] : [], bb = Array.isArray(b[k]) ? b[k] : [];
       out[k] = aa.concat(bb.filter(function(v) { return aa.indexOf(v) < 0; }));
     });
+    if ((!Array.isArray(out.sunhyeLegacyOwnBackup) || !out.sunhyeLegacyOwnBackup.length) && Array.isArray(b.sunhyeLegacyOwnBackup)) out.sunhyeLegacyOwnBackup = b.sunhyeLegacyOwnBackup.slice();
     if (out.own.length && !cloudOwn.length) out.eq = Object.assign({}, out.eq || {});
     else out.eq = Object.assign({}, out.eq || {}, b.eq || {});
     var stat = Object.assign({}, out.stat || {}, b.stat || {});
@@ -2639,7 +2640,7 @@ var VIDEOS = {
 
     // 원래 구매 기록은 별도로 남겨 둡니다. 이전 버전에는 구매 이력 원장이 없어
     // 자동 복구로 합쳐진 보유 목록에서 실제 구매분을 개별 식별할 수 없습니다.
-    if (firstRepair && !Array.isArray(P.sunhyeLegacyOwnBackup)) {
+    if (firstRepair && (!Array.isArray(P.sunhyeLegacyOwnBackup) || P.sunhyeLegacyOwnBackup.length === 0)) {
       P.sunhyeLegacyOwnBackup = P.own.slice();
       changed = true;
     }
@@ -2772,9 +2773,9 @@ var VIDEOS = {
     saveLocal();
   }
   function loadProfile() {
-    if (!P) { loadLocal(); restoreRequestedProfile(); repairSunhyeCharacterOwnership(); }
+    if (!P) { loadLocal(); restoreRequestedProfile(); }
     applyTheme(); renderAcct(); renderShop();
-    if (!db || !user) { initAch(); renderAcct(); renderShop(); return; }
+    if (!db || !user) { repairSunhyeCharacterOwnership(); initAch(); renderAcct(); renderShop(); return; }
     var ref = db.collection('users').doc(uid(user));
     var isCoinCleanupAccount = String(user || '').replace(/\s+/g, '') === '최선혜';
     if (String(user || '').replace(/\s+/g, '') === '최선혜') {
