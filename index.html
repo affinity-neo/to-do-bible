@@ -3439,6 +3439,17 @@ var VIDEOS = {
     if (shopTab === 'ch') list = CHARS.filter(function (c) { return !c.h; }).concat(CHARS.filter(function (c) { return c.h; }).sort(function (a, b) { return a.p - b.p; }));
     else if (shopTab === 'theme') list = THEMES; else if (shopTab === 'font') list = FONTS;
     else list = [{ id: '', v: '', n: '없음', p: 0 }].concat(ITEMS.filter(function (i) { return i.s === shopTab; }));
+    // 이전 커밋 방식: 각 상점 탭에서 무료 상품을 제외한 첫 유료 상품 3개에 입문 가격을 적용합니다.
+    var introPrices = [5, 8, 10], introCount = 0;
+    list = list.map(function (item) {
+      var copy = Object.assign({}, item);
+      if (copy.p > 0 && introCount < introPrices.length) {
+        copy.p = introPrices[introCount];
+        copy.introDeal = true;
+        introCount++;
+      }
+      return copy;
+    });
     list.forEach(function (it) {
       var owned = it.p === 0 || P.own.indexOf(it.id) >= 0, rk = rarity(it, cur);
       var premiumChars = CHARS.filter(function (c) { return !!c.h; }).sort(function (a, b) { if (a.id === 'h6') return 1; if (b.id === 'h6') return -1; return CHARS.indexOf(a) - CHARS.indexOf(b); });
