@@ -482,7 +482,7 @@ html.shop-only,html.shop-only body{background:transparent!important;margin:0!imp
 </head>
 <body>
 <main>
-  <header><div class="date" id="date"></div><h1 id="title"></h1><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px"><a href="https://affinity-neo.github.io/to-do/" style="display:inline-block;padding:9px 14px;border-radius:999px;background:var(--hl);color:var(--fg);text-decoration:none;font:600 .85rem var(--ui)">To do 쓰러 가기</a></div></header>
+  <header><div class="date" id="date"></div><h1 id="title"></h1><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px"><button id="unifiedTodoOpen" type="button" aria-controls="unifiedTodoPanel" aria-expanded="false" style="display:inline-block;padding:9px 14px;border:0;border-radius:999px;background:var(--hl);color:var(--fg);font:600 .85rem var(--ui);cursor:pointer">To do 쓰러 가기</button></div></header>
 
   <div class="player">
     <div class="row">
@@ -3634,7 +3634,7 @@ var VIDEOS = {
 
 <!-- Unified Todo panel: keep Bible as the main page -->
 <style>
-#unifiedTodoOpen{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:9998;border:0;border-radius:999px;padding:13px 19px;background:#3d6b5b;color:#fff8e8;font:600 15px/1.2 'Gowun Dodum','Noto Sans KR',sans-serif;box-shadow:0 4px 18px #0002;cursor:pointer}
+#unifiedTodoOpen{box-shadow:none}
 #unifiedTodoPanel{position:fixed;inset:0;z-index:9999;background:var(--bg,#f7f4ee);display:none;flex-direction:column}
 #unifiedTodoPanel.open{display:flex}
 #unifiedTodoBar{height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 14px;border-bottom:1px solid var(--line,#e5e0d3);background:var(--bg,#f7f4ee);font:600 14px 'Gowun Dodum','Noto Sans KR',sans-serif}
@@ -3642,7 +3642,6 @@ var VIDEOS = {
 #unifiedTodoFrame{display:block;width:100%;height:calc(100% - 54px);border:0;background:#fff;flex:1}
 @media(min-width:761px){#unifiedTodoPanel{inset:3vh 3vw;border:1px solid var(--line,#e5e0d3);border-radius:18px;overflow:hidden;box-shadow:0 12px 60px #0003}#unifiedTodoFrame{height:calc(100% - 54px)}}
 </style>
-<button id="unifiedTodoOpen" type="button" aria-controls="unifiedTodoPanel" aria-expanded="false">☑ Todo 가기</button>
 <section id="unifiedTodoPanel" aria-label="Todo" aria-hidden="true">
   <div id="unifiedTodoBar"><span>☑ 오늘의 할 일</span><button id="unifiedTodoClose" type="button">말씀으로 돌아가기 ✕</button></div>
   <iframe id="unifiedTodoFrame" title="할 일 관리" loading="lazy" src="about:blank"></iframe>
