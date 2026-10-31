@@ -2668,8 +2668,10 @@ var VIDEOS = {
     profileWatch = ref.onSnapshot(function (snap) {
       if (!snap.exists || !P) return;
       var d = snap.data() || {}, changed = false;
+      if (d.wc != null) { var wc = Number(d.wc) || 0; if (P.wc !== wc) { P.wc = wc; changed = true; } }
       if (d.coins != null || d.gc != null) { var gc = Number(d.coins != null ? d.coins : d.gc) || 0; if (P.gc !== gc) { P.gc = gc; changed = true; } }
       if (d.completeCoins != null || d.sc != null) { var sc = Number(d.completeCoins != null ? d.completeCoins : d.sc) || 0; if (P.sc !== sc) { P.sc = sc; changed = true; } }
+      ['tot','wtot','gtot','stot'].forEach(function(k){ if(d[k] != null && P[k] !== Number(d[k])) { P[k] = Number(d[k]) || 0; changed = true; } });
       if (changed) { saveLocal(); renderAcct(); renderShop(); }
     }, function () {});
   }
@@ -2685,6 +2687,48 @@ var VIDEOS = {
     P.wtot = Number(P.wtot || 0) + 8;
     P.tot = Number(P.tot || 0) + 8;
     P.gr.push(SUNHYE_WORD_GIFT_MARKER);
+  }
+  function ensureCoinRankAndNamedGifts(ref) {
+    if (!db || !ref) return Promise.resolve();
+    return db.runTransaction(function(tx) {
+      return tx.get(ref).then(function(snap) {
+        if (!snap.exists) return;
+        var d = snap.data() || {};
+        var name = String(d.name || '').replace(/\s+/g, '');
+        var coins = Number(d.coins != null ? d.coins : d.gc || 0) || 0;
+        var complete = Number(d.completeCoins != null ? d.completeCoins : d.sc || 0) || 0;
+        var words = Number(d.wc || 0) || 0;
+        var gtot = Math.max(Number(d.gtot || 0) || 0, coins);
+        var stot = Math.max(Number(d.stot || 0) || 0, complete);
+        var wtot = Math.max(Number(d.wtot || 0) || 0, words);
+        var patch = {}, totalAdded = 0, gameAdded = 0, completeAdded = 0, wordAdded = 0;
+        if (d.coinRankBackfill20261031V1 !== true) {
+          patch.coinRankBackfill20261031V1 = true;
+          patch.gtot = gtot; patch.stot = stot; patch.wtot = wtot;
+        }
+        if (name === '지윤' && d.jiyunCoin3V1 !== true) {
+          gameAdded += 3; totalAdded += 3; patch.jiyunCoin3V1 = true;
+        }
+        var gifts = {
+          '지민': { game: 5, complete: 1, words: 3 },
+          '이서엘': { game: 0, complete: 1, words: 2 },
+          '지윤': { game: 0, complete: 0, words: 2 }
+        };
+        var gift = gifts[name];
+        if (gift && d.namedCoinGift20261031V1 !== true) {
+          gameAdded += gift.game; completeAdded += gift.complete; wordAdded += gift.words;
+          totalAdded += gift.game + gift.complete + gift.words;
+          patch.namedCoinGift20261031V1 = true;
+        }
+        if (gameAdded) { coins += gameAdded; gtot += gameAdded; patch.coins = coins; patch.gc = coins; patch.gtot = gtot; }
+        if (completeAdded) { complete += completeAdded; stot += completeAdded; patch.completeCoins = complete; patch.sc = complete; patch.stot = stot; }
+        if (wordAdded) { words += wordAdded; wtot += wordAdded; patch.wc = words; patch.wtot = wtot; }
+        if (totalAdded) patch.tot = (Number(d.tot || 0) || 0) + totalAdded;
+        if (d.coins == null || d.gc == null) { patch.coins = coins; patch.gc = coins; }
+        if (d.completeCoins == null || d.sc == null) { patch.completeCoins = complete; patch.sc = complete; }
+        if (Object.keys(patch).length) tx.set(ref, patch, { merge: true });
+      });
+    }).catch(function(e) { console.warn('코인 동기화 확인 실패:', e); });
   }
   var SC_FIX_MARKER = 'sc_accidental_6998_removed_v1';
   function removeAccidentalSuccessCoins() {
@@ -2714,7 +2758,7 @@ var VIDEOS = {
         if (shopTab === 'rank' && document.getElementById('shopOv') && !document.getElementById('shopOv').hidden) renderBoard();
       }).catch(function () {});
     }
-    ref.get().then(function (s) {
+    ensureCoinRankAndNamedGifts(ref).then(function(){ return ref.get(); }).then(function (s) {
       if (s.exists) {
         var d = s.data();
         if (d.name) { user = d.name; lsSet('user', user); }
