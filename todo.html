@@ -130,24 +130,58 @@ const IME=e=>e.isComposing||e.keyCode===229;
 function startAdd(cid){S.add=cid;S.edit=null;render()}
 function addKey(e,cid){if(IME(e))return;if(e.key==='Escape'){S.add=null;render();return}if(e.key!=='Enter')return;
  const v=e.target.value.trim();if(!v){S.add=null;render();return}
- D.todos.push({id:uid(),cid,text:v,time:'',date:S.date,done:0,memo:'',ts:Date.now()});save();e.target.value='';render()}
+ D.todos.push({id:uid(),cid,text:v,time:'',date:S.date,done:0,memo:'',ts:Date.now()});syncDailyCompletion(S.date,false);save();e.target.value='';render()}
 const addBlur=()=>setTimeout(()=>{if(S.add&&document.activeElement?.id!=='ai'){S.add=null;render()}},150);
 function editKey(e,id){if(IME(e))return;if(e.key==='Escape'){S.edit=null;render();return}if(e.key!=='Enter')return;commitEdit(id,e.target.value)}
 const blurEdit=(id,v)=>setTimeout(()=>{if(S.edit===id&&document.activeElement?.id!=='ei')commitEdit(id,v)},150);
 function commitEdit(id,v){if(S.edit!==id)return;v=v.trim();const t=T(id);S.edit=null;if(t&&v){t.text=v;save()}render()}
-function scoreCategory(t){const c=D.cats.find(x=>x.id===t.cid);const n=c?String(c.name).trim():'';return n==='Neo'||n==='일정'}
-function deleteTask(id){const t=T(id);if(!t)return;if(t.done&&t.coined&&scoreCategory(t))D.coins=Math.max(0,D.coins-1);D.todos=D.todos.filter(x=>x.id!==id);save();mclose();render()}
-function toggle(id){const t=T(id);if(!t)return;const wasDone=!!t.done;t.done=wasDone?0:1;let g=0;
+function categoryName(t){const c=D.cats.find(x=>x.id===t.cid);return c?String(c.name).trim():''}
+function scoreCategory(t){const n=categoryName(t);return n==='Neo'||n==='일정'}
+function dailyCompletionReady(date){
+ const active=D.todos.filter(x=>x.date===date&&!x.arch&&scoreCategory(x));
+ const neo=active.filter(x=>categoryName(x)==='Neo');
+ const schedule=active.filter(x=>categoryName(x)==='일정');
+ return neo.length>0&&schedule.length>0&&neo.every(x=>!!x.done)&&schedule.every(x=>!!x.done);
+}
+function syncDailyCompletion(date,allowAward){
+ if(!date)return false;
+ D.bonus=D.bonus||{};
+ const ready=dailyCompletionReady(date),awarded=!!D.bonus[date];
+ if(ready&&!awarded&&allowAward){
+  D.bonus[date]=1;D.completeCoins=(D.completeCoins||0)+1;toast('Neo와 일정의 할 일을 모두 완료해 완료 코인 +1');
+  return true;
+ }
+ if(!ready&&awarded){
+  D.bonus[date]=0;D.completeCoins=Math.max(0,(D.completeCoins||0)-1);toast('Neo 또는 일정의 완료 조건이 바뀌어 완료 코인 -1');
+  return true;
+ }
+ return false;
+}
+function syncAllDailyCompletions(){
+ const dates=new Set((D.todos||[]).map(x=>x.date).filter(Boolean));
+ Object.keys(D.bonus||{}).forEach(x=>dates.add(x));
+ let changed=false;
+ dates.forEach(date=>{if(syncDailyCompletion(date,false))changed=true;});
+ return changed;
+}
+function unarchiveTask(id){const t=T(id);if(!t)return;t.arch=0;syncDailyCompletion(t.date,false);save();render()}
+function deleteTask(id){
+ const t=T(id);if(!t)return;const date=t.date;
+ if(t.done&&t.coined&&scoreCategory(t))D.coins=Math.max(0,D.coins-1);
+ D.todos=D.todos.filter(x=>x.id!==id);
+ syncDailyCompletion(date,false);save();mclose();render();
+}
+function toggle(id){
+ const t=T(id);if(!t)return;const wasDone=!!t.done;t.done=wasDone?0:1;let g=0;
  if(scoreCategory(t)){
   if(t.done){if(!t.coined){t.coined=1;g+=1}}
   else if(t.coined){g-=1;t.coined=0}
-  const day=D.todos.filter(x=>x.date===t.date&&!x.arch&&scoreCategory(x));
-  if(day.length>0&&day.every(x=>x.done)&&!D.bonus[t.date]){D.bonus[t.date]=1;D.completeCoins=(D.completeCoins||0)+1;toast('완료 코인 +1')}
-  else if(D.bonus[t.date]&&(!day.length||!day.every(x=>x.done))){D.bonus[t.date]=0;D.completeCoins=Math.max(0,(D.completeCoins||0)-1);toast('완료 코인 -1')}
  }else{t.coined=0}
  if(t.done&&scoreCategory(t)&&D.activePet&&!t.petXpEarned){t.petXpEarned=1;D.petXp=(D.petXp||0)+1;const before=Math.floor(((D.petXp||0)-1)/5)+1,after=Math.floor((D.petXp||0)/5)+1;if(after>before)toast('집중 파트너 레벨 업! 경험치 '+(D.petXp||0));else toast('집중 파트너 경험치 +1')}
  if(t.done&&!D.cats.find(c=>c.id===t.cid)?.priv){D.log.unshift({text:t.text,ts:Date.now()});D.log.length=Math.min(D.log.length,50)}
- if(g){D.coins=Math.max(0,D.coins+g);toast(g>0?'코인 +'+g:'코인 '+g)}save();render()}
+ if(g){D.coins=Math.max(0,D.coins+g);toast(g>0?'코인 +'+g:'코인 '+g)}
+ syncDailyCompletion(t.date,true);save();render()
+}
 
 /* ---------- 할 일 시트 ---------- */
 let SH=null;
@@ -165,9 +199,9 @@ function drawSheet(){const t=T(SH.id);if(!t){mclose();return}const v=SH.v,id=SH.
 function svMemo(id){T(id).memo=document.getElementById('sm').value.trim();save();render();sheet(id)}
 function svTime(id,off){const t=T(id);t.time=off?'':document.getElementById('st').value;t.fired='';save();render();if(t.time&&window.Notification&&Notification.permission==='default')Notification.requestPermission();sheet(id)}
 function svTimer(id){const n=+document.getElementById('sn').value;if(n>0){S.timer={id,end:Date.now()+n*6e4,txt:T(id).text};mclose();render();toast(n+'분 타이머를 시작했어요')}}
-function svDate(id){const x=document.getElementById('sd').value;if(x){T(id).date=x;save();render()}sheet(id)}
-function tomorrow(id){const t=T(id);t.date=addD(t.date,1);save();mclose();render();toast('내일로 옮겼어요')}
-function archive(id){T(id).arch=1;save();mclose();render();toast('보관함으로 옮겼어요')}
+function svDate(id){const x=document.getElementById('sd').value,t=T(id);if(x&&t){const oldDate=t.date;t.date=x;syncDailyCompletion(oldDate,false);syncDailyCompletion(x,false);save();render()}sheet(id)}
+function tomorrow(id){const t=T(id);if(!t)return;const oldDate=t.date;t.date=addD(t.date,1);syncDailyCompletion(oldDate,false);syncDailyCompletion(t.date,false);save();mclose();render();toast('내일로 옮겼어요')}
+function archive(id){const t=T(id);if(!t)return;t.arch=1;syncDailyCompletion(t.date,false);save();mclose();render();toast('보관함으로 옮겼어요')}
 setInterval(()=>{const n=new Date(),hm=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
  D.todos.forEach(t=>{if(t.time===hm&&t.date===TODAY&&!t.done&&t.fired!==hm){t.fired=hm;save();toast('알림: '+t.text);try{new Notification('Affinity Neo',{body:t.text})}catch(e){}}});
  D.rm.forEach(r=>{if(r.time===hm&&r.fired!==hm+TODAY){r.fired=hm+TODAY;save();toast('리마인더: '+r.text)}});
@@ -175,9 +209,9 @@ setInterval(()=>{const n=new Date(),hm=String(n.getHours()).padStart(2,'0')+':'+
 
 /* ---------- 설정 동작 ---------- */
 const go=t=>{if(S.crew)leaveCrew();S.tab=t;S.sub=null;S.add=null;S.edit=null;render()};
-function catForm(c){modal(c?'카테고리 수정':'카테고리 추가',[{p:'카테고리 이름',v:c?.name},{t:'col',v:c?.color},{t:'sel',v:c?.ended?1:0,o:[[0,'사용 중'],[1,'종료']]}],([name,color,e])=>{const d={name,color,priv:0,ended:+e};c?Object.assign(c,d):D.cats.push({id:uid(),...d});save()},c&&(()=>{D.cats=D.cats.filter(x=>x!==c)}))}
+function catForm(c){modal(c?'카테고리 수정':'카테고리 추가',[{p:'카테고리 이름',v:c?.name},{t:'col',v:c?.color},{t:'sel',v:c?.ended?1:0,o:[[0,'사용 중'],[1,'종료']]}],([name,color,e])=>{const d={name,color,priv:0,ended:+e};c?Object.assign(c,d):D.cats.push({id:uid(),...d});syncAllDailyCompletions();save()},c&&(()=>{D.cats=D.cats.filter(x=>x!==c);syncAllDailyCompletions()}))}
 function routineDue(r,key){const d=new Date(key+'T00:00:00'),day=d.getDate(),dow=d.getDay(),last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),start=new Date((r.start||key)+'T00:00:00');if(d<start||(r.end&&key>r.end))return false;const diff=Math.floor((d-start)/86400000);switch(r.repeat||'weekly'){case'daily':return diff%(+r.interval||1)===0;case'weekly':return Math.floor(diff/7)%(+r.interval||1)===0&&(r.days||[]).includes(dow);case'monthly_nth':return (r.ordinal===0?day+7>last:Math.floor((day-1)/7)+1===(+r.ordinal||2))&&dow===(r.weekday===0?0:(+r.weekday||6));case'month_end':return day===last;case'monthly_date':return day===(+r.monthday||1);case'interval':return diff%(+r.interval||1)===0;default:return false}}
-function genRoutine(){let ch=0;D.rt.forEach(r=>{if(routineDue(r,S.date)&&!D.todos.some(t=>t.rid===r.id&&t.date===S.date)){D.todos.push({id:uid(),cid:r.cid,text:r.name,date:S.date,done:0,memo:'',rid:r.id,ts:Date.now()});ch=1}});if(ch)save()}
+function genRoutine(){let ch=0;D.rt.forEach(r=>{if(routineDue(r,S.date)&&!D.todos.some(t=>t.rid===r.id&&t.date===S.date)){D.todos.push({id:uid(),cid:r.cid,text:r.name,date:S.date,done:0,memo:'',rid:r.id,ts:Date.now()});ch=1}});if(ch){syncDailyCompletion(S.date,false);save()}}
 function routineExtra(r,type){const days=r?.days||[1,2,3,4,5];if(type==='weekly')return `<div class="row" style="justify-content:space-between">${'일월화수목금토'.split('').map((d,i)=>`<button class="rday ${days.includes(i)?'on':''}" onclick="this.classList.toggle('on')" data-day="${i}">${d}</button>`).join('')}</div><div class="rsmall">매주 선택한 요일 반복</div>`;if(type==='monthly_nth')return `<div class="row"><select id="rordinal" style="background:var(--bg)">${[[1,'첫째 주'],[2,'둘째 주'],[3,'셋째 주'],[4,'넷째 주'],[5,'다섯째 주'],[0,'마지막 주']].map(([v,n])=>`<option value="${v}" ${(r?.ordinal??2)===v?'selected':''}>${n}</option>`).join('')}</select><select id="rweekday" style="background:var(--bg)">${'일월화수목금토'.split('').map((d,i)=>`<option value="${i}" ${(r?.weekday??6)===i?'selected':''}>${d}요일</option>`).join('')}</select></div><div class="rsmall">예: 매달 둘째 주 토요일</div><div style="margin-top:10px"><label class="row"><input type="checkbox" id="rmonthend" style="width:auto" ${r?.repeat==='month_end'?'checked':''}>매달 마지막 날</label></div>`;if(type==='interval')return `<div class="row"><span>매</span><input id="rinterval" type="number" min="1" max="365" value="${r?.interval||2}" style="width:90px;background:var(--bg)"><span>일마다</span></div>`;if(type==='monthly_date')return `<div class="row"><span>매달</span><input id="rmonthday" type="number" min="1" max="31" value="${r?.monthday||1}" style="width:90px;background:var(--bg)"><span>일</span></div>`;return '<div class="rsmall">매일 반복합니다.</div>'}
 function routineForm(r){const cats=D.cats.filter(c=>!c.ended),repeat=['month_end','monthly_date'].includes(r?.repeat)?'monthly_nth':r?.repeat||'weekly';window._routine={repeat,id:r?.id};document.getElementById('md').innerHTML=`<div class="mask" onclick="if(event.target===this)mclose()"><div class="mb" style="max-width:420px;max-height:92vh;overflow:auto;padding:20px"><div class="row sp" style="margin-bottom:18px"><button class="mu" onclick="mclose()">‹ 뒤로</button><div class="b" style="font-size:16px">반복하기</div><span style="width:42px"></span></div><input id="rn" placeholder="루틴 이름" value="${esc(r?.name||'')}" style="margin-bottom:12px;background:var(--bg)"><select id="rc" style="margin-bottom:12px">${cats.map(c=>`<option value="${c.id}" ${(r?.cid||cats[0]?.id)===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select><div class="rpanel"><div class="b" style="margin-bottom:12px">반복</div><div class="rtab">${[['daily','매일'],['weekly','매주'],['monthly_nth','매달'],['interval','N일마다']].map(([k,n])=>`<button id="rt-${k}" class="${repeat===k?'on':''}" onclick="setRoutineType('${k}')">${n}</button>`).join('')}</div><div id="r-extra" style="margin-top:14px">${routineExtra(r,repeat)}</div></div><div class="rpanel"><div class="rrow"><span>시작일</span><input id="rstart" type="date" value="${r?.start||TODAY}" style="width:170px;padding:8px;background:var(--bg)"></div><div class="rrow"><span>종료일</span><input id="rend" type="date" value="${r?.end||''}" style="width:170px;padding:8px;background:var(--bg)"></div><div class="rrow"><span>시간 알림</span><input id="rtime" type="time" value="${r?.time||''}" style="width:130px;padding:8px;background:var(--bg)"></div></div><div class="rpanel"><textarea id="rmemo" placeholder="메모" style="min-height:70px;background:var(--bg)">${esc(r?.memo||'')}</textarea></div>${r?`<button class="btn g wide" style="margin-bottom:8px" onclick="deleteRoutine('${r.id}')">루틴 삭제</button>`:''}<button class="btn wide" onclick="saveRoutine('${r?.id||''}')">반복 시작</button></div></div>`}
 function setRoutineType(type){window._routine={...(window._routine||{}),repeat:type};document.querySelectorAll('.rtab button').forEach(b=>b.classList.toggle('on',b.id==='rt-'+type));document.getElementById('r-extra').innerHTML=routineExtra(null,type)}
@@ -237,7 +271,7 @@ function vSub(){const s=S.sub;
  if(s==='rt')return lst('rt','루틴 관리',r=>r.name,r=>(r.days||[]).map(d=>'일월화수목금토'[d]).join(' '));
  if(s==='dd')return lst('dd','디데이 관리',r=>r.name,r=>r.date);
  if(s==='rm')return lst('rm','리마인더 관리',r=>r.text,r=>r.time||'');
- if(s==='arch')return back('보관함',"S.sub='menu';render()")+(D.todos.filter(t=>t.arch).map(t=>`<div class="li"><span>${esc(t.text)}</span><button class="mu" onclick="T('${t.id}').arch=0;save();render()">꺼내기</button></div>`).join('')||'<div class="mu">보관함이 비어 있어요.</div>');
+ if(s==='arch')return back('보관함',"S.sub='menu';render()")+(D.todos.filter(t=>t.arch).map(t=>`<div class="li"><span>${esc(t.text)}</span><button class="mu" onclick="unarchiveTask('${t.id}')">꺼내기</button></div>`).join('')||'<div class="mu">보관함이 비어 있어요.</div>');
  if(s==='rec'){const done=D.todos.filter(t=>t.done),by=D.cats.map(c=>[c,done.filter(t=>t.cid===c.id).length]),mx=Math.max(1,...by.map(x=>x[1]));
   return back('나의 기록')+`<div class="ttl">완료한 할 일 ${done.length}개</div>`+by.map(([c,n])=>`<div style="margin-bottom:12px"><div class="row sp"><span class="b" style="color:${c.color}">${esc(c.name)}</span><span>${n}</span></div><div class="pr" style="margin:6px 0 0"><i style="width:${n/mx*100}%;background:${c.color}"></i></div></div>`).join('')}
  if(s==='set'){const it=[['user','프로필',"pf()"],['scr','보상 상점',"S.sub='shop';render()"],['shield','공유 설정',"info('카테고리 공유','카테고리는 모두 공개 상태이며, 크루에 가입할 때 공유할 카테고리를 직접 선택할 수 있어요.')"],['bell','알림',"info('알림','시간 알림과 리마인더는 페이지가 열려 있을 때 울립니다.')"],['mega','공지사항',"info('공지사항','등록된 공지가 없습니다.')"],['info','정보',"info('정보','Affinity Neo 1.0')"]];
