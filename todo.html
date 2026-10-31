@@ -75,12 +75,44 @@ const ago=t=>{const m=Math.floor((Date.now()-t)/6e4);return m<1?'방금 전':m<6
 const CFG={apiKey:"AIzaSyDO4NtgbQQplIzjHtPONED8fOAHuFWd8Ho",authDomain:"todo-20be6.firebaseapp.com",projectId:"todo-20be6",storageBucket:"todo-20be6.firebasestorage.app",messagingSenderId:"685125018838",appId:"1:685125018838:web:1871862ce07bcc662cd577"};
 firebase.initializeApp(CFG);const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue;
 const def=()=>({name:'',bio:'',theme:'light',owned:['light'],coins:0,completeCoins:0,bonus:{},follows:[],cats:[{id:'c1',name:'일',color:'#2f6fed',priv:0,ended:0},{id:'c2',name:'개인',color:'#7b8794',priv:0,ended:0},{id:'c3',name:'기타',color:'#7b8794',priv:0,ended:0}],todos:[],rt:[],dd:[],rm:[],posts:[],log:[],rewards:[],badges:[]});
-let D=def(),ME=null,US={},U=[],UC=()=>{},dirty=0,t0,lastLocalCoins=0,lastLocalCompleteCoins=0,pendingCoinDelta=0,pendingCompleteDelta=0;
+let D=def(),ME=null,US={},U=[],UC=()=>{},dirty=0,t0,lastLocalCoins=0,lastLocalCompleteCoins=0,pendingCoinDelta=0,pendingCompleteDelta=0,coinMaintenanceBusy={};
 const S={tab:'home',sub:null,date:TODAY,cm:new Date(new Date().getFullYear(),new Date().getMonth(),1),timer:null,view:null,nt:'f',ready:0,err:'',add:null,edit:null,crew:null,crews:[],cposts:[]};
 window.addEventListener('message',e=>{if(e.data==='close-tree-shop'){S.sub=null;render()}});
 const own=()=>!S.view||S.view===ME?.uid;
+function ensureCoinMaintenance(userId){
+ if(coinMaintenanceBusy[userId])return;
+ coinMaintenanceBusy[userId]=1;
+ const ref=db.collection('users').doc(userId);
+ db.runTransaction(tx=>tx.get(ref).then(s=>{
+  if(!s.exists)return;
+  const d=s.data()||{},name=String(d.name||'').replace(/\s+/g,'');
+  let coins=Number(d.coins!=null?d.coins:d.gc||0)||0,complete=Number(d.completeCoins!=null?d.completeCoins:d.sc||0)||0,words=Number(d.wc||0)||0;
+  let gtot=Math.max(Number(d.gtot||0)||0,coins),stot=Math.max(Number(d.stot||0)||0,complete),wtot=Math.max(Number(d.wtot||0)||0,words);
+  const patch={};let addGame=0,addComplete=0,addWords=0,totalAdded=0;
+  if(d.coinRankBackfill20261031V1!==true){patch.coinRankBackfill20261031V1=true;patch.gtot=gtot;patch.stot=stot;patch.wtot=wtot;}
+  if(name==='지윤'&&d.jiyunCoin3V1!==true){addGame+=3;totalAdded+=3;patch.jiyunCoin3V1=true;}
+  const gifts={'지민':{game:5,complete:1,words:3},'이서엘':{game:0,complete:1,words:2},'지윤':{game:0,complete:0,words:2}};
+  const gift=gifts[name];
+  if(gift&&d.namedCoinGift20261031V1!==true){addGame+=gift.game;addComplete+=gift.complete;addWords+=gift.words;totalAdded+=gift.game+gift.complete+gift.words;patch.namedCoinGift20261031V1=true;}
+  if(addGame){coins+=addGame;gtot+=addGame;patch.coins=coins;patch.gc=coins;patch.gtot=gtot;}
+  if(addComplete){complete+=addComplete;stot+=addComplete;patch.completeCoins=complete;patch.sc=complete;patch.stot=stot;}
+  if(addWords){words+=addWords;wtot+=addWords;patch.wc=words;patch.wtot=wtot;}
+  if(totalAdded)patch.tot=(Number(d.tot||0)||0)+totalAdded;
+  if(d.coins==null||d.gc==null){patch.coins=coins;patch.gc=coins;}
+  if(d.completeCoins==null||d.sc==null){patch.completeCoins=complete;patch.sc=complete;}
+  if(Object.keys(patch).length)tx.set(ref,patch,{merge:true});
+ })).catch(e=>console.warn('코인 동기화 확인 실패:',e)).finally(()=>{delete coinMaintenanceBusy[userId]});
+}
 const T=id=>D.todos.find(t=>t.id===id);
-function save(){if(!ME)return;const nowCoins=Number(D.coins||0),nowComplete=Number(D.completeCoins||0);pendingCoinDelta+=nowCoins-lastLocalCoins;pendingCompleteDelta+=nowComplete-lastLocalCompleteCoins;lastLocalCoins=nowCoins;lastLocalCompleteCoins=nowComplete;dirty=1;clearTimeout(t0);t0=setTimeout(()=>{const deltaCoins=pendingCoinDelta,deltaComplete=pendingCompleteDelta;pendingCoinDelta=0;pendingCompleteDelta=0;const payload=Object.assign({},D);delete payload.coins;delete payload.completeCoins;delete payload.gc;delete payload.sc;if(deltaCoins) {payload.coins=FV.increment(deltaCoins);payload.gc=FV.increment(deltaCoins)}if(deltaComplete){payload.completeCoins=FV.increment(deltaComplete);payload.sc=FV.increment(deltaComplete)}db.collection('users').doc(ME.uid).set(payload,{merge:true}).then(()=>db.collection('users').doc(ME.uid).get()).then(s=>{if(s.exists){const c=s.data();if(Number(D.coins||0)===lastLocalCoins){D.coins=Number(c.coins!=null?c.coins:(c.gc||0));lastLocalCoins=D.coins}if(Number(D.completeCoins||0)===lastLocalCompleteCoins){D.completeCoins=Number(c.completeCoins!=null?c.completeCoins:(c.sc||0));lastLocalCompleteCoins=D.completeCoins}}dirty=0;render()}).catch(e=>{pendingCoinDelta+=deltaCoins;pendingCompleteDelta+=deltaComplete;dirty=0;toast('저장 실패: '+e.code)})},(pendingCoinDelta||pendingCompleteDelta)?0:300)}
+function save(){if(!ME)return;const nowCoins=Number(D.coins||0),nowComplete=Number(D.completeCoins||0);pendingCoinDelta+=nowCoins-lastLocalCoins;pendingCompleteDelta+=nowComplete-lastLocalCompleteCoins;lastLocalCoins=nowCoins;lastLocalCompleteCoins=nowComplete;dirty=1;clearTimeout(t0);t0=setTimeout(()=>{const deltaCoins=pendingCoinDelta,deltaComplete=pendingCompleteDelta;pendingCoinDelta=0;pendingCompleteDelta=0;const payload=Object.assign({},D);
+  ['coins','completeCoins','gc','sc','wc','tot','wtot','gtot','stot','own','eq','wk','gr','stat','ach','bibleCoinResetV1','coinSyncRepairV1','coinRankBackfill20261031V1','namedCoinGift20261031V1','jiyunCoin3V1'].forEach(k=>delete payload[k]);
+  if(deltaCoins){payload.coins=FV.increment(deltaCoins);payload.gc=FV.increment(deltaCoins)}
+  if(deltaComplete){payload.completeCoins=FV.increment(deltaComplete);payload.sc=FV.increment(deltaComplete)}
+  const earnedCoins=Math.max(0,deltaCoins),earnedComplete=Math.max(0,deltaComplete);
+  if(earnedCoins)payload.gtot=FV.increment(earnedCoins);
+  if(earnedComplete)payload.stot=FV.increment(earnedComplete);
+  if(earnedCoins+earnedComplete)payload.tot=FV.increment(earnedCoins+earnedComplete);
+  db.collection('users').doc(ME.uid).set(payload,{merge:true}).then(()=>db.collection('users').doc(ME.uid).get()).then(s=>{if(s.exists){const c=s.data();if(Number(D.coins||0)===lastLocalCoins){D.coins=Number(c.coins!=null?c.coins:(c.gc||0));lastLocalCoins=D.coins}if(Number(D.completeCoins||0)===lastLocalCompleteCoins){D.completeCoins=Number(c.completeCoins!=null?c.completeCoins:(c.sc||0));lastLocalCompleteCoins=D.completeCoins}}dirty=0;render()}).catch(e=>{pendingCoinDelta+=deltaCoins;pendingCompleteDelta+=deltaComplete;dirty=0;toast('저장 실패: '+e.code)})},(pendingCoinDelta||pendingCompleteDelta)?0:300)}
 
 /* ---------- 모달 / 토스트 ---------- */
 function modal(title,fields,ok,del){const m=document.getElementById('md');
@@ -235,7 +267,7 @@ const login=()=>auth.signInWithEmailAndPassword(em.value.trim(),pw.value).catch(
 const signup=()=>{const n=nm.value.trim();auth.createUserWithEmailAndPassword(em.value.trim(),pw.value).then(r=>{D=def();D.name=n||em.value.split('@')[0];ME=r.user;db.collection('users').doc(r.user.uid).set(D)}).catch(fail)};
 auth.onAuthStateChanged(u=>{U.forEach(f=>f());U=[];UC();UC=()=>{};ME=u;S.ready=0;S.view=null;S.sub=null;S.crew=null;S.add=null;S.edit=null;
  if(!u){D=def();lastLocalCoins=0;lastLocalCompleteCoins=0;pendingCoinDelta=0;pendingCompleteDelta=0;return render()}
- U.push(db.collection('users').doc(u.uid).onSnapshot(s=>{if(dirty)return;if(s.exists){const cloudData=s.data();D=Object.assign(def(),cloudData);D.coins=Number(cloudData.coins!=null?cloudData.coins:(cloudData.gc||0));D.completeCoins=Number(cloudData.completeCoins!=null?cloudData.completeCoins:(cloudData.sc||0));lastLocalCoins=D.coins;lastLocalCompleteCoins=D.completeCoins;if(D.todoCoinResetV1!==true){D.todoCoinResetV1=true;db.collection('users').doc(u.uid).set({todoCoinResetV1:true},{merge:true}).catch(()=>{})}if(String(D.name||'').trim()==='지윤'&&D.jiyunCoin3V1!==true){D.coins=(D.coins||0)+3;D.jiyunCoin3V1=true;db.collection('users').doc(u.uid).set({coins:D.coins,jiyunCoin3V1:true},{merge:true}).catch(()=>{})}if(u.email&&D.email!==u.email){D.email=u.email;db.collection('users').doc(u.uid).set({email:u.email},{merge:true}).catch(()=>{})}if((u.email||'').toLowerCase().startsWith('affinityuniverse.neo@')&&(!D.name||D.name==='affinityuniverse.neo'||D.name==='affinityuniverse')){D.name='선혜';db.collection('users').doc(u.uid).set({name:'선혜'},{merge:true}).catch(()=>{})}}else{D=def();D.name=(u.email||'').toLowerCase().startsWith('affinityuniverse.neo@')?'선혜':(u.displayName||u.email.split('@')[0]);D.email=u.email||'';D.todoCoinResetV1=true;db.collection('users').doc(u.uid).set(D)}S.ready=1;genRoutine();render()},e=>{S.err='데이터베이스 오류: '+e.code;S.ready=1;render()}));
+ U.push(db.collection('users').doc(u.uid).onSnapshot(s=>{ensureCoinMaintenance(u.uid);if(dirty)return;if(s.exists){const cloudData=s.data();D=Object.assign(def(),cloudData);D.coins=Number(cloudData.coins!=null?cloudData.coins:(cloudData.gc||0));D.completeCoins=Number(cloudData.completeCoins!=null?cloudData.completeCoins:(cloudData.sc||0));lastLocalCoins=D.coins;lastLocalCompleteCoins=D.completeCoins;if(D.todoCoinResetV1!==true){D.todoCoinResetV1=true;db.collection('users').doc(u.uid).set({todoCoinResetV1:true},{merge:true}).catch(()=>{})}if(u.email&&D.email!==u.email){D.email=u.email;db.collection('users').doc(u.uid).set({email:u.email},{merge:true}).catch(()=>{})}if((u.email||'').toLowerCase().startsWith('affinityuniverse.neo@')&&(!D.name||D.name==='affinityuniverse.neo'||D.name==='affinityuniverse')){D.name='선혜';db.collection('users').doc(u.uid).set({name:'선혜'},{merge:true}).catch(()=>{})}}else{D=def();D.name=(u.email||'').toLowerCase().startsWith('affinityuniverse.neo@')?'선혜':(u.displayName||u.email.split('@')[0]);D.email=u.email||'';D.todoCoinResetV1=true;db.collection('users').doc(u.uid).set(D)}S.ready=1;genRoutine();render()},e=>{S.err='데이터베이스 오류: '+e.code;S.ready=1;render()}));
  U.push(db.collection('users').onSnapshot(s=>{US={};s.docs.forEach(d=>US[d.id]=d.data());render()}));
  U.push(db.collection('crews').onSnapshot(s=>{S.crews=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts||0)-(a.ts||0));render()}))});
 function render(){D.cats=(D.cats||[]).map(c=>({...c,priv:0}));D.rewards=D.rewards||[];D.badges=D.badges||[];document.documentElement.dataset.t=D.theme;const app=document.getElementById('app');
