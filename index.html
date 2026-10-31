@@ -3495,7 +3495,7 @@ var VIDEOS = {
       if (rk) card.insertAdjacentHTML('afterbegin', '<span class="rb">' + RLAB[rk] + '</span>');
       card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '') + '</div>');
       var b = document.createElement('button');
-      b.innerHTML = on ? '사용 중' : owned ? '사용하기' : (pend && pend === it.id ? '한 번 더!' : payType === 'sc' ? IC.trophy + '완료 코인 ' + payPrice : payPrice + (payType === 'gc' ? IC.game : IC.book)); b.disabled = on;
+      b.innerHTML = on ? '사용 중' : owned ? '사용하기' : (pend && pend === it.id ? '한 번 더!' : payPrice + (payType === 'sc' ? IC.trophy : (payType === 'gc' ? IC.game : IC.book))); b.disabled = on;
       b.className = (pend && pend === it.id) ? 'conf' : (owned && it.p > 0 ? 'own' : '');
       b.onclick = function () {
         var bought = false;
