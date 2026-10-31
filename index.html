@@ -3631,5 +3631,33 @@ var VIDEOS = {
 
 
 
+
+<!-- Unified Todo panel: keep Bible as the main page -->
+<style>
+#unifiedTodoOpen{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:9998;border:0;border-radius:999px;padding:13px 19px;background:#3d6b5b;color:#fff8e8;font:600 15px/1.2 'Gowun Dodum','Noto Sans KR',sans-serif;box-shadow:0 4px 18px #0002;cursor:pointer}
+#unifiedTodoPanel{position:fixed;inset:0;z-index:9999;background:var(--bg,#f7f4ee);display:none;flex-direction:column}
+#unifiedTodoPanel.open{display:flex}
+#unifiedTodoBar{height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 14px;border-bottom:1px solid var(--line,#e5e0d3);background:var(--bg,#f7f4ee);font:600 14px 'Gowun Dodum','Noto Sans KR',sans-serif}
+#unifiedTodoBar button{border:1px solid var(--line,#e5e0d3);border-radius:999px;padding:8px 14px;background:var(--card,#fff);color:var(--fg,#27302c);cursor:pointer}
+#unifiedTodoFrame{display:block;width:100%;height:calc(100% - 54px);border:0;background:#fff;flex:1}
+@media(min-width:761px){#unifiedTodoPanel{inset:3vh 3vw;border:1px solid var(--line,#e5e0d3);border-radius:18px;overflow:hidden;box-shadow:0 12px 60px #0003}#unifiedTodoFrame{height:calc(100% - 54px)}}
+</style>
+<button id="unifiedTodoOpen" type="button" aria-controls="unifiedTodoPanel" aria-expanded="false">☑ Todo 가기</button>
+<section id="unifiedTodoPanel" aria-label="Todo" aria-hidden="true">
+  <div id="unifiedTodoBar"><span>☑ 오늘의 할 일</span><button id="unifiedTodoClose" type="button">말씀으로 돌아가기 ✕</button></div>
+  <iframe id="unifiedTodoFrame" title="할 일 관리" src="https://affinity-neo.github.io/to-do/" loading="lazy"></iframe>
+</section>
+<script>
+(function(){
+ var openBtn=document.getElementById('unifiedTodoOpen'), closeBtn=document.getElementById('unifiedTodoClose'), panel=document.getElementById('unifiedTodoPanel'), frame=document.getElementById('unifiedTodoFrame');
+ function openTodo(){panel.classList.add('open');panel.setAttribute('aria-hidden','false');openBtn.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
+ function closeTodo(){panel.classList.remove('open');panel.setAttribute('aria-hidden','true');openBtn.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+ openBtn.addEventListener('click',openTodo);closeBtn.addEventListener('click',closeTodo);
+ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&panel.classList.contains('open'))closeTodo();});
+ // Keep the Todo view mounted when hidden so its Firebase session and live coin updates remain active.
+ frame.addEventListener('load',function(){try{frame.contentWindow.postMessage({type:'todo-bible-integrated'},location.origin);}catch(e){}});
+})();
+</script>
+
 </body>
 </html>
