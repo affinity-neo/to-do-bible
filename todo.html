@@ -75,7 +75,7 @@ const ago=t=>{const m=Math.floor((Date.now()-t)/6e4);return m<1?'방금 전':m<6
 const CFG={apiKey:"AIzaSyDO4NtgbQQplIzjHtPONED8fOAHuFWd8Ho",authDomain:"todo-20be6.firebaseapp.com",projectId:"todo-20be6",storageBucket:"todo-20be6.firebasestorage.app",messagingSenderId:"685125018838",appId:"1:685125018838:web:1871862ce07bcc662cd577"};
 firebase.initializeApp(CFG);const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue;
 const def=()=>({name:'',bio:'',theme:'light',owned:['light'],coins:0,completeCoins:0,bonus:{},follows:[],cats:[{id:'c1',name:'일',color:'#2f6fed',priv:0,ended:0},{id:'c2',name:'개인',color:'#7b8794',priv:0,ended:0},{id:'c3',name:'기타',color:'#7b8794',priv:0,ended:0}],todos:[],rt:[],dd:[],rm:[],posts:[],log:[],rewards:[],badges:[]});
-let D=def(),ME=null,US={},U=[],UC=()=>{},dirty=0,t0,lastLocalCoins=0,lastLocalCompleteCoins=0,pendingCoinDelta=0,pendingCompleteDelta=0,coinMaintenanceBusy={};
+let D=def(),ME=null,US={},U=[],UC=()=>{},dirty=0,t0,lastLocalCoins=0,lastLocalCompleteCoins=0,pendingCoinDelta=0,pendingCompleteDelta=0,coinMaintenanceBusy={},activeCoinWrites=0;
 const S={tab:'home',sub:null,date:TODAY,cm:new Date(new Date().getFullYear(),new Date().getMonth(),1),timer:null,view:null,nt:'f',ready:0,err:'',add:null,edit:null,crew:null,crews:[],cposts:[]};
 window.addEventListener('message',e=>{if(e.data==='close-tree-shop'){S.sub=null;render()}});
 const own=()=>!S.view||S.view===ME?.uid;
@@ -94,6 +94,14 @@ function ensureCoinMaintenance(userId){
   const gifts={'지민':{game:5,complete:1,words:3},'이서엘':{game:0,complete:1,words:2},'지윤':{game:0,complete:0,words:2}};
   const gift=gifts[name];
   if(gift&&d.namedCoinGift20261031V1!==true){addGame+=gift.game;addComplete+=gift.complete;addWords+=gift.words;totalAdded+=gift.game+gift.complete+gift.words;patch.namedCoinGift20261031V1=true;}
+  // 2026-11-03 추가 지급: 기존 지급 내역과 분리된 1회성 마커로 중복 지급 방지
+  const extraGiftMarker='namedCoinGift20261103V1';
+  if(d[extraGiftMarker]!==true){
+   const extraGame=(name==='지민'||name==='이서엘')?3:0,extraComplete=name==='지민'?1:0,extraWords=name==='지민'?9:0;
+   addGame+=extraGame;addComplete+=extraComplete;addWords+=extraWords;totalAdded+=extraGame+extraComplete+extraWords;
+   if(name==='지민'){const ownedChars=Array.isArray(d.own)?d.own.slice():[];if(!ownedChars.includes('c1')){ownedChars.push('c1');patch.own=ownedChars;}}
+   if(name==='지민'||name==='이서엘')patch[extraGiftMarker]=true;
+  }
   if(addGame){coins+=addGame;gtot+=addGame;patch.coins=coins;patch.gc=coins;patch.gtot=gtot;}
   if(addComplete){complete+=addComplete;stot+=addComplete;patch.completeCoins=complete;patch.sc=complete;patch.stot=stot;}
   if(addWords){words+=addWords;wtot+=addWords;patch.wc=words;patch.wtot=wtot;}
@@ -104,15 +112,16 @@ function ensureCoinMaintenance(userId){
  })).catch(e=>console.warn('코인 동기화 확인 실패:',e)).finally(()=>{delete coinMaintenanceBusy[userId]});
 }
 const T=id=>D.todos.find(t=>t.id===id);
-function save(){if(!ME)return;const nowCoins=Number(D.coins||0),nowComplete=Number(D.completeCoins||0);pendingCoinDelta+=nowCoins-lastLocalCoins;pendingCompleteDelta+=nowComplete-lastLocalCompleteCoins;lastLocalCoins=nowCoins;lastLocalCompleteCoins=nowComplete;dirty=1;clearTimeout(t0);t0=setTimeout(()=>{const deltaCoins=pendingCoinDelta,deltaComplete=pendingCompleteDelta;pendingCoinDelta=0;pendingCompleteDelta=0;const payload=Object.assign({},D);
-  ['coins','completeCoins','gc','sc','wc','tot','wtot','gtot','stot','own','eq','wk','gr','stat','ach','bibleCoinResetV1','coinSyncRepairV1','coinRankBackfill20261031V1','namedCoinGift20261031V1','jiyunCoin3V1'].forEach(k=>delete payload[k]);
+function save(){if(!ME)return;const nowCoins=Number(D.coins||0),nowComplete=Number(D.completeCoins||0);pendingCoinDelta+=nowCoins-lastLocalCoins;pendingCompleteDelta+=nowComplete-lastLocalCompleteCoins;lastLocalCoins=nowCoins;lastLocalCompleteCoins=nowComplete;dirty=1;clearTimeout(t0);t0=setTimeout(()=>{t0=null;const deltaCoins=pendingCoinDelta,deltaComplete=pendingCompleteDelta;pendingCoinDelta=0;pendingCompleteDelta=0;const payload=Object.assign({},D);
+  ['coins','completeCoins','gc','sc','wc','tot','wtot','gtot','stot','own','eq','wk','gr','stat','ach','bibleCoinResetV1','coinSyncRepairV1','coinRankBackfill20261031V1','namedCoinGift20261031V1','namedCoinGift20261103V1','jiyunCoin3V1'].forEach(k=>delete payload[k]);
   if(deltaCoins){payload.coins=FV.increment(deltaCoins);payload.gc=FV.increment(deltaCoins)}
   if(deltaComplete){payload.completeCoins=FV.increment(deltaComplete);payload.sc=FV.increment(deltaComplete)}
   const earnedCoins=Math.max(0,deltaCoins),earnedComplete=Math.max(0,deltaComplete);
   if(earnedCoins)payload.gtot=FV.increment(earnedCoins);
   if(earnedComplete)payload.stot=FV.increment(earnedComplete);
   if(earnedCoins+earnedComplete)payload.tot=FV.increment(earnedCoins+earnedComplete);
-  db.collection('users').doc(ME.uid).set(payload,{merge:true}).then(()=>db.collection('users').doc(ME.uid).get()).then(s=>{if(s.exists){const c=s.data();if(Number(D.coins||0)===lastLocalCoins){D.coins=Number(c.coins!=null?c.coins:(c.gc||0));lastLocalCoins=D.coins}if(Number(D.completeCoins||0)===lastLocalCompleteCoins){D.completeCoins=Number(c.completeCoins!=null?c.completeCoins:(c.sc||0));lastLocalCompleteCoins=D.completeCoins}}dirty=0;render()}).catch(e=>{pendingCoinDelta+=deltaCoins;pendingCompleteDelta+=deltaComplete;dirty=0;toast('저장 실패: '+e.code)})},(pendingCoinDelta||pendingCompleteDelta)?0:300)}
+  activeCoinWrites++;
+  db.collection('users').doc(ME.uid).set(payload,{merge:true}).then(()=>db.collection('users').doc(ME.uid).get()).then(s=>{if(s.exists){const c=s.data();if(Number(D.coins||0)===lastLocalCoins){D.coins=Number(c.coins!=null?c.coins:(c.gc||0));lastLocalCoins=D.coins}if(Number(D.completeCoins||0)===lastLocalCompleteCoins){D.completeCoins=Number(c.completeCoins!=null?c.completeCoins:(c.sc||0));lastLocalCompleteCoins=D.completeCoins}}render()}).catch(e=>{pendingCoinDelta+=deltaCoins;pendingCompleteDelta+=deltaComplete;toast('저장 실패: '+e.code)}).finally(()=>{activeCoinWrites=Math.max(0,activeCoinWrites-1);if(activeCoinWrites===0&&!t0&&pendingCoinDelta===0&&pendingCompleteDelta===0)dirty=0})},(pendingCoinDelta||pendingCompleteDelta)?0:300)}
 
 /* ---------- 모달 / 토스트 ---------- */
 function modal(title,fields,ok,del){const m=document.getElementById('md');
