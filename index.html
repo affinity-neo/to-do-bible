@@ -2752,6 +2752,20 @@ var VIDEOS = {
           totalAdded += gift.game + gift.complete + gift.words;
           patch.namedCoinGift20261031V1 = true;
         }
+        // 2026-11-03 추가 지급: 기존 지급 내역과 분리된 1회성 마커로 중복 지급 방지
+        var extraGiftMarker = 'namedCoinGift20261103V1';
+        if (d[extraGiftMarker] !== true) {
+          var extraGame = name === '지민' || name === '이서엘' ? 3 : 0;
+          var extraComplete = name === '지민' ? 1 : 0;
+          var extraWords = name === '지민' ? 9 : 0;
+          gameAdded += extraGame; completeAdded += extraComplete; wordAdded += extraWords;
+          totalAdded += extraGame + extraComplete + extraWords;
+          if (name === '지민') {
+            var ownedChars = Array.isArray(d.own) ? d.own.slice() : [];
+            if (ownedChars.indexOf('c1') < 0) { ownedChars.push('c1'); patch.own = ownedChars; }
+          }
+          if (name === '지민' || name === '이서엘') patch[extraGiftMarker] = true;
+        }
         if (gameAdded) { coins += gameAdded; gtot += gameAdded; patch.coins = coins; patch.gc = coins; patch.gtot = gtot; }
         if (completeAdded) { complete += completeAdded; stot += completeAdded; patch.completeCoins = complete; patch.sc = complete; patch.stot = stot; }
         if (wordAdded) { words += wordAdded; wtot += wordAdded; patch.wc = words; patch.wtot = wtot; }
