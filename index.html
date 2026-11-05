@@ -2692,8 +2692,12 @@ var VIDEOS = {
   function saveLocal() { lsSet(pkey(), JSON.stringify(P)); }
   function uid(n) { return authUser ? authUser.uid : n.replace(/[\/\\.#$\[\]\s]+/g, '_').slice(0, 20); }
   function cloud(f) {
-    if (!db || !user) return;
-    db.collection('users').doc(uid(user)).set(f, { merge: true }).catch(function () {});
+    if (!db || !user) return Promise.reject(new Error('Firebase 프로필 저장을 사용할 수 없습니다.'));
+    return db.collection('users').doc(uid(user)).set(f, { merge: true }).catch(function (e) {
+      console.error('[프로필 저장 실패]', e);
+      try { toast('저장에 실패했습니다. 인터넷 연결을 확인해 주세요.'); } catch (_) {}
+      throw e;
+    });
   }
   function watchProfile(ref) {
     if (profileWatch) { profileWatch(); profileWatch = null; }
@@ -2704,8 +2708,21 @@ var VIDEOS = {
       if (d.coins != null || d.gc != null) { var gc = Number(d.coins != null ? d.coins : d.gc) || 0; if (P.gc !== gc) { P.gc = gc; changed = true; } }
       if (d.completeCoins != null || d.sc != null) { var sc = Number(d.completeCoins != null ? d.completeCoins : d.sc) || 0; if (P.sc !== sc) { P.sc = sc; changed = true; } }
       ['tot','wtot','gtot','stot'].forEach(function(k){ if(d[k] != null && P[k] !== Number(d[k])) { P[k] = Number(d[k]) || 0; changed = true; } });
-      if (changed) { saveLocal(); renderAcct(); renderShop(); }
-    }, function () {});
+      ['own','wk','gr','ach','sunhyeOwnedChars'].forEach(function(k) {
+        if (!Array.isArray(d[k])) return;
+        var local = Array.isArray(P[k]) ? P[k] : [];
+        var merged = local.concat(d[k].filter(function(v){ return local.indexOf(v) < 0; }));
+        if (merged.length !== local.length) { P[k] = merged; changed = true; }
+      });
+      if (Array.isArray(d.sunhyeLegacyOwnBackup) && (!Array.isArray(P.sunhyeLegacyOwnBackup) || !P.sunhyeLegacyOwnBackup.length)) {
+        P.sunhyeLegacyOwnBackup = d.sunhyeLegacyOwnBackup.slice(); changed = true;
+      }
+      if (d.eq && typeof d.eq === 'object') {
+        var nextEq = Object.assign({}, P.eq || {}, d.eq);
+        if (JSON.stringify(nextEq) !== JSON.stringify(P.eq || {})) { P.eq = nextEq; changed = true; }
+      }
+      if (changed) { normEq(); saveLocal(); applyTheme(); renderAcct(); renderShop(); }
+    }, function (e) { console.error('[프로필 실시간 동기화 실패]', e); });
   }
   function inc(n) { return db ? firebase.firestore.FieldValue.increment(n) : n; }
   function union(v) { return db ? firebase.firestore.FieldValue.arrayUnion(v) : v; }
