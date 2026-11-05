@@ -2696,7 +2696,7 @@ var VIDEOS = {
     return db.collection('users').doc(uid(user)).set(f, { merge: true }).catch(function (e) {
       console.error('[프로필 저장 실패]', e);
       try { toast('저장에 실패했습니다. 인터넷 연결을 확인해 주세요.'); } catch (_) {}
-      throw e;
+      return false;
     });
   }
   function watchProfile(ref) {
