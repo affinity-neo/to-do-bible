@@ -2691,7 +2691,7 @@ var VIDEOS = {
   }
   function saveLocal() { lsSet(pkey(), JSON.stringify(P)); }
   function grantJiminGiftOnce() {
-    if (String(user || '').replace(/\\s+/g, '') !== '지민' || !P) return false;
+    if (String(user || '').replace(/\s+/g, '') !== '지민' || !P) return false;
     var marker = 'jimin_gift_wc15_rabbit_c1_20261105';
     P.gr = Array.isArray(P.gr) ? P.gr : [];
     if (P.gr.indexOf(marker) >= 0) return false;
