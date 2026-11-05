@@ -3466,7 +3466,7 @@ var VIDEOS = {
   }
 
   // ---- 꾸미기 상점 (나무 상점 팝업) ----
-  var shopTab = 'ch', pend = '', boardType = 'wc', boardTok = 0;
+  var shopTab = 'ch', pend = '', boardType = 'wc', boardTok = 0, boardWatch = null;
   var TABS = [['ch', '캐릭터'], ['hat', '모자'], ['face', '얼굴'], ['neck', '목'], ['theme', '테마'], ['font', '글꼴'], ['ach', '업적'], ['rank', '순위']];
   function openShop() {
     var ov = document.getElementById('shopOv'); if (!ov) return;
@@ -3480,21 +3480,29 @@ var VIDEOS = {
       if (body) body.innerHTML = '<p style="padding:16px;text-align:center">상점을 불러오는 중 문제가 발생했어요. 닫았다가 다시 열어 주세요.</p>';
     }
   }
-  function closeShop() { if (new URLSearchParams(location.search).get('shop') === '1') { try { window.parent.postMessage('close-tree-shop', '*'); } catch(e) {} return; } document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
+  function closeShop() { if (boardWatch) { boardWatch(); boardWatch = null; } if (new URLSearchParams(location.search).get('shop') === '1') { try { window.parent.postMessage('close-tree-shop', '*'); } catch(e) {} return; } document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
   function renderBoard() {
+    if (boardWatch) { boardWatch(); boardWatch = null; }
     var b = document.getElementById('sboard'), tok = ++boardTok;
     b.innerHTML = '<div class="bsw"><button data-t="wc"' + (boardType === 'wc' ? ' class="on"' : '') + '>' + IC.book + '말씀 코인</button><button data-t="gc"' + (boardType === 'gc' ? ' class="on"' : '') + '>' + IC.game + '코인</button><button data-t="sc"' + (boardType === 'sc' ? ' class="on"' : '') + '>' + IC.trophy + '완료 코인</button></div><div id="blist"></div>';
     Array.prototype.forEach.call(b.querySelectorAll('.bsw button'), function (x) { x.onclick = function () { boardType = x.getAttribute('data-t'); renderBoard(); }; });
     var L = document.getElementById('blist');
     if (!db) { L.textContent = '인터넷에 연결되면 순위를 볼 수 있어요.'; return; }
-    L.textContent = '불러오는 중...';
-    var fld = boardType === 'wc' ? 'wtot' : boardType === 'sc' ? 'stot' : 'gtot';
-    db.collection('users').orderBy(fld, 'desc').limit(30).get().then(function (s) {
+    L.textContent = '실시간 순위를 불러오는 중...';
+    var fld = boardType === 'wc' ? 'wc' : boardType === 'sc' ? 'sc' : 'gc';
+    boardWatch = db.collection('users').orderBy(fld, 'desc').limit(30).onSnapshot(function (snap) {
       if (tok !== boardTok) return;
       var h = '', i = 0;
-      s.forEach(function (d) { var v = d.data(); if (String(user || '').replace(/\s+/g, '') === '최선혜' && d.id !== uid(user) && String(v.name || '').replace(/\s+/g, '') === '최선혜') return; if (i >= 10) return; i++; h += '<div class="brow' + (v.name === user ? ' mine' : '') + '"><span class="rk">' + i + '</span><span class="nm">' + esc(v.name) + '</span><b>' + (v[fld] || 0).toLocaleString() + '</b></div>'; });
+      snap.forEach(function (d) {
+        var v = d.data() || {};
+        if (String(user || '').replace(/\s+/g, '') === '최선혜' && d.id !== uid(user) && String(v.name || '').replace(/\s+/g, '') === '최선혜') return;
+        if (i >= 10) return;
+        i++;
+        var current = Number(v[fld] != null ? v[fld] : (fld === 'gc' ? v.coins : fld === 'sc' ? v.completeCoins : 0)) || 0;
+        h += '<div class="brow' + (v.name === user ? ' mine' : '') + '"><span class="rk">' + i + '</span><span class="nm">' + esc(v.name || '이름 없음') + '</span><b>' + current.toLocaleString() + '</b></div>';
+      });
       L.innerHTML = h || '아직 순위에 오른 친구가 없어요.';
-    }).catch(function () { if (tok === boardTok) L.textContent = '순위를 불러오지 못했어요.'; });
+    }, function () { if (tok === boardTok) L.textContent = '실시간 순위를 불러오지 못했어요.'; });
   }
   function renderShop() {
     var ov = document.getElementById('shopOv'); if (!ov || ov.hidden) return;
@@ -3506,7 +3514,7 @@ var VIDEOS = {
       b.innerHTML = t[1] + (c ? '<span class="tc">' + c + '</span>' : ''); if (t[0] === shopTab) b.className = 'on';
       b.onclick = function () { shopTab = t[0]; pend = ''; meMsg(''); renderShop(); }; tb.appendChild(b);
     });
-    var INFO = { ch: '영웅·전설 캐릭터는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', theme: '영웅·전설 테마는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', font: '등급에 따라 구매 코인이 달라져요.', ach: '업적을 달성하면 레벨이 올라요.', rank: '지금까지 모은 코인을 기준으로 한 순위예요.' };
+    var INFO = { ch: '영웅·전설 캐릭터는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', theme: '영웅·전설 테마는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', font: '등급에 따라 구매 코인이 달라져요.', ach: '업적을 달성하면 레벨이 올라요.', rank: '현재 보유한 코인 수를 기준으로 실시간으로 바뀌는 순위예요.' };
     document.getElementById('sinfo').textContent = INFO[shopTab] || '영웅·전설 등급은 완료 코인으로 구매해요. 예수님은 특별 전설 캐릭터입니다. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.';
     var grid = document.getElementById('sgrid'), board = document.getElementById('sboard'), sc = document.getElementById('scol');
     if (shopTab === 'rank' || shopTab === 'ach') { sc.hidden = true; grid.hidden = true; board.hidden = false; if (shopTab === 'rank') renderBoard(); else renderAch(); return; }
