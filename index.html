@@ -2690,6 +2690,20 @@ var VIDEOS = {
     return true;
   }
   function saveLocal() { lsSet(pkey(), JSON.stringify(P)); }
+  function grantJiminGiftOnce() {
+    if (String(user || '').replace(/\\s+/g, '') !== '지민' || !P) return false;
+    var marker = 'jimin_gift_wc15_rabbit_c1_20261105';
+    P.gr = Array.isArray(P.gr) ? P.gr : [];
+    if (P.gr.indexOf(marker) >= 0) return false;
+    P.own = Array.isArray(P.own) ? P.own : [];
+    P.wc = Number(P.wc || 0) + 15;
+    P.wtot = Number(P.wtot || 0) + 15;
+    P.tot = Number(P.tot || 0) + 15;
+    if (P.own.indexOf('c1') < 0) P.own.push('c1');
+    P.gr.push(marker);
+    saveLocal();
+    return true;
+  }
   function uid(n) { return authUser ? authUser.uid : n.replace(/[\/\\.#$\[\]\s]+/g, '_').slice(0, 20); }
   function cloud(f) {
     if (!db || !user) return Promise.reject(new Error('Firebase 프로필 저장을 사용할 수 없습니다.'));
@@ -2861,14 +2875,16 @@ var VIDEOS = {
         }
         restoreRequestedProfile();
         grantSunhyeWordCoinsOnce();
+        grantJiminGiftOnce();
         saveLocal();
-        var hydratePayload = { wc: P.wc, wtot: P.wtot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, coinSyncRepairV1: true }; if (String(user || '').replace(/\s+/g,'') === '선혜') { hydratePayload.sunhyeOwnedChars = P.sunhyeOwnedChars || ['c0']; hydratePayload.sunhyeLegacyOwnBackup = P.sunhyeLegacyOwnBackup || []; }
+        var hydratePayload = { wc: P.wc, wtot: P.wtot, tot: P.tot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, coinSyncRepairV1: true }; if (String(user || '').replace(/\s+/g,'') === '선혜') { hydratePayload.sunhyeOwnedChars = P.sunhyeOwnedChars || ['c0']; hydratePayload.sunhyeLegacyOwnBackup = P.sunhyeLegacyOwnBackup || []; }
         if (repairedCoinBalance) { hydratePayload.gc=P.gc; hydratePayload.coins=P.gc; hydratePayload.sc=P.sc; hydratePayload.completeCoins=P.sc; }
         ref.set(hydratePayload, { merge: true }).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
       } else {
         if (isCoinCleanupAccount && P.gr.indexOf(SC_FIX_MARKER) < 0) removeAccidentalSuccessCoins();
         repairSunhyeCharacterOwnership();
         grantSunhyeWordCoinsOnce();
+        grantJiminGiftOnce();
         ref.set(Object.assign({ wc: P.wc, gc: P.gc, sc: P.sc, coins: P.gc, completeCoins: P.sc, tot: P.tot, wtot: P.wtot, gtot: P.gtot, stot: P.stot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, bibleCoinResetV1:true, coinSyncRepairV1:true }, P)).then(function(){return ensureCoinRankAndNamedGifts(ref);}).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
         welcome();
       }
