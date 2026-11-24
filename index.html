@@ -512,7 +512,7 @@ html.shop-only,html.shop-only body{background:transparent!important;margin:0!imp
 <body>
 <main>
   <header><div class="date" id="date"></div><h1 id="title"></h1><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px"><button id="unifiedTodoOpen" type="button" aria-controls="unifiedTodoPanel" aria-expanded="false" style="display:inline-block;padding:9px 14px;border:0;border-radius:999px;background:var(--hl);color:var(--fg);font:600 .85rem var(--ui);cursor:pointer">To do 쓰러 가기</button></div></header>
-<button id="petLaunchBanner" type="button" aria-label="반려동물 오픈 특가 80% 할인, 상점 열기"><span class="pet-poster-copy"><small>NEW PETS · LIMITED</small><strong>반려동물 오픈 특가</strong><b>80<em>% OFF</em></b><i>11.26 12:00 마감</i><span id="petLaunchTimer">남은 시간 계산 중…</span></span><span class="pet-poster-friends" aria-hidden="true">["pet_fox","pet_lamb","pet_bunny","pet_puppy"].map(function(id){return petSvg(id,68)}).join("")</span></button>
+<button id="petLaunchBanner" type="button" aria-label="반려동물 오픈 특가 80% 할인, 상점 열기"><span class="pet-poster-copy"><small>NEW PETS · LIMITED</small><strong>반려동물 오픈 특가</strong><b>80<em>% OFF</em></b><i>11.26 12:00 마감</i><span id="petLaunchTimer">남은 시간 계산 중…</span></span><span class="pet-poster-friends" aria-hidden="true"></span></button>
 
   <div class="player">
     <div class="row">
@@ -3655,7 +3655,7 @@ var VIDEOS = {
       var premiumIndex = premiumChars.findIndex(function (c) { return c.id === it.id; });
       var introPrices = [5, 8, 10];
       var successPrice = shopTab === 'ch' && premiumIndex >= 0 ? (premiumIndex < 3 ? introPrices[premiumIndex] : premiumIndex === premiumChars.length - 1 ? 31 : premiumIndex === 3 ? 6 : premiumIndex === 4 ? 7 : premiumIndex === 5 ? 9 : premiumIndex + 5) : (rk === 'leg' ? 25 : rk === 'epic' ? 8 : 0);
-      var payType = shopTab === 'pet' ? (rk === 'com' ? 'gc' : 'sc') : (successPrice ? 'sc' : cur), petSaleOn = shopTab === 'pet' && Date.now() < PET_SALE_END, payPrice = petSaleOn ? Math.max(1, Math.floor(it.p * 0.2)) : (successPrice || it.p);
+      var payType = shopTab === 'pet' ? (rk === 'com' ? 'gc' : 'sc') : (successPrice ? 'sc' : cur), petSaleOn = shopTab === 'pet' && Date.now() < PET_SALE_END, payPrice = petSaleOn && it.p > 0 ? Math.max(1, Math.floor(it.p * 0.2)) : (successPrice || it.p);
       var on = shopTab === 'ch' ? P.eq.ch === it.id : shopTab === 'theme' ? (P.eq.theme || 'auto') === it.t : shopTab === 'font' ? (P.eq.font || 'default') === it.f : shopTab === 'pet' ? (P.eq.pet || '') === it.id : P.eq[shopTab] === it.v;
       var card = document.createElement('div'); card.className = 'sc' + (on ? ' on' : '') + (owned && it.p > 0 ? ' owned' : '') + (rk ? ' r-' + rk : '');
       card.appendChild(pvNode(it, shopTab));
@@ -3683,6 +3683,7 @@ var VIDEOS = {
   }
   document.getElementById('shopBtn').onclick = openShop;
   var petBanner=document.getElementById('petLaunchBanner');
+  var petFriends=document.querySelector('.pet-poster-friends');if(petFriends)petFriends.innerHTML=['pet_fox','pet_lamb','pet_bunny','pet_puppy'].map(function(id){return petSvg(id,68)}).join('');
   function petLaunchTick(){var el=document.getElementById('petLaunchTimer');if(!el)return;var left=Math.max(0,PET_SALE_END-Date.now()),h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),z=Math.floor(left%60000/1000);el.textContent=left?'⏰ '+h+'시간 '+String(m).padStart(2,'0')+':'+String(z).padStart(2,'0'):'특가 종료';if(!left&&shopTab==='pet'&&!document.getElementById('shopOv').hidden)renderShop();}
   if(petBanner)petBanner.onclick=function(){shopTab='pet';openShop();};petLaunchTick();setInterval(petLaunchTick,1000);
   document.getElementById('shopX').onclick = closeShop;
