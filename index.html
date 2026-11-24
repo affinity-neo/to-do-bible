@@ -2495,34 +2495,20 @@ var VIDEOS = {
   ];
   var PET_SALE_END = new Date('2026-11-26T12:00:00+09:00').getTime();
   function petSvg(id, size) {
-    var n=size||68, w=n, h=Math.round(n*1.03);
-    var stroke='#514239', ink='#302923', blush='#ffc9c2';
-    var art={
-      pet_bunny:`
-        <path d="M56 59C35 17 34 5 47 8C65 12 72 35 75 54Z" fill="#fffaf5" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>
-        <path d="M87 55C86 25 95 6 108 12C120 19 105 44 99 62Z" fill="#fffaf5" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>
-        <path d="M48 23Q56 32 63 52M101 25Q99 37 94 51" fill="none" stroke="#f4b9b5" stroke-width="5" stroke-linecap="round"/>
-        <ellipse cx="77" cy="105" rx="47" ry="43" fill="#fffaf5" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="77" cy="77" rx="43" ry="39" fill="#fffaf5" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="51" cy="91" rx="13" ry="10" fill="${blush}"/><ellipse cx="103" cy="91" rx="13" ry="10" fill="${blush}"/>
-        <ellipse cx="65" cy="76" rx="4.5" ry="6" fill="${ink}"/><ellipse cx="89" cy="76" rx="4.5" ry="6" fill="${ink}"/>
-        <path d="M73 88q4 5 8 0q-3 10-8 0" fill="${ink}"/>
-        <ellipse cx="56" cy="135" rx="17" ry="10" fill="#fffaf5" stroke="${stroke}" stroke-width="4"/><ellipse cx="98" cy="135" rx="17" ry="10" fill="#fffaf5" stroke="${stroke}" stroke-width="4"/>
-        <path d="M34 111q-18 2-17 21q8 16 27 7" fill="#fffaf5" stroke="${stroke}" stroke-width="5" stroke-linecap="round"/>
-      `,
-      pet_cat:`
-        <path d="M39 67Q24 22 34 16Q53 18 69 52Q86 42 104 53Q118 23 133 22Q142 31 119 72Z" fill="#f1e2d3" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>
-        <path d="M39 47Q48 37 59 57M109 57Q120 38 130 43" fill="none" stroke="#f5bdb7" stroke-width="6" stroke-linecap="round"/>
-        <ellipse cx="80" cy="108" rx="43" ry="38" fill="#fff8ef" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="78" cy="78" rx="43" ry="39" fill="#fff8ef" stroke="${stroke}" stroke-width="5"/>
-        <path d="M47 53Q78 26 110 58Q96 72 70 68Q53 65 47 53Z" fill="#b88d70"/>
-        <ellipse cx="51" cy="92" rx="13" ry="10" fill="${blush}"/><ellipse cx="105" cy="92" rx="13" ry="10" fill="${blush}"/>
-        <path d="M63 76q-7-7-12 1m45-1q7-7 12 1" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round"/>
-        <path d="M73 85q7 8 14 0q-2 13-9 13q-7-1-5-13" fill="#f18f83" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/>
-        <path d="M42 132q-15 10-6 21q12 8 27-4m36 2q14 8 23-3" fill="none" stroke="${stroke}" stroke-width="5" stroke-linecap="round"/>
-        <path d="M52 138q-5 12 5 13m40-13q5 12-5 13" fill="none" stroke="${stroke}" stroke-width="5" stroke-linecap="round"/>
-      `,
-      pet_fox:`
+ var n=size||68,w=n,h=Math.round(n*1.03),o='#bd7843',ink='#38271d';
+ var art={
+ pet_cat:`
+ <path d="M112 87Q153 96 139 132Q127 158 94 143Q81 136 94 122Q105 111 117 124Q130 120 121 105Z" fill="#ffc36f" stroke="#bd7843" stroke-width="5" stroke-linejoin="round"/>
+ <path d="M119 105q10 8 5 18m-9-4q7 3 8 10" fill="none" stroke="#e99b4e" stroke-width="5" stroke-linecap="round"/>
+ <path d="M33 75Q27 33 49 15Q62 7 76 42Q92 6 111 16Q132 31 126 77Q145 92 128 119Q117 136 76 135Q33 136 24 111Q14 88 33 75Z" fill="#ffc875" stroke="#bd7843" stroke-width="5" stroke-linejoin="round"/>
+ <path d="M42 49Q43 25 52 23Q64 27 66 49M99 49Q104 24 114 23Q123 30 119 51" fill="#fff8e9"/>
+ <path d="M69 20l-3 17m16-17-1 16m9-15-1 13" stroke="#e69a4b" stroke-width="5" stroke-linecap="round"/>
+ <path d="M27 83q18-1 34-12m69 12q-16-1-30-12" fill="none" stroke="#e99c50" stroke-width="4" stroke-linecap="round"/>
+ <circle cx="59" cy="81" r="6" fill="#39271c"/><circle cx="101" cy="81" r="6" fill="#39271c"/><ellipse cx="80" cy="86" rx="3" ry="2" fill="#d77c54"/>
+ <path d="M80 89q-7 9-15 2m15-2q7 9 15 2" fill="none" stroke="#bd7843" stroke-width="3" stroke-linecap="round"/>
+ <path d="M43 119Q60 128 80 128Q103 128 117 117" fill="#fffdf8" stroke="#bd7843" stroke-width="4" stroke-linecap="round"/>
+ `,
+ pet_fox:`
         <path d="M38 68Q24 27 42 16Q61 19 75 52Q94 25 117 17Q135 29 119 70Z" fill="#f6a65f" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>
         <path d="M42 37Q53 38 61 57L48 52ZM112 37Q101 38 92 57L107 52Z" fill="#fff1df"/>
         <path d="M110 117Q145 83 147 111Q146 143 109 143Q128 127 110 117Z" fill="#ed984e" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>
@@ -2536,19 +2522,14 @@ var VIDEOS = {
         <path d="M72 88q6 7 12 0" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round"/>
         <path d="M52 141q-8 10 4 12m43-12q8 10-4 12" fill="none" stroke="${stroke}" stroke-width="5" stroke-linecap="round"/>
       `,
-      pet_lamb:`
-        <path d="M38 70Q14 48 10 68Q9 91 37 91M120 70Q144 48 148 68Q149 91 121 91" fill="#fff7e9" stroke="${stroke}" stroke-width="5" stroke-linecap="round"/>
-        <path d="M15 68q13 3 19 17m111-17q-13 3-19 17" fill="none" stroke="#e7b8a9" stroke-width="5" stroke-linecap="round"/>
-        <g fill="#fffaf0" stroke="${stroke}" stroke-width="4"><circle cx="48" cy="50" r="22"/><circle cx="76" cy="39" r="25"/><circle cx="104" cy="51" r="22"/><circle cx="40" cy="76" r="20"/><circle cx="112" cy="76" r="20"/></g>
-        <ellipse cx="77" cy="111" rx="44" ry="34" fill="#fffaf0" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="77" cy="80" rx="37" ry="34" fill="#fffaf0" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="51" cy="92" rx="12" ry="10" fill="${blush}"/><ellipse cx="103" cy="92" rx="12" ry="10" fill="${blush}"/>
-        <ellipse cx="64" cy="78" rx="4.5" ry="6" fill="${ink}"/><ellipse cx="90" cy="78" rx="4.5" ry="6" fill="${ink}"/>
-        <path d="M72 88q5 7 10 0" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round"/>
-        <path d="M57 137v9m40-9v9" stroke="${stroke}" stroke-width="6" stroke-linecap="round"/>
-        <path d="M49 118q28 12 56 0" fill="none" stroke="#f0e2d2" stroke-width="5" stroke-linecap="round"/>
-      `,
-      pet_penguin:`
+ pet_lamb:`
+ <path d="M31 90Q12 88 18 68Q20 54 37 56Q37 31 60 35Q71 17 91 33Q112 23 122 48Q145 49 139 72Q151 90 130 101Q135 126 112 130Q94 145 77 130Q55 143 43 127Q19 127 31 105Z" fill="#fff8e8" stroke="#51483d" stroke-width="5" stroke-linejoin="round"/>
+ <path d="M43 77Q34 58 52 56Q62 48 76 59Q91 48 104 58Q120 56 117 78Q126 98 106 109Q78 125 50 108Q35 99 43 77Z" fill="#8a705b" stroke="#51483d" stroke-width="5" stroke-linejoin="round"/>
+ <ellipse cx="65" cy="83" rx="3.5" ry="5" fill="#33271e"/><ellipse cx="95" cy="83" rx="3.5" ry="5" fill="#33271e"/><ellipse cx="80" cy="91" rx="3" ry="2" fill="#33271e"/>
+ <path d="M73 96q7 5 14 0" fill="none" stroke="#51483d" stroke-width="3" stroke-linecap="round"/>
+ <path d="M43 116q8 13 20 4m15 2q8 12 17 0m15-5q8 13 16 2" fill="#8a705b" stroke="#51483d" stroke-width="4" stroke-linecap="round"/>
+ `,
+ pet_penguin:`
         <ellipse cx="78" cy="106" rx="48" ry="48" fill="#4b4546" stroke="${stroke}" stroke-width="5"/>
         <ellipse cx="78" cy="119" rx="36" ry="34" fill="#fffaf2"/>
         <path d="M36 94Q15 82 18 111Q24 128 45 119M120 94Q141 82 138 111Q132 128 111 119" fill="#4b4546" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>
@@ -2559,29 +2540,15 @@ var VIDEOS = {
         <path d="M69 85Q78 78 87 85Q82 98 78 98Q73 97 69 85Z" fill="#ffbd4e"/>
         <path d="M55 148q-12 10-23 2m69-2q12 10 23 2" fill="none" stroke="#e7b55f" stroke-width="7" stroke-linecap="round"/>
       `,
-      pet_puppy:`
-        <path d="M43 65Q10 33 12 68Q13 104 47 104M113 65Q146 33 144 68Q143 104 109 104" fill="#d7a477" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>
-        <ellipse cx="78" cy="111" rx="43" ry="38" fill="#fff8ef" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="78" cy="78" rx="43" ry="40" fill="#fff8ef" stroke="${stroke}" stroke-width="5"/>
-        <path d="M39 57Q53 30 78 43Q99 31 116 57Q101 72 78 66Q56 71 39 57Z" fill="#e8bd8e"/>
-        <ellipse cx="51" cy="94" rx="13" ry="10" fill="${blush}"/><ellipse cx="105" cy="94" rx="13" ry="10" fill="${blush}"/>
-        <ellipse cx="64" cy="78" rx="4.5" ry="6" fill="${ink}"/><ellipse cx="91" cy="78" rx="4.5" ry="6" fill="${ink}"/>
-        <path d="M72 88q6 6 12 0q-3 12-9 12q-6-2-3-12" fill="#f28f83" stroke="${ink}" stroke-width="3"/>
-        <path d="M43 138q-10 12 5 13m65-13q10 12-5 13" fill="none" stroke="${stroke}" stroke-width="6" stroke-linecap="round"/>
-        <path d="M28 111q-14 2-12 17" fill="none" stroke="${stroke}" stroke-width="5" stroke-linecap="round"/>
-      `,
-      pet_panda:`
-        <circle cx="45" cy="49" r="23" fill="#383332" stroke="${stroke}" stroke-width="5"/><circle cx="111" cy="49" r="23" fill="#383332" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="78" cy="111" rx="43" ry="39" fill="#fffaf5" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="78" cy="78" rx="43" ry="40" fill="#fffaf5" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="60" cy="79" rx="10" ry="14" transform="rotate(-24 60 79)" fill="#393434"/><ellipse cx="96" cy="79" rx="10" ry="14" transform="rotate(24 96 79)" fill="#393434"/>
-        <ellipse cx="48" cy="96" rx="12" ry="10" fill="${blush}"/><ellipse cx="108" cy="96" rx="12" ry="10" fill="${blush}"/>
-        <ellipse cx="60" cy="78" rx="4" ry="5" fill="#fff"/><ellipse cx="96" cy="78" rx="4" ry="5" fill="#fff"/>
-        <path d="M72 91q6 6 12 0" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round"/>
-        <path d="M43 136q-9 12 5 14m60-14q9 12-5 14" fill="#393434" stroke="${stroke}" stroke-width="4"/>
-        <path d="M75 107l-9 26m18-26 9 26" stroke="#6b9b55" stroke-width="8" stroke-linecap="round"/>
-      `,
-      pet_deer:`
+ pet_puppy:`
+ <path d="M31 74Q10 49 18 33Q28 15 46 34Q57 44 55 58M103 58Q101 39 119 28Q139 19 145 42Q150 65 125 79" fill="#eeb47d" stroke="#c98555" stroke-width="5" stroke-linecap="round"/>
+ <path d="M26 76Q17 50 39 40Q52 32 67 40Q84 29 102 41Q127 38 134 62Q144 85 126 103Q129 131 104 136Q79 147 56 135Q31 139 26 116Q12 99 26 76Z" fill="#f7bd82" stroke="#c98555" stroke-width="5" stroke-linejoin="round"/>
+ <g fill="#f4c994"><circle cx="42" cy="50" r="17"/><circle cx="61" cy="38" r="19"/><circle cx="83" cy="37" r="20"/><circle cx="105" cy="47" r="18"/><circle cx="122" cy="65" r="16"/><circle cx="31" cy="77" r="15"/></g>
+ <ellipse cx="64" cy="87" rx="4" ry="5" fill="#8b5131"/><ellipse cx="96" cy="87" rx="4" ry="5" fill="#8b5131"/><ellipse cx="80" cy="91" rx="3" ry="2" fill="#8b5131"/>
+ <path d="M72 98q8 7 16 0" fill="none" stroke="#c98555" stroke-width="4" stroke-linecap="round"/>
+ <path d="M48 126q-5 13 9 13m41-13q5 13-9 13" fill="none" stroke="#c98555" stroke-width="5" stroke-linecap="round"/>
+ `,
+ pet_deer:`
         <path d="M54 52Q28 24 28 8M40 27 23 23M37 22 43 8M101 52Q127 24 127 8M115 27l17-4m-20-1-6-14" fill="none" stroke="#8e6549" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M42 65Q19 43 13 62Q12 83 43 91M114 65Q137 43 143 62Q144 83 113 91" fill="#dca778" stroke="${stroke}" stroke-width="5"/>
         <ellipse cx="78" cy="111" rx="42" ry="38" fill="#dca778" stroke="${stroke}" stroke-width="5"/>
@@ -2593,34 +2560,25 @@ var VIDEOS = {
         <path d="M69 91q9 7 18 0" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round"/>
         <path d="M54 139v8m48-8v8" stroke="${stroke}" stroke-width="6" stroke-linecap="round"/>
       `,
-      pet_turtle:`
-        <path d="M95 95Q139 83 141 114Q137 145 101 137Q121 121 95 95Z" fill="#739b62" stroke="${stroke}" stroke-width="5"/>
-        <path d="M107 111q18-5 23 8m-30 0q16-4 24 8" fill="none" stroke="#52774c" stroke-width="4" stroke-linecap="round"/>
-        <ellipse cx="75" cy="116" rx="43" ry="34" fill="#b6d58c" stroke="${stroke}" stroke-width="5"/>
-        <path d="M43 115Q37 76 78 69Q119 76 112 115Q78 147 43 115Z" fill="#719d65" stroke="${stroke}" stroke-width="5"/>
-        <path d="M78 73 100 89 92 117H64L56 89Z" fill="none" stroke="#52774c" stroke-width="4"/>
-        <path d="M48 130q-8 12-19 5m57-5q8 12 19 5" fill="none" stroke="#8fb96e" stroke-width="9" stroke-linecap="round"/>
-        <circle cx="50" cy="57" r="29" fill="#cce5a1" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="50" cy="68" rx="16" ry="10" fill="#e7f0c7"/>
-        <ellipse cx="39" cy="66" rx="4" ry="6" fill="${ink}"/><ellipse cx="61" cy="66" rx="4" ry="6" fill="${ink}"/>
-        <path d="M44 76q6 6 12 0" fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>
-        <ellipse cx="25" cy="77" rx="10" ry="8" fill="${blush}"/>
-      `,
-      pet_bird:`
-        <ellipse cx="78" cy="109" rx="44" ry="43" fill="#ffe47e" stroke="${stroke}" stroke-width="5"/>
-        <path d="M47 47Q78 5 109 47Q92 41 78 49Q63 41 47 47Z" fill="#ffe47e" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>
-        <path d="M41 94Q10 80 17 112Q28 127 48 111M115 94Q146 80 139 112Q128 127 108 111" fill="#ffdf6c" stroke="${stroke}" stroke-width="5"/>
-        <ellipse cx="78" cy="119" rx="27" ry="29" fill="#fff5d9"/>
-        <ellipse cx="51" cy="90" rx="12" ry="10" fill="${blush}"/><ellipse cx="105" cy="90" rx="12" ry="10" fill="${blush}"/>
-        <ellipse cx="64" cy="76" rx="4.5" ry="6" fill="${ink}"/><ellipse cx="91" cy="76" rx="4.5" ry="6" fill="${ink}"/>
-        <path d="M69 87l9 10 9-10Z" fill="#f3a34d" stroke="${stroke}" stroke-width="3" stroke-linejoin="round"/>
-        <path d="M57 148q-8 7-16 2m58-2q8 7 16 2" fill="none" stroke="#d69b4e" stroke-width="5" stroke-linecap="round"/>
-      `
-    };
-    var drawing=art[id];
-    if(!drawing)return '';
-    return '<svg class="pet-art" viewBox="0 0 160 160" width="'+w+'" height="'+h+'" role="img" aria-label="귀여운 반려동물"><ellipse cx="78" cy="153" rx="34" ry="4" fill="#6d5548" opacity=".10"/>'+drawing+'</svg>';
-  }
+ pet_turtle:`
+ <path d="M85 100Q126 88 137 111Q135 136 99 130Z" fill="#8da96b" stroke="#506b4c" stroke-width="5"/>
+ <ellipse cx="69" cy="108" rx="43" ry="30" fill="#b6d28a" stroke="#607c52" stroke-width="5"/>
+ <path d="M31 105Q29 69 69 66Q111 69 108 105Q70 132 31 105Z" fill="#759c66" stroke="#506b4c" stroke-width="5"/>
+ <path d="M69 68 91 84 84 108H54L47 84Z" fill="none" stroke="#a8c887" stroke-width="4"/>
+ <circle cx="45" cy="63" r="27" fill="#cce5a1" stroke="#607c52" stroke-width="5"/>
+ <circle cx="37" cy="61" r="3.5" fill="#35412d"/><circle cx="54" cy="61" r="3.5" fill="#35412d"/><path d="M41 71q5 5 10 0" fill="none" stroke="#607c52" stroke-width="3" stroke-linecap="round"/>
+ `,
+ pet_bird:`
+ <path d="M25 114Q16 92 33 80Q34 49 64 47Q81 26 103 47Q130 47 130 76Q148 89 133 113L126 124H31Z" fill="#fff9ee" stroke="#a66a52" stroke-width="5" stroke-linejoin="round"/>
+ <path d="M31 104Q27 76 53 70Q66 43 88 57Q111 51 119 76Q138 85 125 108Q111 123 91 111Q75 126 58 112Q42 122 31 104Z" fill="#ffd77d" stroke="#c98651" stroke-width="5" stroke-linejoin="round"/>
+ <path d="M65 82q5-5 10 0m17 0q5-5 10 0" fill="none" stroke="#8b5739" stroke-width="4" stroke-linecap="round"/>
+ <path d="M78 91l9 7 9-7q-8-8-18 0Z" fill="#d88945" stroke="#a66a52" stroke-width="3" stroke-linejoin="round"/>
+ <path d="M34 111Q73 143 124 111" fill="none" stroke="#a66a52" stroke-width="4"/>
+ `
+ };
+ var drawing=art[id];if(!drawing)return '';
+ return '<svg class="pet-art" viewBox="0 0 160 160" width="'+w+'" height="'+h+'" role="img" aria-label="귀여운 반려동물">'+drawing+'</svg>';
+}
   var ANAMES = ['곰', '토끼', '고양이', '펭귄', '아기 돼지', '병아리', '판다', '개구리', '여우', '양', '오리', '강아지', '코알라', '하마', '기린', '호랑이', '햄스터', '파랑새', '올빼미', '비둘기', '낙타', '당나귀', '염소', '코끼리', '사슴', '너구리', '거북이', '사자'];
   var APRICE = [0, 8, 10, 12, 14, 16, 18, 20, 22, 0, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 60];
   var CHARS = KINDS.map(function (K, i) { var n = parseInt(K.id.slice(1), 10); return { id: K.id, k: i, n: ANAMES[n], p: APRICE[n] }; });
