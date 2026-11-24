@@ -3154,7 +3154,10 @@ var VIDEOS = {
     tick();window.__petSaleTimer=setInterval(tick,1000);
   }
   function syncWalkabout(data) {
-    if(!P)return;var avatar=data||P.avatarData||'';
+    if(!P)return;
+    if(!P.eq)P.eq={};
+    if(!P.eq.pet&&Array.isArray(P.own)){var firstOwnedPet=PETS.find(function(x){return P.own.indexOf(x.id)>=0;});if(firstOwnedPet){P.eq.pet=firstOwnedPet.id;saveLocal();cloud({eq:P.eq});}}
+    var avatar=data||P.avatarData||'';
     try{if(avatar){localStorage.setItem('bible-avatar:'+user,avatar);localStorage.setItem('bible-companion:'+user,JSON.stringify({avatarData:avatar,pet:(P.eq&&P.eq.pet)||''}));}}catch(e){}
     var el=document.getElementById('bibleWalkabout');if(!el){el=document.createElement('div');el.id='bibleWalkabout';el.innerHTML='<img class="walk-char" alt="내 캐릭터"><div class="walk-pet"></div>';document.body.appendChild(el);}
     var im=el.querySelector('img');if(avatar){im.src=avatar;im.style.display='block';}else im.style.display='none';
