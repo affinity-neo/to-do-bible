@@ -22,6 +22,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .chip.on{background:var(--acc);color:var(--accfg)}
 .coin{display:flex;align-items:center;gap:6px;background:var(--pill);border-radius:99px;padding:8px 14px;font-weight:700;flex:none}.coin svg{width:18px;height:18px;color:#d9a521}
 .av{width:32px;height:32px;border-radius:50%;background:var(--acc);opacity:.85;color:var(--accfg);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}.av.l{width:60px;height:60px;font-size:21px}
+.av.has-buddy{position:relative;overflow:visible;opacity:1;background:var(--pill)}.av.has-buddy>img{display:block;width:100%;height:100%;object-fit:contain;border-radius:50%}.av-pet{position:absolute;right:-10px;top:-11px;width:34px;height:38px;z-index:2;animation:profilePetPeek 2.2s ease-in-out infinite;filter:drop-shadow(0 2px 2px #0002)}.av-pet svg{width:100%;height:100%;overflow:visible}@keyframes profilePetPeek{0%,100%{transform:translateY(0) rotate(4deg)}35%{transform:translate(3px,-4px) rotate(9deg)}70%{transform:translate(-2px,-1px) rotate(-5deg)}}.av.l .av-pet{width:38px;height:42px;right:-10px;top:-12px}
 .cols{display:grid;grid-template-columns:350px 1fr;gap:44px}@media(max-width:760px){.cols{grid-template-columns:1fr;gap:26px}}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:8px 0;text-align:center;margin-top:14px;font-size:11px}.cal .h{color:var(--mu);font-size:12px;padding-bottom:4px}
 .d{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--mu)}
@@ -254,7 +255,12 @@ function postDiary(){return}
 
 /* ---------- 화면 ---------- */
 const back=(t,to)=>`<div class="row" style="margin-bottom:18px"><button onclick="${to||"S.sub=null;render()"}">${ic('l')}</button><div class="b" style="flex:1;text-align:center;margin-right:20px">${t}</div></div>`;
-const avt=(u,s)=>`<div class="av${s?' l':''}">${u?.avatarData?`<img src="${u.avatarData}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:50%">`:esc((u?.name||'?')[0])}</div>`;
+function localBuddyFor(u){
+ let profile=null,companion=null;
+ if(u&&D&&u.name===D.name){try{profile=JSON.parse(localStorage.getItem('prof:'+u.name)||'null');companion=JSON.parse(localStorage.getItem('bible-companion:'+u.name)||'null')}catch(e){}}
+ return {avatar:(u&&u.avatarData)||(companion&&companion.avatarData)||(profile&&profile.avatarData)||'',pet:(companion&&companion.pet)||(profile&&profile.eq&&profile.eq.pet)||''};
+}
+const avt=(u,s)=>{const buddy=localBuddyFor(u),img=buddy.avatar,pet=buddy.pet;return '<div class="av'+(s?' l':'')+(img?' has-buddy':'')+'">'+(img?'<img src="'+img+'" alt="">':esc((u?.name||'?')[0]))+(img&&pet?'<span class="av-pet">'+petBuddySvg(pet)+'</span>':'')+'</div>'};
 
 function petBuddySvg(id){
  const paths={
@@ -358,5 +364,5 @@ function render(){D.cats=(D.cats||[]).map(c=>({...c,priv:0}));D.rewards=D.reward
  if(!S.ready){app.innerHTML='<div class="w mu">불러오는 중…</div>';return}
  const b=S.sub?vSub():{home:vHome,explore:vExplore,noti:vNoti,me:vMe}[S.tab]();
  const nav=[['home','home'],['explore','compass'],['noti','bell'],['me','user']];
- app.innerHTML=`<div class="w">${b}${S.err?`<div style="margin-top:12px;color:#e5484d">${esc(S.err)}</div>`:''}</div><div class="nav">${nav.map(([k,i])=>`<button class="${S.tab===k?'on':''}" onclick="go('${k}')">${ic(i,'width:24px;height:24px')}</button>`).join('')}</div>`;renderTodoWalkabout();rest()}
+ app.innerHTML=`<div class="w">${b}${S.err?`<div style="margin-top:12px;color:#e5484d">${esc(S.err)}</div>`:''}</div><div class="nav">${nav.map(([k,i])=>`<button class="${S.tab===k?'on':''}" onclick="go('${k}')">${ic(i,'width:24px;height:24px')}</button>`).join('')}</div>`;document.getElementById('todoWalkabout')?.remove();rest()}
 </script></body></html>
