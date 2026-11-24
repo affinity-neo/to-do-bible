@@ -56,6 +56,14 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .tb{background:var(--card);border-radius:14px;padding:12px 16px;margin-bottom:16px}
 .auth{max-width:340px;margin:12vh auto;display:grid;gap:12px;padding:20px}
 .th{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}.sw2{display:flex;border-radius:12px;overflow:hidden;border:1px solid var(--line);width:56px;height:40px;flex:none}.sw2 i{flex:1}
+</style><style id="todo-walkabout-style">
+#todoWalkabout{position:fixed;right:12px;bottom:82px;z-index:7;display:none;align-items:flex-end;gap:0;pointer-events:none;animation:todoBuddyWalk 3s ease-in-out infinite}
+#todoWalkabout .buddy-char{width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 2px 2px #0002)}
+#todoWalkabout .buddy-pet{width:40px;height:46px;display:grid;place-items:end center;margin-left:-7px;animation:todoPetHop 1.6s ease-in-out infinite}
+#todoWalkabout .buddy-pet svg{width:40px;height:44px}
+@keyframes todoBuddyWalk{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,-3px)}50%{transform:translate(-10px,0)}75%{transform:translate(-5px,-4px)}}
+@keyframes todoPetHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media(min-width:761px){#todoWalkabout{right:28px;bottom:24px}}
 </style></head><body>
 <div id="app"></div><div id="md"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
@@ -247,6 +255,29 @@ function postDiary(){return}
 /* ---------- 화면 ---------- */
 const back=(t,to)=>`<div class="row" style="margin-bottom:18px"><button onclick="${to||"S.sub=null;render()"}">${ic('l')}</button><div class="b" style="flex:1;text-align:center;margin-right:20px">${t}</div></div>`;
 const avt=(u,s)=>`<div class="av${s?' l':''}">${u?.avatarData?`<img src="${u.avatarData}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:50%">`:esc((u?.name||'?')[0])}</div>`;
+
+function petBuddySvg(id){
+ const paths={
+ pet_lamb:'<ellipse cx="40" cy="56" rx="22" ry="23" fill="#fff" stroke="#c8c1b6" stroke-width="2"/><circle cx="40" cy="28" r="15" fill="#fff" stroke="#c8c1b6" stroke-width="2"/><circle cx="27" cy="20" r="7" fill="#fff"/><circle cx="53" cy="20" r="7" fill="#fff"/><ellipse cx="40" cy="31" rx="10" ry="8" fill="#f2c6c5"/><circle cx="35" cy="27" r="2"/><circle cx="45" cy="27" r="2"/><path d="M37 34q3 3 6 0M28 73v8m24-8v8" stroke="#8b746a" stroke-width="4" stroke-linecap="round"/>',
+ pet_fox:'<path d="M55 57q28-5 20 17-10 11-24-1" fill="#ef9b45" stroke="#b9662a" stroke-width="2"/><path d="M20 39 17 12l20 13 7 0 20-13-3 28q-1 29-21 29T20 39" fill="#e98b3c" stroke="#a95b2d" stroke-width="2"/><ellipse cx="40" cy="48" rx="15" ry="12" fill="#fff1df"/><circle cx="34" cy="39" r="2"/><circle cx="47" cy="39" r="2"/><path d="M37 49q3 4 6 0m-14 22-2 9m25-9 2 9" stroke="#8b4a2a" stroke-width="4" stroke-linecap="round"/>',
+ pet_turtle:'<ellipse cx="40" cy="53" rx="25" ry="19" fill="#76a96c" stroke="#426c4a" stroke-width="2"/><path d="M17 52q2-26 23-26t23 26q-22 13-46 0" fill="#8dbb78" stroke="#426c4a" stroke-width="2"/><path d="M25 40 40 31l15 9-4 15H29z" fill="none" stroke="#426c4a" stroke-width="2"/><circle cx="67" cy="49" r="10" fill="#9bc987" stroke="#426c4a" stroke-width="2"/><circle cx="64" cy="46" r="1.8"/><path d="M24 68 19 77m35-9 5 9m-25-2v6m12-6v6" stroke="#426c4a" stroke-width="5" stroke-linecap="round"/>',
+ pet_bird:'<ellipse cx="40" cy="52" rx="22" ry="25" fill="#f3d66c" stroke="#bd9c36" stroke-width="2"/><circle cx="40" cy="26" r="15" fill="#f3d66c" stroke="#bd9c36" stroke-width="2"/><path d="m27 13-3-9 10 7m9 2 7-9 1 13" fill="#f3d66c" stroke="#bd9c36" stroke-width="2"/><path d="m54 27 13 5-13 5" fill="#e88b4c"/><circle cx="35" cy="25" r="2"/><circle cx="46" cy="25" r="2"/><path d="m31 74-3 7m23-7 3 7" stroke="#bd8536" stroke-width="3" stroke-linecap="round"/>',
+ pet_penguin:'<ellipse cx="40" cy="52" rx="24" ry="29" fill="#46586b"/><ellipse cx="40" cy="57" rx="16" ry="20" fill="#fff"/><circle cx="40" cy="24" r="17" fill="#46586b"/><ellipse cx="40" cy="29" rx="12" ry="10" fill="#fff"/><circle cx="35" cy="23" r="2"/><circle cx="45" cy="23" r="2"/><path d="m36 31 4 5 4-5" fill="#e9a34d"/><path d="M17 48 5 60l16 4m38-16 12 12-16 4" fill="#46586b"/><path d="m29 78-4 5m26-5 4 5" stroke="#e9a34d" stroke-width="4" stroke-linecap="round"/>'
+ };
+ return paths[id]?'<svg viewBox="0 0 80 88" aria-hidden="true">'+paths[id]+'</svg>':'';
+}
+function renderTodoWalkabout(){
+ if(!ME||!D||!D.name)return;
+ let profile=null;try{profile=JSON.parse(localStorage.getItem('prof:'+D.name)||'null')}catch(e){}
+ const data=(profile&&profile.avatarData)||(()=>{try{return localStorage.getItem('bible-avatar:'+D.name)}catch(e){return null}})();
+ const pet=profile&&profile.eq&&profile.eq.pet||'';
+ let el=document.getElementById('todoWalkabout');
+ if(!el){el=document.createElement('div');el.id='todoWalkabout';el.innerHTML='<img class="buddy-char" alt=""><div class="buddy-pet"></div>';document.body.appendChild(el);}
+ const img=el.querySelector('img'),petBox=el.querySelector('.buddy-pet');
+ if(data){img.src=data;img.style.display='block'}else img.style.display='none';
+ petBox.innerHTML=pet?petBuddySvg(pet):'';
+ el.style.display=(data||pet)?'flex':'none';
+}
 function vHome(){const isCrew=typeof S.view==='string'&&S.view.startsWith('crew:'),crew=isCrew?S.crews.find(c=>c.id===S.view.slice(5)):null,mine=own(),X=mine||isCrew?D:(US[S.view]||def());let vis=X.cats.filter(c=>!c.ended&&(mine||!c.priv)),vt=X.todos.filter(t=>!t.arch&&vis.some(c=>c.id===t.cid));if(isCrew&&crew){vis=[];vt=[];(crew.members||[]).forEach(uid=>{const u=uid===ME.uid?D:US[uid];if(!u)return;(crew.sharedCats?.[uid]||[]).forEach(cid=>{const c=u.cats?.find(z=>z.id===cid);if(!c)return;const id='crew-'+uid+'-'+cid;vis.push({...c,id,name:(u.name||'멤버')+' · '+c.name});u.todos.filter(t=>!t.arch&&t.cid===cid).forEach(t=>vt.push({...t,cid:id,ownerName:u.name}))})})}
  const y=S.cm.getFullYear(),m=S.cm.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
  let cells='';for(let i=0;i<first;i++)cells+='<div></div>';
@@ -321,5 +352,5 @@ function render(){D.cats=(D.cats||[]).map(c=>({...c,priv:0}));D.rewards=D.reward
  if(!S.ready){app.innerHTML='<div class="w mu">불러오는 중…</div>';return}
  const b=S.sub?vSub():{home:vHome,explore:vExplore,noti:vNoti,me:vMe}[S.tab]();
  const nav=[['home','home'],['explore','compass'],['noti','bell'],['me','user']];
- app.innerHTML=`<div class="w">${b}${S.err?`<div style="margin-top:12px;color:#e5484d">${esc(S.err)}</div>`:''}</div><div class="nav">${nav.map(([k,i])=>`<button class="${S.tab===k?'on':''}" onclick="go('${k}')">${ic(i,'width:24px;height:24px')}</button>`).join('')}</div>`;rest()}
+ app.innerHTML=`<div class="w">${b}${S.err?`<div style="margin-top:12px;color:#e5484d">${esc(S.err)}</div>`:''}</div><div class="nav">${nav.map(([k,i])=>`<button class="${S.tab===k?'on':''}" onclick="go('${k}')">${ic(i,'width:24px;height:24px')}</button>`).join('')}</div>`;renderTodoWalkabout();rest()}
 </script></body></html>
