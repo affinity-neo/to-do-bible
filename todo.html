@@ -263,35 +263,36 @@ function localBuddyFor(u){
 const avt=(u,s)=>{const buddy=localBuddyFor(u),img=buddy.avatar,pet=buddy.pet;return '<div class="av'+(s?' l':'')+(img?' has-buddy':'')+'">'+(img?'<img src="'+img+'" alt="">':esc((u?.name||'?')[0]))+(img&&pet?'<span class="av-pet">'+petBuddySvg(pet)+'</span>':'')+'</div>'};
 
 function petBuddySvg(id){
-    var C={
-      pet_lamb:{base:'#fffaf0',shade:'#e8dfd2',ear:'#f4c9cf',muzzle:'#f5c9cb',accent:'<circle cx="60" cy="24" r="12" fill="#fff"/><circle cx="43" cy="34" r="10" fill="#fff"/><circle cx="77" cy="34" r="10" fill="#fff"/>',tail:'<circle cx="92" cy="84" r="12" fill="#fff"/>',ears:'<ellipse cx="29" cy="49" rx="11" ry="17" fill="#fff" transform="rotate(-28 29 49)"/><ellipse cx="91" cy="49" rx="11" ry="17" fill="#fff" transform="rotate(28 91 49)"/>'},
-      pet_fox:{base:'#f39a4a',shade:'#d87835',ear:'#f5c0a8',muzzle:'#fff1df',accent:'<path d="M26 47 20 12l28 20m46 15 6-35-28 20" fill="#e98a3d" stroke="#171313" stroke-width="4" stroke-linejoin="round"/><path d="m27 29 17 12-13 5m62-17L76 41l13 5" fill="#f7d0bc"/>',tail:'<path d="M82 86q35-15 28 13-8 21-31 3" fill="#f39a4a" stroke="#171313" stroke-width="4"/><path d="M91 96q16-8 18 3-6 13-17 8" fill="#fff4e7"/>',ears:''},
-      pet_turtle:{base:'#9dca85',shade:'#659b68',ear:'#9dca85',muzzle:'#d7edb8',accent:'<path d="M28 78q-1-40 32-42 32 2 32 42-32 21-64 0" fill="#83ad70" stroke="#171313" stroke-width="4"/><path d="m60 43 19 14-7 24H48l-7-24z" fill="none" stroke="#171313" stroke-width="4"/><path d="m43 54-10 15m44-15 10 15" stroke="#b9d99a" stroke-width="4" stroke-linecap="round"/>',tail:'<path d="m29 91-14 8 15 7" fill="#83ad70" stroke="#171313" stroke-width="4" stroke-linejoin="round"/>',ears:''},
-      pet_bird:{base:'#ffe080',shade:'#e9b94d',ear:'#ffe080',muzzle:'#f5b46c',accent:'<path d="m48 25 12-16 12 16" fill="#f5c85e" stroke="#dca63e" stroke-width="4" stroke-linejoin="round"/><path d="M36 73q-22-4-20 18 16 9 31-4" fill="#f3c34f" stroke="#dca63e" stroke-width="4"/>',tail:'<path d="m80 83 24-9-8 23" fill="#efbd4c" stroke="#dca63e" stroke-width="4" stroke-linejoin="round"/>',ears:''},
-      pet_penguin:{base:'#61758c',shade:'#171313',ear:'#61758c',muzzle:'#fff3dd',accent:'<path d="M31 79q-19-7-21 10 12 16 29 5m50-15q19-7 21 10-12 16-29 5" fill="#536981" stroke="#171313" stroke-width="4"/>',tail:'<path d="m43 112-9 7 19-1m18-6 9 7-19-1" fill="#f1b45e"/>',ears:''},
-      pet_cat:{base:'#eabda6',shade:'#171313',ear:'#efb2b3',muzzle:'#fff0e7',accent:'<path d="m26 48 1-33 25 20m42 13-1-33-25 20" fill="#eabda6" stroke="#171313" stroke-width="4" stroke-linejoin="round"/><path d="m31 31 13 10-12 4m57-14L76 41l12 4" fill="#f7d4d1"/>',tail:'<path d="M83 88q29-3 21 21-7 10-17 1" fill="none" stroke="#171313" stroke-width="9" stroke-linecap="round"/>',ears:''},
-      pet_puppy:{base:'#d7a574',shade:'#171313',ear:'#b98058',muzzle:'#f8e7d4',accent:'<ellipse cx="25" cy="55" rx="14" ry="24" fill="#b98058" stroke="#171313" stroke-width="4" transform="rotate(-24 25 55)"/><ellipse cx="95" cy="55" rx="14" ry="24" fill="#b98058" stroke="#171313" stroke-width="4" transform="rotate(24 95 55)"/>',tail:'<path d="M86 88q28-10 23 12-6 12-18 4" fill="none" stroke="#171313" stroke-width="9" stroke-linecap="round"/>',ears:''},
-      pet_bunny:{base:'#fff1ef',shade:'#e5c1c7',ear:'#f3b9c6',muzzle:'#f8d5dc',accent:'<path d="M42 39Q21-3 31 3q18 2 20 37M77 39Q99-3 89 3q-18 2-20 37" fill="#fff1ef" stroke="#171313" stroke-width="4"/><path d="M39 27q-1-13-5-15m43 15q1-13 5-15" stroke="#f1a9b8" stroke-width="6" stroke-linecap="round"/>',tail:'<circle cx="94" cy="91" r="11" fill="#fff" stroke="#e5c1c7" stroke-width="2"/>',ears:''},
-      pet_panda:{base:'#fff',shade:'#dedede',ear:'#34383b',muzzle:'#f8eeee',accent:'<circle cx="33" cy="31" r="12" fill="#34383b"/><circle cx="87" cy="31" r="12" fill="#34383b"/><ellipse cx="44" cy="53" rx="9" ry="13" fill="#34383b" transform="rotate(24 44 53)"/><ellipse cx="76" cy="53" rx="9" ry="13" fill="#34383b" transform="rotate(-24 76 53)"/>',tail:'<circle cx="96" cy="92" r="8" fill="#34383b"/>',ears:''},
-      pet_deer:{base:'#c99562',shade:'#a87448',ear:'#d99a79',muzzle:'#f4dfc5',accent:'<path d="M39 31Q17 7 9 17m12-3-4-11m10 18-10 1m56 9Q103 7 111 17m-12-3 4-11m-10 18 10 1" fill="none" stroke="#171313" stroke-width="5" stroke-linecap="round"/><path d="m28 48 8-6m48 6-8-6" stroke="#f3dfb9" stroke-width="5" stroke-linecap="round"/>',tail:'<circle cx="94" cy="91" r="9" fill="#f3dfb9"/>',ears:'<ellipse cx="25" cy="54" rx="13" ry="8" fill="#d99a79" transform="rotate(-25 25 54)"/><ellipse cx="95" cy="54" rx="13" ry="8" fill="#d99a79" transform="rotate(25 95 54)"/>'}
-    }[id];
-    if(!C)return '';
-    var s=82;
-    return '<svg viewBox="0 0 120 124" width="'+s+'" height="'+Math.round(s*1.03)+'" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+
-      '<ellipse cx="60" cy="116" rx="31" ry="4" fill="#72513b" opacity=".14"/>'+
-      C.tail+C.ears+C.accent+
-      '<path d="M35 73q-4 23 1 35 24 11 48 0 5-12 1-35-10-19-25-19T35 73" fill="'+C.base+'" stroke="'+C.shade+'" stroke-width="4" stroke-linejoin="round"/>'+
-      '<ellipse cx="60" cy="91" rx="19" ry="17" fill="'+C.muzzle+'" opacity=".96"/>'+
-      '<path d="M43 102q-7 8-4 13m38-13q7 8 4 13" fill="none" stroke="'+C.shade+'" stroke-width="7" stroke-linecap="round"/>'+
-      '<circle cx="60" cy="46" r="30" fill="'+C.base+'" stroke="'+C.shade+'" stroke-width="4"/>'+
-      '<ellipse cx="60" cy="61" rx="19" ry="13" fill="'+C.muzzle+'"/>'+
-      '<ellipse cx="48" cy="48" rx="3.4" ry="4.7" fill="#40302a"/><ellipse cx="72" cy="48" rx="3.4" ry="4.7" fill="#40302a"/>'+
-      '<circle cx="49.2" cy="46.2" r="1.2" fill="#fff"/><circle cx="73.2" cy="46.2" r="1.2" fill="#fff"/>'+
-      '<ellipse cx="38" cy="61" rx="6" ry="3.5" fill="#f3a7a9" opacity=".75"/><ellipse cx="82" cy="61" rx="6" ry="3.5" fill="#f3a7a9" opacity=".75"/>'+
-      '<path d="M56 59q4 4 8 0m-4 1q-5 6-10 1m10-1q5 6 10 1" fill="none" stroke="#805247" stroke-width="2.1" stroke-linecap="round"/>'+
-      '<path d="M45 27q7-9 15-7" fill="none" stroke="#fff" stroke-width="4" opacity=".45" stroke-linecap="round"/>'+
-      '</svg>';
-  }
+ const o='#514239',ink='#302923',pink='#ffc9c2';
+ const p={
+  pet_bunny:{c:'#fffaf5',ear:'<path d="M47 52Q22 3 40 8Q59 16 62 54M76 54Q80 14 100 9Q116 14 91 59" fill="#fffaf5" stroke="'+o+'" stroke-width="5"/><path d="M39 22q12 9 17 28m34 0q7-20 15-27" fill="none" stroke="#f2b9bd" stroke-width="5"/>',body:''},
+  pet_cat:{c:'#f4e5d7',ear:'<path d="M39 59 30 14Q52 22 64 50L78 50Q93 21 116 15L107 63Z" fill="#f0e0d1" stroke="'+o+'" stroke-width="5"/><path d="M48 35q9 6 12 19m34 0q6-14 16-20" fill="none" stroke="#f2b8b2" stroke-width="5"/>',patch:'<path d="M39 72Q70 35 108 70Q93 85 72 82Q51 84 39 72Z" fill="#b88d70"/>'},
+  pet_fox:{c:'#f5a45b',ear:'<path d="M38 60 26 13Q51 21 66 51L78 51Q94 19 119 13L106 63Z" fill="#f5a45b" stroke="'+o+'" stroke-width="5"/><path d="M39 33 55 52 43 49m62-16L89 52l13-3" fill="#fff1df"/>',tail:'<path d="M95 112q44-32 43 1-5 31-42 21" fill="#ef984e" stroke="'+o+'" stroke-width="5"/><path d="M119 111q18-5 13 12-9 10-21 7" fill="#fff4e7"/>'},
+  pet_lamb:{c:'#fffaf0',ear:'<path d="M36 69Q11 45 8 69Q9 93 38 91M105 69Q130 45 133 69Q132 93 103 91" fill="#fffaf0" stroke="'+o+'" stroke-width="5"/><g fill="#fffaf0" stroke="'+o+'" stroke-width="4"><circle cx="49" cy="38" r="18"/><circle cx="72" cy="29" r="20"/><circle cx="95" cy="39" r="18"/></g>'},
+  pet_penguin:{c:'#4b4546',muzzle:'#fffaf2',ear:'<ellipse cx="72" cy="95" rx="43" ry="44" fill="#4b4546" stroke="'+o+'" stroke-width="5"/><ellipse cx="72" cy="110" rx="31" ry="31" fill="#fffaf2"/>',beak:'<path d="M63 77 72 89 81 77Z" fill="#ffbd4e"/>'},
+  pet_puppy:{c:'#fff8ef',ear:'<path d="M42 55Q8 26 13 67Q17 94 45 91M100 55Q134 26 129 67Q125 94 97 91" fill="#d7a477" stroke="'+o+'" stroke-width="5"/><path d="M48 48Q72 24 98 48Q90 66 72 61Q58 65 48 48Z" fill="#e8bd8e"/>'},
+  pet_panda:{c:'#fffaf5',ear:'<circle cx="43" cy="40" r="18" fill="#393434" stroke="'+o+'" stroke-width="4"/><circle cx="101" cy="40" r="18" fill="#393434" stroke="'+o+'" stroke-width="4"/>',patch:'<ellipse cx="58" cy="69" rx="9" ry="13" transform="rotate(-25 58 69)" fill="#393434"/><ellipse cx="86" cy="69" rx="9" ry="13" transform="rotate(25 86 69)" fill="#393434"/>'},
+  pet_deer:{c:'#e6b986',ear:'<path d="M50 43Q25 18 26 5m9 20L18 20m70 23Q112 18 111 5m-9 20 17-5" fill="none" stroke="#8e6549" stroke-width="6" stroke-linecap="round"/><path d="M42 56Q15 38 13 60Q20 77 44 75M100 56Q127 38 129 60Q122 77 98 75" fill="#dca778" stroke="'+o+'" stroke-width="4"/>',spots:'<circle cx="61" cy="33" r="3" fill="#fff1df"/><circle cx="79" cy="29" r="3" fill="#fff1df"/>'},
+  pet_turtle:{c:'#cce5a1',ear:'<path d="M38 105Q22 92 17 111Q24 127 44 119M99 105Q118 92 124 111Q117 127 97 119" fill="#b6d58c" stroke="'+o+'" stroke-width="4"/><path d="M87 104Q130 89 132 119Q127 142 91 134Q112 119 87 104Z" fill="#739b62" stroke="'+o+'" stroke-width="4"/><path d="M34 111Q30 70 72 65Q113 70 108 111Q72 139 34 111Z" fill="#719d65" stroke="'+o+'" stroke-width="5"/><path d="M72 69 94 86 86 112H58L50 86Z" fill="none" stroke="#52774c" stroke-width="3"/>',muzzle:'#e7f0c7'},
+  pet_bird:{c:'#ffe47e',ear:'<path d="M48 44Q72 7 96 44Q83 38 72 46Q60 38 48 44Z" fill="#ffe47e" stroke="'+o+'" stroke-width="4"/><path d="M40 88Q12 76 19 105Q31 119 48 103M104 88Q132 76 125 105Q113 119 96 103" fill="#ffdf6c" stroke="'+o+'" stroke-width="4"/>',beak:'<path d="M62 75 72 88 82 75Z" fill="#f3a34d"/>'}
+ }[id];
+ if(!p)return '';
+ const muzzle=p.muzzle||'#fff1e7';
+ return '<svg viewBox="0 0 145 150" width="82" height="85" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+
+ '<ellipse cx="72" cy="144" rx="31" ry="4" fill="#72513b" opacity=".10"/>'+(p.tail||'')+(p.ear||'')+
+ '<ellipse cx="72" cy="104" rx="40" ry="36" fill="'+p.c+'" stroke="'+o+'" stroke-width="5"/>'+
+ '<ellipse cx="72" cy="118" rx="21" ry="18" fill="'+muzzle+'"/>'+
+ (p.patch||'')+
+ '<circle cx="72" cy="69" r="35" fill="'+p.c+'" stroke="'+o+'" stroke-width="5"/>'+
+ '<ellipse cx="72" cy="84" rx="22" ry="14" fill="'+muzzle+'"/>'+
+ '<ellipse cx="43" cy="86" rx="10" ry="8" fill="'+pink+'"/><ellipse cx="101" cy="86" rx="10" ry="8" fill="'+pink+'"/>'+
+ '<ellipse cx="59" cy="68" rx="4" ry="5.5" fill="'+ink+'"/><ellipse cx="85" cy="68" rx="4" ry="5.5" fill="'+ink+'"/>'+
+ (p.beak||'<path d="M65 83q7 7 14 0" fill="none" stroke="'+ink+'" stroke-width="4" stroke-linecap="round"/>')+
+ (p.spots||'')+
+ '<path d="M48 127q-7 9 5 11m38-11q7 9-5 11" fill="none" stroke="'+o+'" stroke-width="5" stroke-linecap="round"/>'+
+ '</svg>';
+}
+
 function renderTodoWalkabout(){
  if(!ME||!D||!D.name)return;
  let profile=null,companion=null;try{profile=JSON.parse(localStorage.getItem('prof:'+D.name)||'null');companion=JSON.parse(localStorage.getItem('bible-companion:'+D.name)||'null')}catch(e){}
