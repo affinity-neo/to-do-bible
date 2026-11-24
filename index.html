@@ -3688,7 +3688,7 @@ var VIDEOS = {
     grid.hidden = false; board.hidden = true; grid.innerHTML = '';
     var list;
     if (shopTab === 'ch') list = CHARS.filter(function (c) { return !c.h; }).concat(CHARS.filter(function (c) { return c.h; }).sort(function (a, b) { return a.p - b.p; }));
-    else if (shopTab === 'theme') list = THEMES; else if (shopTab === 'font') list = FONTS;
+    else if (shopTab === 'theme') list = THEMES.slice().sort(function (a, b) { if (a.p === 0 && b.p !== 0) return -1; if (b.p === 0 && a.p !== 0) return 1; return (a.o || 0) - (b.o || 0); }); else if (shopTab === 'font') list = FONTS;
     else if (shopTab === 'pet') list = [{id:'',kind:'',n:'없음',p:0}].concat(PETS);
     else list = [{ id: '', v: '', n: '없음', p: 0 }].concat(ITEMS.filter(function (i) { return i.s === shopTab; }));
     // 이전 커밋 방식: 각 상점 탭에서 무료 상품을 제외한 첫 유료 상품 3개에 입문 가격을 적용합니다.
@@ -3714,7 +3714,7 @@ var VIDEOS = {
       card.appendChild(pvNode(it, shopTab));
       if (shopTab === 'pet' && it.id) card.insertAdjacentHTML('afterbegin','<span class="pet-new">NEW</span>');
       if (rk) card.insertAdjacentHTML('afterbegin', '<span class="rb">' + RLAB[rk] + '</span>');
-      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + (shopTab === 'pet' && it.id ? (Date.now() < PET_SALE_END ? '<span style="display:block;font-size:10px;color:#c43b35;margin-top:2px"><s>'+it.p+' '+(payType==='sc'?'완료 코인':'코인')+'</s> · 80% OFF</span>' : '<span style="display:block;font-size:10px;color:#888;margin-top:2px">'+(payType==='sc'?'완료 코인':'코인')+'</span>') : ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '')) + '</div>');
+      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + (shopTab === 'theme' && it.p === 0 && it.t !== 'auto' && it.t !== 'light' && it.t !== 'dark' ? '<span style="display:block;font-size:10px;color:#39845b;margin-top:2px">무료 · 바로 사용 가능</span>' : '') + (shopTab === 'pet' && it.id ? (Date.now() < PET_SALE_END ? '<span style="display:block;font-size:10px;color:#c43b35;margin-top:2px"><s>'+it.p+' '+(payType==='sc'?'완료 코인':'코인')+'</s> · 80% OFF</span>' : '<span style="display:block;font-size:10px;color:#888;margin-top:2px">'+(payType==='sc'?'완료 코인':'코인')+'</span>') : ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '')) + '</div>');
       var b = document.createElement('button');
       b.innerHTML = on ? '사용 중' : owned ? '사용하기' : (pend && pend === it.id ? '한 번 더!' : payPrice + (payType === 'sc' ? IC.trophy : (payType === 'gc' ? IC.game : IC.book))); b.disabled = on;
       b.className = (pend && pend === it.id) ? 'conf' : (owned && it.p > 0 ? 'own' : '');
