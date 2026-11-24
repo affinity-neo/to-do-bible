@@ -57,13 +57,13 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .auth{max-width:340px;margin:12vh auto;display:grid;gap:12px;padding:20px}
 .th{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}.sw2{display:flex;border-radius:12px;overflow:hidden;border:1px solid var(--line);width:56px;height:40px;flex:none}.sw2 i{flex:1}
 </style><style id="todo-walkabout-style">
-#todoWalkabout{position:fixed;right:12px;bottom:82px;z-index:7;display:none;align-items:flex-end;gap:0;pointer-events:none;animation:todoBuddyWalk 3s ease-in-out infinite}
-#todoWalkabout .buddy-char{width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 2px 2px #0002)}
-#todoWalkabout .buddy-pet{width:40px;height:46px;display:grid;place-items:end center;margin-left:-7px;animation:todoPetHop 1.6s ease-in-out infinite}
-#todoWalkabout .buddy-pet svg{width:40px;height:44px}
-@keyframes todoBuddyWalk{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,-3px)}50%{transform:translate(-10px,0)}75%{transform:translate(-5px,-4px)}}
-@keyframes todoPetHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@media(min-width:761px){#todoWalkabout{right:28px;bottom:24px}}
+#todoWalkabout{position:fixed;right:20px;bottom:82px;z-index:7;width:132px;height:132px;display:none;align-items:flex-end;justify-content:center;pointer-events:none;animation:todoBuddyWalk 3.5s ease-in-out infinite}
+#todoWalkabout .buddy-char{position:absolute;bottom:0;left:18px;width:104px;height:104px;object-fit:contain;filter:drop-shadow(0 3px 3px #0003)}
+#todoWalkabout .buddy-pet{position:absolute;right:0;top:0;width:76px;height:84px;display:grid;place-items:center;animation:todoPetHop 2s ease-in-out infinite}
+#todoWalkabout .buddy-pet svg{width:76px!important;height:84px!important;filter:drop-shadow(0 3px 2px #0003)}
+@keyframes todoBuddyWalk{0%,100%{transform:translate(0,0)}18%{transform:translate(-9px,-4px)}36%{transform:translate(-16px,0)}55%{transform:translate(-8px,-5px)}72%{transform:translate(3px,0)}}
+@keyframes todoPetHop{0%,100%{transform:translate(0,0) rotate(4deg)}30%{transform:translate(5px,-12px) rotate(9deg)}60%{transform:translate(-3px,-4px) rotate(-5deg)}}
+@media(min-width:761px){#todoWalkabout{right:32px;bottom:24px;width:164px;height:164px}#todoWalkabout .buddy-char{width:132px;height:132px}#todoWalkabout .buddy-pet{width:94px;height:102px}#todoWalkabout .buddy-pet svg{width:94px!important;height:102px!important}}
 </style></head><body>
 <div id="app"></div><div id="md"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
@@ -268,9 +268,9 @@ function petBuddySvg(id){
 }
 function renderTodoWalkabout(){
  if(!ME||!D||!D.name)return;
- let profile=null;try{profile=JSON.parse(localStorage.getItem('prof:'+D.name)||'null')}catch(e){}
- const data=(profile&&profile.avatarData)||(()=>{try{return localStorage.getItem('bible-avatar:'+D.name)}catch(e){return null}})();
- const pet=profile&&profile.eq&&profile.eq.pet||'';
+ let profile=null,companion=null;try{profile=JSON.parse(localStorage.getItem('prof:'+D.name)||'null');companion=JSON.parse(localStorage.getItem('bible-companion:'+D.name)||'null')}catch(e){}
+ const data=(companion&&companion.avatarData)||(profile&&profile.avatarData)||(()=>{try{return localStorage.getItem('bible-avatar:'+D.name)}catch(e){return null}})();
+ const pet=(companion&&companion.pet)||(profile&&profile.eq&&profile.eq.pet)||'';
  let el=document.getElementById('todoWalkabout');
  if(!el){el=document.createElement('div');el.id='todoWalkabout';el.innerHTML='<img class="buddy-char" alt=""><div class="buddy-pet"></div>';document.body.appendChild(el);}
  const img=el.querySelector('img'),petBox=el.querySelector('.buddy-pet');
