@@ -2497,12 +2497,11 @@ var VIDEOS = {
     // --- 모자 (게더타운 스타일) ---
     { id: 'h_bucket', s: 'hat', v: 'bucket', n: '벙거지', p: 18 }, { id: 'h_beanie', s: 'hat', v: 'beanie', n: '털 비니', p: 20 },
     { id: 'h_beret', s: 'hat', v: 'beret', n: '베레모', p: 24 }, { id: 'h_hard', s: 'hat', v: 'hard', n: '안전모', p: 26 },
-    { id: 'h_bunny', s: 'hat', v: 'bunny', n: '토끼 귀', p: 30 }, { id: 'h_cat', s: 'hat', v: 'catears', n: '고양이 귀', p: 30 },
     { id: 'h_phones', s: 'hat', v: 'phones', n: '헤드폰', p: 34 }, { id: 'h_cowboy', s: 'hat', v: 'cowboy', n: '카우보이 모자', p: 36 },
     { id: 'h_chef', s: 'hat', v: 'chef', n: '요리사 모자', p: 38 }, { id: 'h_tophat', s: 'hat', v: 'tophat', n: '신사 모자', p: 42 },
     { id: 'h_flowerc', s: 'hat', v: 'flowerc', n: '꽃 화관', p: 44 }, { id: 'h_grad', s: 'hat', v: 'grad', n: '졸업 모자', p: 48 },
-    { id: 'h_wizard', s: 'hat', v: 'wizard', n: '마법사 모자', p: 52 }, { id: 'h_pirate', s: 'hat', v: 'pirate', n: '해적 모자', p: 60 },
-    { id: 'h_viking', s: 'hat', v: 'viking', n: '바이킹 투구', p: 72 }, { id: 'h_olive', s: 'hat', v: 'olive', n: '올리브 가지관', p: 92 },
+    { id: 'h_pirate', s: 'hat', v: 'pirate', n: '해적 모자', p: 60 },
+    { id: 'h_olive', s: 'hat', v: 'olive', n: '올리브 가지관', p: 92 },
     // --- 얼굴 ---
     { id: 'f_band', s: 'face', v: 'bandaid', n: '코 반창고', p: 12 }, { id: 'f_freck', s: 'face', v: 'freck', n: '주근깨', p: 15 },
     { id: 'f_blush', s: 'face', v: 'blush', n: '하트 볼터치', p: 16 }, { id: 'f_clown', s: 'face', v: 'clown', n: '빨간 코', p: 18 },
@@ -2514,9 +2513,9 @@ var VIDEOS = {
     // --- 목 ---
     { id: 'n_lanyard', s: 'neck', v: 'lanyard', n: '명찰 목걸이', p: 20 }, { id: 'n_bandana', s: 'neck', v: 'bandana', n: '파랑 반다나', p: 22 },
     { id: 'n_choker', s: 'neck', v: 'choker', n: '리본 초커', p: 28 }, { id: 'n_ntie', s: 'neck', v: 'ntie', n: '빨간 넥타이', p: 30 },
-    { id: 'n_starp', s: 'neck', v: 'starp', n: '별 목걸이', p: 36 }, { id: 'n_hphone', s: 'neck', v: 'hphone', n: '목 헤드폰', p: 38 },
-    { id: 'n_rainbow', s: 'neck', v: 'rainbow', n: '무지개 목도리', p: 42 }, { id: 'n_pearl', s: 'neck', v: 'pearl', n: '진주 목걸이', p: 44 },
-    { id: 'n_fish', s: 'neck', v: 'fish', n: '물고기 목걸이', p: 48 }, { id: 'n_chain', s: 'neck', v: 'chain', n: '금목걸이', p: 58 },
+    { id: 'n_starp', s: 'neck', v: 'starp', n: '별 목걸이', p: 36 },
+    { id: 'n_pearl', s: 'neck', v: 'pearl', n: '진주 목걸이', p: 44 },
+    { id: 'n_chain', s: 'neck', v: 'chain', n: '금목걸이', p: 58 },
     { id: 'n_cape', s: 'neck', v: 'cape', n: '빨간 망토', p: 62 }, { id: 'n_tallit', s: 'neck', v: 'tallit', n: '기도 숄', p: 76 }
   ];
   var THEMES = [
@@ -2574,6 +2573,8 @@ var VIDEOS = {
     if (typeof P.eq.ch === 'number') P.eq.ch = 'c' + P.eq.ch;
     P.stat = P.stat || {}; P.ach = P.ach || [];
     if (P.eq.hat === 'laurel') P.eq.hat = ''; if (P.eq.neck === 'tie') P.eq.neck = ''; if (P.eq.face === 'beard') P.eq.face = ''; if (P.eq.face === 'patch') P.eq.face = '';
+    if (['bunny','catears','wizard','viking'].indexOf(P.eq.hat) >= 0) P.eq.hat = '';
+    if (['hphone','rainbow','fish'].indexOf(P.eq.neck) >= 0) P.eq.neck = '';
   }
   function blank() { return { wc: 0, gc: 0, sc: 0, tot: 0, wtot: 0, gtot: 0, stot: 0, own: [], sunhyeOwnedChars: [], sunhyeLegacyOwnBackup: [], eq: { ch: 'c0', hat: '', face: '', neck: '', theme: 'auto', font: 'default' }, wk: [], gr: [], stat: {}, ach: [] }; }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -2704,6 +2705,24 @@ var VIDEOS = {
     saveLocal();
     return true;
   }
+  function grantNamedCharacterOwnershipOnce() {
+    if (!P) return false;
+    var who = String(user || '').replace(/\\s+/g, '');
+    var marker = who === '지민' ? 'jimin_rabbit_character_grant_20261125_v1' : who === '선혜' ? 'sunhye_rabbit_david_character_grant_20261125_v1' : '';
+    if (!marker) return false;
+    P.gr = Array.isArray(P.gr) ? P.gr : [];
+    if (P.gr.indexOf(marker) >= 0) return false;
+    P.own = Array.isArray(P.own) ? P.own : [];
+    var ids = who === '지민' ? ['c1'] : ['c1','h0'];
+    ids.forEach(function(id) { if (P.own.indexOf(id) < 0) P.own.push(id); });
+    if (who === '선혜') {
+      P.sunhyeOwnedChars = Array.isArray(P.sunhyeOwnedChars) ? P.sunhyeOwnedChars : ['c0'];
+      ids.forEach(function(id) { if (P.sunhyeOwnedChars.indexOf(id) < 0) P.sunhyeOwnedChars.push(id); });
+    }
+    P.gr.push(marker);
+    saveLocal();
+    return true;
+  }
   function uid(n) { return authUser ? authUser.uid : n.replace(/[\/\\.#$\[\]\s]+/g, '_').slice(0, 20); }
   function cloud(f) {
     if (!db || !user) return Promise.reject(new Error('Firebase 프로필 저장을 사용할 수 없습니다.'));
@@ -2820,7 +2839,7 @@ var VIDEOS = {
   function loadProfile() {
     if (!P) { loadLocal(); restoreRequestedProfile(); }
     applyTheme(); renderAcct(); renderShop();
-    if (!db || !user) { repairSunhyeCharacterOwnership(); initAch(); renderAcct(); renderShop(); return; }
+    if (!db || !user) { grantNamedCharacterOwnershipOnce(); repairSunhyeCharacterOwnership(); initAch(); renderAcct(); renderShop(); return; }
     var ref = db.collection('users').doc(uid(user));
     var isCoinCleanupAccount = String(user || '').replace(/\s+/g, '') === '최선혜';
     if (String(user || '').replace(/\s+/g, '') === '최선혜') {
@@ -2852,7 +2871,7 @@ var VIDEOS = {
         var localEq = P && P.eq ? Object.assign({}, P.eq) : null;
         var localAlreadyFixed = Array.isArray(P.gr) && P.gr.indexOf(SC_FIX_MARKER) >= 0;
         var cloudAlreadyFixed = Array.isArray(d.gr) && d.gr.indexOf(SC_FIX_MARKER) >= 0;
-        P = mergeProfile(P, d); normEq(); repairSunhyeCharacterOwnership();
+        P = mergeProfile(P, d); normEq(); grantNamedCharacterOwnershipOnce(); repairSunhyeCharacterOwnership();
 
         if (d.bibleCoinResetV1 !== true) { P.bibleCoinResetV1=true; cloud({bibleCoinResetV1:true}); }
         if (localEq && localEq.ch && localEq.ch !== 'c0') P.eq.ch = localEq.ch;
@@ -2882,7 +2901,7 @@ var VIDEOS = {
         ref.set(hydratePayload, { merge: true }).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
       } else {
         if (isCoinCleanupAccount && P.gr.indexOf(SC_FIX_MARKER) < 0) removeAccidentalSuccessCoins();
-        repairSunhyeCharacterOwnership();
+        grantNamedCharacterOwnershipOnce(); repairSunhyeCharacterOwnership();
         grantSunhyeWordCoinsOnce();
         grantJiminGiftOnce();
         ref.set(Object.assign({ wc: P.wc, gc: P.gc, sc: P.sc, coins: P.gc, completeCoins: P.sc, tot: P.tot, wtot: P.wtot, gtot: P.gtot, stot: P.stot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, bibleCoinResetV1:true, coinSyncRepairV1:true }, P)).then(function(){return ensureCoinRankAndNamedGifts(ref);}).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
