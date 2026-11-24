@@ -523,7 +523,22 @@ main{position:relative;z-index:1}
 .pet-sale{display:grid;gap:5px;padding:12px 14px;border-radius:12px;background:linear-gradient(110deg,#fff1e7,#ffe0d9);color:#7e2c20;text-align:center}
 .pet-sale b{font-size:15px}.pet-sale span{font-size:12px}.pet-sale strong{font-size:18px;font-variant-numeric:tabular-nums;color:#c62828}
 </style>
-</head>
+<style id="seasonal-theme-preview">
+.season-preview{height:82px;width:100%;position:relative;overflow:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 18px #fff4}
+.season-preview b{font:800 9px/1.2 Arial,sans-serif;letter-spacing:2px;z-index:2;margin-top:2px}
+.season-preview small{font-size:8px;z-index:2;margin-top:3px}
+.winter-preview{color:#345875;background:linear-gradient(160deg,#a9d5f3,#f7fcff 70%,#d5eafa)}
+.winter-preview:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#fff 1.7px,transparent 2px),radial-gradient(#fff 2px,transparent 2.5px);background-size:19px 22px,31px 35px;background-position:0 0,8px 11px;animation:previewSnow 2s linear infinite}
+.winter-preview .snow-pile{position:absolute;bottom:-9px;left:-8%;width:116%;height:29px;border-radius:50% 50% 0 0;background:linear-gradient(#fff,#dceefa);box-shadow:0 -4px 12px #fff}
+.snowflake{position:absolute;color:#fff;text-shadow:0 1px 5px #6aa5d9}.s1{left:18%;top:10px;font-size:19px}.s2{right:17%;top:18px;font-size:15px}.s3{left:70%;top:5px;font-size:12px}
+.xmas-preview{color:#ffe8b0;background:radial-gradient(ellipse at 50% 100%,#315b42,#10251e 72%)}
+.xmas-preview:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 25%,#ffd978 0 2px,transparent 5px),radial-gradient(circle at 83% 20%,#e85c55 0 2px,transparent 5px),radial-gradient(circle at 22% 65%,#ffe7a0 0 2px,transparent 6px),radial-gradient(circle at 78% 62%,#e85c55 0 2px,transparent 6px);filter:drop-shadow(0 0 5px #ffd978);animation:previewGlow 1.8s ease-in-out infinite alternate}
+.xmas-tree{position:absolute;top:1px;font-size:41px;filter:drop-shadow(0 0 8px #f7d47a)}
+.xmas-star{position:absolute;top:0;left:calc(50% - 5px);color:#ffe58d;z-index:2;text-shadow:0 0 9px #ffdc6d}
+.xmas-ornament{position:absolute;z-index:2;font-size:10px;text-shadow:0 0 8px #ffd56a}.o1{left:39%;top:35px;color:#f2c65c}.o2{right:38%;top:49px;color:#e75b57}
+.xmas-gift{position:absolute;right:17%;bottom:8px;font-size:19px;z-index:2}
+@keyframes previewSnow{to{background-position:0 22px,8px 46px}}@keyframes previewGlow{to{opacity:.45;filter:brightness(1.5)}}
+</style></head>
 <body>
 <main>
   <header><div class="date" id="date"></div><h1 id="title"></h1><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px"><button id="unifiedTodoOpen" type="button" aria-controls="unifiedTodoPanel" aria-expanded="false" style="display:inline-block;padding:9px 14px;border:0;border-radius:999px;background:var(--hl);color:var(--fg);font:600 .85rem var(--ui);cursor:pointer">To do 쓰러 가기</button></div></header>
@@ -2700,6 +2715,7 @@ var VIDEOS = {
     var e = (P && P.eq) || {}, t = e.theme || 'auto', r = document.documentElement, F = fontBy(e.font);
     if (t === 'auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme', t);
     r.style.setProperty('--ff', F.ff); r.style.setProperty('--ui', F.ui);
+    try { localStorage.setItem('affinity-season-theme', t); } catch (ignore) {}
   }
   function chById(id) { if (typeof id === 'number') id = 'c' + id; for (var i = 0; i < CHARS.length; i++) if (CHARS[i].id === id) return CHARS[i]; return CHARS[0]; }
   function heroChar() { return chById(P.eq.ch); }
@@ -2781,17 +2797,21 @@ var VIDEOS = {
       P.sunhyeLegacyOwnBackup = P.own.slice();
       changed = true;
     }
-    if (firstRepair || !Array.isArray(P.sunhyeOwnedChars)) {
-      var keep = ['c0'];
-      var equipped = P.eq && P.eq.ch;
-      if (equipped && charIds.indexOf(equipped) >= 0 && keep.indexOf(equipped) < 0) keep.push(equipped);
-      P.sunhyeOwnedChars = keep;
+    if (!Array.isArray(P.sunhyeOwnedChars)) {
+      P.sunhyeOwnedChars = ['c0'];
       changed = true;
     }
+    // 선혜에게 지급한 토끼(c1)와 다윗(h0)은 매 로그인·동기화 때도 보유 처리합니다.
+    // 장착 중인 캐릭터만 남기며 기존 목록을 덮어쓰지 않습니다.
+    ['c1','h0'].forEach(function(id) {
+      if (charIds.indexOf(id) >= 0 && P.sunhyeOwnedChars.indexOf(id) < 0) {
+        P.sunhyeOwnedChars.push(id); changed = true;
+      }
+    });
     P.sunhyeOwnedChars = P.sunhyeOwnedChars.filter(function(id, i, arr) {
       return charIds.indexOf(id) >= 0 && arr.indexOf(id) === i;
     });
-    if (P.sunhyeOwnedChars.indexOf('c0') < 0) P.sunhyeOwnedChars.unshift('c0');
+    if (P.sunhyeOwnedChars.indexOf('c0') < 0) { P.sunhyeOwnedChars.unshift('c0'); changed = true; }
     var allowed = P.sunhyeOwnedChars;
     var nextOwn = P.own.filter(function(id) {
       return charIds.indexOf(id) < 0 || allowed.indexOf(id) >= 0;
@@ -3216,7 +3236,11 @@ var VIDEOS = {
   }
   function pvNode(it, tab) {
     var d = document.createElement('div');
-    if (tab === 'theme') d.innerHTML = '<div class="swatch" style="background:' + it.c[0] + ';border-color:' + it.c[2] + '"><i style="background:' + it.c[2] + '"></i><b style="color:' + it.c[1] + '">가나다</b></div>';
+    if (tab === 'theme' && (it.t === 'winter' || it.t === 'christmas')) {
+      if (it.t === 'winter') d.innerHTML = '<div class="season-preview winter-preview"><span class="snow-pile"></span><span class="snowflake s1">❄</span><span class="snowflake s2">❄</span><span class="snowflake s3">✦</span><b>WINTER</b><small>눈 내리는 겨울 정원</small></div>';
+      else d.innerHTML = '<div class="season-preview xmas-preview"><span class="xmas-star">✦</span><span class="xmas-tree">🎄</span><span class="xmas-ornament o1">●</span><span class="xmas-ornament o2">●</span><span class="xmas-gift">🎁</span><b>CHRISTMAS</b><small>빛나는 성탄의 밤</small></div>';
+    }
+    else if (tab === 'theme') d.innerHTML = '<div class="swatch" style="background:' + it.c[0] + ';border-color:' + it.c[2] + '"><i style="background:' + it.c[2] + '"></i><b style="color:' + it.c[1] + '">가나다</b></div>';
     else if (tab === 'font') d.innerHTML = '<div class="fsw" style="font-family:' + it.ff + '">말씀</div>';
     else if (tab === 'pet') { d.className='pet-preview'; d.style.cssText='height:70px;display:grid;place-items:center;flex:none'; d.innerHTML=it.id ? petSvg(it.id,64) : '<span style="font-size:30px;color:#aaa">＋</span>'; return d; }
     else { var eq = Object.assign({}, P.eq); if (tab !== 'ch') eq[tab] = it.v; return previewEl(tab === 'ch' ? it : heroChar(), eq); }
