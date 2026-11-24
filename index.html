@@ -266,8 +266,8 @@
   :root[data-theme="sakura"] { --bg:#fdf5f6; --fg:#3a2a30; --muted:#9c8189; --accent:#c4577f; --line:#f1dce1; --hl:#f9e3e9; }
   :root[data-theme="summer"] { --bg:#eff7f9; --fg:#1a3039; --muted:#668590; --accent:#2a7f9e; --line:#d3e6ec; --hl:#dbeff5; }
   :root[data-theme="autumn"] { --bg:#faf3ea; --fg:#382b20; --muted:#9a8068; --accent:#b0562a; --line:#ead9c3; --hl:#f4e0c4; }
-  :root[data-theme="winter"] { --bg:#f2f5f9; --fg:#232f3e; --muted:#7b8899; --accent:#4d73a6; --line:#d9e0ea; --hl:#e1e9f4; }
-  :root[data-theme="christmas"] { --bg:#f7f3e9; --fg:#263b31; --muted:#7c8b7e; --accent:#b84444; --line:#e6ddd0; --hl:#e8eee5; --card:#fffdf8; }
+  :root[data-theme="winter"] { --bg:#eaf3fb; --fg:#24384d; --muted:#718ba5; --accent:#4b83b8; --line:#d1e1ef; --hl:#dcebf7; --card:#f8fcff; color-scheme:light; }
+  :root[data-theme="christmas"] { --bg:#101b19; --fg:#f5ead2; --muted:#b9a98a; --accent:#e6b85c; --line:#34463c; --hl:#263b31; --card:#192823; color-scheme:dark; }
   :root[data-theme="forest"] { --bg:#18241d; --fg:#dde9df; --muted:#8fa496; --accent:#8bc48b; --line:#2c4034; --hl:#264234; --card:color-mix(in srgb,var(--bg),white 7%); color-scheme:dark; }
   :root[data-theme="night"]  { --bg:#141a2e; --fg:#e4e8f7; --muted:#8d97bd; --accent:#f0cf7a; --line:#2a3358; --hl:#222b4d; --card:color-mix(in srgb,var(--bg),white 7%); color-scheme:dark; }
   :root[data-theme="parch"]  { --bg:#f3e9d2; --fg:#3a2d1c; --muted:#8c7a58; --accent:#7d5a34; --line:#e0d1ac; --hl:#ebdcb5; }
@@ -480,6 +480,20 @@
   @media(max-width:390px){.race-top>div{padding:6px}.race-rank-row{grid-template-columns:18px 9px 53px minmax(24px,1fr) 29px;gap:4px}.race-controls button{min-height:54px}.fish-codex{grid-template-columns:repeat(3,minmax(0,1fr))}.fish-book-item{font-size:.54rem;padding:3px 2px}}
 
 html.shop-only,html.shop-only body{background:transparent!important;margin:0!important;padding:0!important;min-height:100vh!important}.shop-only #app,.shop-only main{display:none!important}.shop-only .shop-ov{display:flex!important;position:fixed!important;inset:0!important;z-index:99999!important;overflow:auto!important;background:radial-gradient(80% 60% at 50% 30%,rgba(120,80,40,.5),rgba(18,10,5,.85))!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important;padding:14px 10px!important}.shop-only .shop-ov[hidden]{display:flex!important}
+
+/* Seasonal theme scenery */
+body{position:relative;isolation:isolate}
+body::before,body::after{content:"";position:fixed;pointer-events:none;z-index:0;display:block}
+main{position:relative;z-index:1}
+:root[data-theme="winter"] body::before{inset:-15vh -5vw 0;opacity:.75;background-image:radial-gradient(3px 3px at 8% 12%,#fff 98%,transparent),radial-gradient(2px 2px at 18% 62%,#fff 98%,transparent),radial-gradient(4px 4px at 28% 32%,#fff 98%,transparent),radial-gradient(2px 2px at 38% 82%,#fff 98%,transparent),radial-gradient(3px 3px at 48% 18%,#fff 98%,transparent),radial-gradient(2px 2px at 58% 52%,#fff 98%,transparent),radial-gradient(4px 4px at 68% 72%,#fff 98%,transparent),radial-gradient(2px 2px at 78% 28%,#fff 98%,transparent),radial-gradient(3px 3px at 88% 88%,#fff 98%,transparent),radial-gradient(2px 2px at 96% 42%,#fff 98%,transparent);background-size:230px 260px;animation:winterSnow 13s linear infinite}
+:root[data-theme="winter"] body::after{left:-5vw;right:-5vw;bottom:-5px;height:76px;z-index:2;background:radial-gradient(70px 25px at 8% 100%,#fff 98%,transparent 100%),radial-gradient(120px 38px at 24% 100%,#fff 98%,transparent 100%),radial-gradient(95px 32px at 44% 100%,#fff 98%,transparent 100%),radial-gradient(135px 42px at 68% 100%,#fff 98%,transparent 100%),radial-gradient(110px 34px at 91% 100%,#fff 98%,transparent 100%),linear-gradient(to bottom,transparent 35%,#fafdff 36%);filter:drop-shadow(0 -5px 10px #a9c9e555)}
+@keyframes winterSnow{from{transform:translateY(-4vh)}to{transform:translateY(9vh)}}
+:root[data-theme="christmas"] body::before{inset:0 0 auto;height:112px;z-index:2;opacity:.98;background:radial-gradient(circle at 8% 61%,#f8d36a 0 4px,transparent 5px),radial-gradient(circle at 20% 75%,#e85d55 0 7px,transparent 8px),radial-gradient(circle at 34% 56%,#f4d77c 0 5px,transparent 6px),radial-gradient(circle at 49% 79%,#6fc18b 0 7px,transparent 8px),radial-gradient(circle at 65% 57%,#e85d55 0 6px,transparent 7px),radial-gradient(circle at 81% 74%,#f4d77c 0 7px,transparent 8px),radial-gradient(circle at 94% 57%,#71c48b 0 5px,transparent 6px),radial-gradient(ellipse at 50% -25%,transparent 0 65%,#b7a06c 65.5% 66.5%,transparent 67%);filter:drop-shadow(0 0 7px #e9c66c88);animation:xmasGlow 3.4s ease-in-out infinite alternate}
+:root[data-theme="christmas"] body::after{inset:0;z-index:2;opacity:.58;background:radial-gradient(circle at 12% 14%,#ffe7a1 0 2px,transparent 7px),radial-gradient(circle at 38% 8%,#e85d55 0 2px,transparent 8px),radial-gradient(circle at 71% 12%,#ffe7a1 0 2px,transparent 8px),radial-gradient(circle at 91% 19%,#6fc18b 0 2px,transparent 8px),radial-gradient(ellipse at 50% 115%,#d0a75b22,transparent 55%);animation:xmasTwinkle 4s ease-in-out infinite alternate}
+@keyframes xmasGlow{from{opacity:.72;filter:drop-shadow(0 0 3px #e9c66c66)}to{opacity:1;filter:drop-shadow(0 0 12px #f5cf7288)}}
+@keyframes xmasTwinkle{from{opacity:.3}to{opacity:.75}}
+@media(prefers-reduced-motion:reduce){:root[data-theme="winter"] body::before,:root[data-theme="christmas"] body::before,:root[data-theme="christmas"] body::after{animation:none}}
+
 </style>
 <script>if(new URLSearchParams(location.search).get("shop")==="1"){document.documentElement.classList.add("shop-only");document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("shop-only");});}</script>
 
@@ -3688,7 +3702,7 @@ var VIDEOS = {
     grid.hidden = false; board.hidden = true; grid.innerHTML = '';
     var list;
     if (shopTab === 'ch') list = CHARS.filter(function (c) { return !c.h; }).concat(CHARS.filter(function (c) { return c.h; }).sort(function (a, b) { return a.p - b.p; }));
-    else if (shopTab === 'theme') list = THEMES.slice().sort(function (a, b) { if (a.p === 0 && b.p !== 0) return -1; if (b.p === 0 && a.p !== 0) return 1; return (a.o || 0) - (b.o || 0); }); else if (shopTab === 'font') list = FONTS;
+    else if (shopTab === 'theme') list = THEMES.slice().sort(function (a, b) { var rank = { winter: 0, christmas: 1, auto: 2, light: 3, dark: 4 }; var ar = Object.prototype.hasOwnProperty.call(rank, a.t) ? rank[a.t] : 10; var br = Object.prototype.hasOwnProperty.call(rank, b.t) ? rank[b.t] : 10; return ar - br || (a.p - b.p); }); else if (shopTab === 'font') list = FONTS;
     else if (shopTab === 'pet') list = [{id:'',kind:'',n:'없음',p:0}].concat(PETS);
     else list = [{ id: '', v: '', n: '없음', p: 0 }].concat(ITEMS.filter(function (i) { return i.s === shopTab; }));
     // 이전 커밋 방식: 각 상점 탭에서 무료 상품을 제외한 첫 유료 상품 3개에 입문 가격을 적용합니다.
