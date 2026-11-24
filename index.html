@@ -2867,7 +2867,7 @@ var VIDEOS = {
   function grantSunhyeRestoredPurchasesOnce() {
     if(!P || String(user||'').replace(/\s+/g,'')!=='선혜')return false;
     var marker='sunhye_restore_theme_fonts_20261125_v1';P.gr=Array.isArray(P.gr)?P.gr:[];if(P.gr.indexOf(marker)>=0)return false;
-    P.own=Array.isArray(P.own)?P.own:[];['t_parch','f_gaegu','f_melody'].forEach(function(id){if(P.own.indexOf(id)<0)P.own.push(id);});P.gr.push(marker);saveLocal();cloud({own:P.own,gr:union(marker)});return true;
+    P.own=Array.isArray(P.own)?P.own:[];['t_parch','f_gaegu','f_melody'].forEach(function(id){if(P.own.indexOf(id)<0)P.own.push(id);});P.gr.push(marker);saveLocal();if(db&&user)cloud({own:P.own,gr:union(marker)});return true;
   }
   function loadProfile() {
     if (!P) { loadLocal(); restoreRequestedProfile(); }
@@ -3617,7 +3617,7 @@ var VIDEOS = {
       card.appendChild(pvNode(it, shopTab));
       if (shopTab === 'pet' && it.id) card.insertAdjacentHTML('afterbegin','<span class="pet-new">NEW</span>');
       if (rk) card.insertAdjacentHTML('afterbegin', '<span class="rb">' + RLAB[rk] + '</span>');
-      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + (shopTab === 'pet' && it.id ? '<span style="display:block;font-size:10px;color:#c43b35;margin-top:2px"><s>'+it.p+' 코인</s> · 80% 세일</span>' : ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '')) + '</div>');
+      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + (shopTab === 'pet' && it.id ? (Date.now() < PET_SALE_END ? '<span style="display:block;font-size:10px;color:#c43b35;margin-top:2px"><s>'+it.p+' 코인</s> · 80% 세일</span>' : '<span style="display:block;font-size:10px;color:#888;margin-top:2px">기간 한정 세일 종료</span>') : ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '')) + '</div>');
       var b = document.createElement('button');
       b.innerHTML = on ? '사용 중' : owned ? '사용하기' : (pend && pend === it.id ? '한 번 더!' : payPrice + (payType === 'sc' ? IC.trophy : (payType === 'gc' ? IC.game : IC.book))); b.disabled = on;
       b.className = (pend && pend === it.id) ? 'conf' : (owned && it.p > 0 ? 'own' : '');
