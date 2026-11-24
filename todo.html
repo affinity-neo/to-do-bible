@@ -66,19 +66,13 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 @keyframes todoPetHop{0%,100%{transform:translate(0,0) rotate(4deg)}30%{transform:translate(5px,-12px) rotate(9deg)}60%{transform:translate(-3px,-4px) rotate(-5deg)}}
 @media(min-width:761px){#todoWalkabout{right:32px;bottom:24px;width:164px;height:164px}#todoWalkabout .buddy-char{width:132px;height:132px}#todoWalkabout .buddy-pet{width:94px;height:102px}#todoWalkabout .buddy-pet svg{width:94px!important;height:102px!important}}
 </style><style id="seasonal-todo-themes">
-:root[data-t=winter]{--bg:#eaf4fc;--fg:#233b51;--mu:#6e8aa3;--pill:#f5fbff;--line:#cfe1ef;--card:#fff;--acc:#4b83b8;--accfg:#fff}
-:root[data-t=christmas]{--bg:#101d19;--fg:#f6ecd7;--mu:#b8aa8e;--pill:#1b2d26;--line:#344b3e;--card:#20352b;--acc:#d8ad52;--accfg:#17251e}
+:root[data-t=winter]{--bg:#eaf5ff;--fg:#29415a;--mu:#7695af;--pill:#f5fbff;--line:#d0e5f5;--card:#fff;--acc:#4d91c9;--accfg:#fff}
 #seasonalFx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-#seasonalFx .flakes{position:absolute;inset:-10% 0 0;background-image:radial-gradient(#fff 1.5px,transparent 2px),radial-gradient(#fff 2px,transparent 2.5px),radial-gradient(#fff 1px,transparent 1.5px);background-size:55px 62px,91px 100px,37px 44px;animation:todoSnow 7s linear infinite;opacity:.9}
-#seasonalFx .snowbank{position:absolute;bottom:-12px;left:-5%;width:110%;height:56px;background:radial-gradient(ellipse at 10% 100%,#fff 0 65%,transparent 67%),radial-gradient(ellipse at 36% 100%,#fafdff 0 66%,transparent 68%),radial-gradient(ellipse at 68% 100%,#fff 0 66%,transparent 68%),radial-gradient(ellipse at 94% 100%,#fafdff 0 65%,transparent 67%);filter:drop-shadow(0 -5px 9px #8bb9d655)}
-#seasonalFx .garland{position:absolute;top:-35px;left:-5%;width:110%;height:105px;border-bottom:3px solid #b89b5c;border-radius:0 0 50% 50%;filter:drop-shadow(0 2px 4px #f3cb6c88)}
-#seasonalFx .bulbs{position:absolute;top:26px;left:0;width:100%;display:flex;justify-content:space-around}
-#seasonalFx .bulbs i{width:10px;height:14px;border-radius:50%;background:#f5cf72;box-shadow:0 0 12px 5px #f5cf7288;animation:bulbGlow 1.4s ease-in-out infinite alternate}
-#seasonalFx .bulbs i:nth-child(2n){background:#e85c55;box-shadow:0 0 12px 5px #e85c5588;animation-delay:.5s}
-#seasonalFx .tree{position:absolute;right:12px;bottom:10px;font-size:52px;filter:drop-shadow(0 0 10px #e9c56b88);animation:treeBob 3s ease-in-out infinite}
-#seasonalFx .star{position:absolute;right:49px;bottom:63px;color:#ffe08a;font-size:17px;text-shadow:0 0 12px #ffda6a;animation:bulbGlow 1.5s infinite alternate}
+#seasonalFx .flakes{position:absolute;inset:-18% 0 0;background-image:radial-gradient(#fff 3px,transparent 4px),radial-gradient(#fff 2px,transparent 3px),radial-gradient(#fff 5px,transparent 6px),radial-gradient(#fff 1px,transparent 2px);background-size:49px 57px,27px 33px,83px 91px,17px 21px;animation:todoSnow 4.8s linear infinite;filter:drop-shadow(0 0 4px #fff)}
+#seasonalFx .snowbank{position:absolute;bottom:-12px;left:-5%;width:110%;height:90px;background:radial-gradient(ellipse at 10% 100%,#fff 0 65%,transparent 67%),radial-gradient(ellipse at 36% 100%,#fafdff 0 66%,transparent 68%),radial-gradient(ellipse at 68% 100%,#fff 0 66%,transparent 68%),radial-gradient(ellipse at 94% 100%,#fafdff 0 65%,transparent 67%);filter:drop-shadow(0 -7px 13px #8bb9dd77)}
+#seasonalFx .ice-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,#c6e7ff77,transparent 55%),radial-gradient(ellipse at 100% 100%,#d9efff44,transparent 40%)}
 #app,.nav,#todoWalkabout{position:relative;z-index:1}
-@keyframes todoSnow{to{transform:translateY(15vh)}}@keyframes bulbGlow{to{opacity:.4;filter:brightness(1.6)}}@keyframes treeBob{50%{transform:translateY(-5px)}}
+@keyframes todoSnow{to{transform:translateY(22vh)}}
 @media(prefers-reduced-motion:reduce){#seasonalFx *{animation:none!important}}
 </style></head><body>
 <div id="app"></div><div id="md"></div>
@@ -376,11 +370,11 @@ auth.onAuthStateChanged(u=>{U.forEach(f=>f());U=[];UC();UC=()=>{};ME=u;S.ready=0
  U.push(db.collection('crews').onSnapshot(s=>{S.crews=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts||0)-(a.ts||0));render()}))});
 function applySeasonalTodoTheme(){
  let theme='auto';try{theme=localStorage.getItem('affinity-season-theme')||'auto';if(theme==='auto'){const raw=localStorage.getItem('prof:'+((D&&D.name)||''));if(raw){const p=JSON.parse(raw);theme=p.eq?.theme||'auto'}}}catch(e){}
- if(!['winter','christmas'].includes(theme))theme='auto';
+ if(theme!=='winter')theme='auto';
  if(theme==='auto'){document.documentElement.removeAttribute('data-t');const old=document.getElementById('seasonalFx');if(old)old.remove();return}
- document.documentElement.dataset.t=theme;
+ document.documentElement.dataset.t='winter';
  let fx=document.getElementById('seasonalFx');if(!fx){fx=document.createElement('div');fx.id='seasonalFx';document.body.appendChild(fx)}
- fx.innerHTML=theme==='winter'?'<div class="flakes"></div><div class="snowbank"></div>':'<div class="garland"></div><div class="bulbs"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="tree">🎄</div><div class="star">✦</div>';
+ fx.innerHTML='<div class="ice-glow"></div><div class="flakes"></div><div class="snowbank"></div>';
 }
 window.addEventListener('storage',e=>{if(e.key==='affinity-season-theme'||(e.key||'').startsWith('prof:'))applySeasonalTodoTheme()});
 function render(){applySeasonalTodoTheme();D.cats=(D.cats||[]).map(c=>({...c,priv:0}));D.rewards=D.rewards||[];D.badges=D.badges||[];document.documentElement.dataset.t=D.theme;const app=document.getElementById('app');
