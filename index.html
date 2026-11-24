@@ -2489,11 +2489,11 @@ var VIDEOS = {
     {id:'pet_lamb',n:'몽실 양',p:45,kind:'lamb'}, {id:'pet_fox',n:'꼬리 여우',p:55,kind:'fox'},
     {id:'pet_turtle',n:'느긋 거북이',p:65,kind:'turtle'}, {id:'pet_bird',n:'짹짹 새',p:75,kind:'bird'},
     {id:'pet_penguin',n:'꼬마 펭귄',p:85,kind:'penguin'},
-    {id:'pet_cat',n:'식빵 고양이',p:100,kind:'cat'}, {id:'pet_puppy',n:'복슬 강아지',p:120,kind:'puppy'},
-    {id:'pet_bunny',n:'당근 토끼',p:140,kind:'bunny'}, {id:'pet_panda',n:'아기 판다',p:170,kind:'panda'},
-    {id:'pet_deer',n:'숲속 아기 사슴',p:280,kind:'deer'}
+    {id:'pet_cat',n:'식빵 고양이',p:45,kind:'cat'}, {id:'pet_puppy',n:'복슬 강아지',p:55,kind:'puppy'},
+    {id:'pet_bunny',n:'당근 토끼',p:65,kind:'bunny'}, {id:'pet_panda',n:'아기 판다',p:75,kind:'panda'},
+    {id:'pet_deer',n:'숲속 아기 사슴',p:90,kind:'deer'}
   ];
-  var PET_SALE_END = new Date('2026-11-26T12:01:00+09:00').getTime();
+  var PET_SALE_END = new Date('2026-11-26T12:00:00+09:00').getTime();
   function petSvg(id, size) {
     var outline='#795548', eye='#49352f', blush='#f3a6a7';
     var body='',extra='',face='',feet='';
@@ -3089,7 +3089,7 @@ var VIDEOS = {
   function curStreak() { var st = P.stat, yd = new Date(); yd.setDate(yd.getDate() - 1); return (st.last === dayStr() || st.last === dayStr(yd)) ? (st.streak || 0) : 0; }
   // 등급: 가격으로 정해요 (일반 / 희귀 / 영웅 / 전설)
   var RLAB = { com: '일반', rare: '희귀', epic: '영웅', leg: '전설' };
-  function rarity(it, cur) { if (!it.p) return ''; var T = cur === 'gc' ? [80, 150, 260] : [25, 55, 90]; return it.p >= T[2] ? 'leg' : it.p >= T[1] ? 'epic' : it.p >= T[0] ? 'rare' : 'com'; }
+  function rarity(it, cur) { if (!it.p) return ''; if (String(it.id||'').indexOf('pet_')===0) { var pi=PETS.findIndex(function(x){return x.id===it.id;}); return pi>=9?'leg':pi>=7?'epic':pi>=5?'rare':'com'; } var T = cur === 'gc' ? [80, 150, 260] : [25, 55, 90]; return it.p >= T[2] ? 'leg' : it.p >= T[1] ? 'epic' : it.p >= T[0] ? 'rare' : 'com'; }
   function countRar(rs) {
     var n = 0;
     [[CHARS, 'gc'], [THEMES, 'gc'], [FONTS, 'gc'], [PETS, 'gc'], [ITEMS, 'wc']].forEach(function (g) {
