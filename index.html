@@ -519,6 +519,15 @@ main{position:relative;z-index:1}
 .pet-new{display:inline-flex;align-items:center;justify-content:center;background:#e53935;color:#fff;font-size:9px;font-weight:900;letter-spacing:.4px;border-radius:4px;padding:2px 5px;margin-left:5px;vertical-align:middle}
 .pet-sale{display:grid;gap:5px;padding:12px 14px;border-radius:12px;background:linear-gradient(110deg,#fff1e7,#ffe0d9);color:#7e2c20;text-align:center}
 .pet-sale b{font-size:15px}.pet-sale span{font-size:12px}.pet-sale strong{font-size:18px;font-variant-numeric:tabular-nums;color:#c62828}
+
+#winterLaunchBanner{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-10px 0 24px;padding:14px 16px;border:1px solid #9bc9e8;border-radius:16px;text-align:left;color:#16466b;background:radial-gradient(circle at 90% 10%,#fff 0 2px,transparent 3px),radial-gradient(circle at 78% 80%,#fff 0 3px,transparent 4px),linear-gradient(115deg,#f3fbff,#d9efff 55%,#b8dcf5);box-shadow:0 4px 0 #80b5d8,0 9px 18px #3c83b522;cursor:pointer;position:relative;overflow:hidden;font-family:var(--ui)}
+#winterLaunchBanner .winter-promo-copy{display:grid;gap:4px;position:relative;z-index:1;min-width:0}
+#winterLaunchBanner small{font-size:9px;font-weight:900;letter-spacing:1.3px;color:#397ca7}
+#winterLaunchBanner strong{font-size:clamp(15px,3.5vw,20px);font-weight:900;line-height:1.3;color:#174d75}
+#winterLaunchBanner b{font-size:13px;color:#286b9b}
+#winterLaunchBanner em{font-style:normal;font-size:11px;font-weight:900;color:#c34e63}
+#winterLaunchBanner .winter-promo-art{font-size:48px;line-height:1;white-space:nowrap;filter:drop-shadow(0 4px 3px #4a87ad44)}
+@media(max-width:380px){#winterLaunchBanner{padding:12px}#winterLaunchBanner .winter-promo-art{font-size:38px}}
 </style>
 <style id="seasonal-theme-preview">
 .season-preview{height:112px;width:100%;position:relative;overflow:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 25px #fff9,0 5px 15px #457ca333;border:1px solid #d6eafa}
@@ -549,6 +558,8 @@ main{position:relative;z-index:1}
 <main>
   <header><div class="date" id="date"></div><h1 id="title"></h1><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px"><button id="unifiedTodoOpen" type="button" aria-controls="unifiedTodoPanel" aria-expanded="false" style="display:inline-block;padding:9px 14px;border:0;border-radius:999px;background:var(--hl);color:var(--fg);font:600 .85rem var(--ui);cursor:pointer">To do 쓰러 가기</button></div></header>
 <button id="petLaunchBanner" type="button" aria-label="반려동물 오픈 특가 80% 할인, 상점 열기"><span class="pet-poster-copy"><small>NEW PETS · LIMITED</small><strong>반려동물 오픈 특가</strong><b>80<em>% OFF</em></b><i>11.26 12:00 마감</i><span id="petLaunchTimer">남은 시간 계산 중…</span></span><span class="pet-poster-friends" aria-hidden="true"></span></button>
+
+  <button id="winterLaunchBanner" type="button" aria-label="반려동물 두 마리 구매하고 겨울 테마 받기, 11월 27일 정오 마감"><span class="winter-promo-copy"><small>❄ WINTER SPECIAL · LIMITED REWARD</small><strong>반려동물 2마리 구매하면<br>겨울 테마 무료 증정!</strong><b>🐾 두 마리 모으고 겨울 왕국을 만나 보세요</b><em>⏰ 11월 27일 오후 12시까지</em></span><span class="winter-promo-art" aria-hidden="true">🐰❄️</span></button>
 
   <div class="player">
     <div class="row">
@@ -3148,6 +3159,7 @@ var VIDEOS = {
     P.gr = Array.isArray(P.gr) ? P.gr : [];
     var count = PETS.filter(function(p){ return P.own.indexOf(p.id) >= 0; }).length;
     var marker = 'winter_theme_pet_pair_reward_v1';
+    if (Date.now() > new Date('2026-11-27T12:00:00+09:00').getTime()) return false;
     if (count < 2 || P.gr.indexOf(marker) >= 0 || P.own.indexOf('t_winter') >= 0) return false;
     P.own.push('t_winter'); P.gr.push(marker); saveLocal();
     cloud({own:union('t_winter'),gr:union(marker)});
@@ -3791,6 +3803,8 @@ var VIDEOS = {
   }
   document.getElementById('shopBtn').onclick = openShop;
   var petBanner=document.getElementById('petLaunchBanner');
+  var winterBanner=document.getElementById('winterLaunchBanner');
+  if(winterBanner)winterBanner.onclick=function(){shopTab='theme';openShop();};
   var petFriends=document.querySelector('.pet-poster-friends');if(petFriends)petFriends.innerHTML=['pet_fox','pet_lamb','pet_bunny','pet_puppy'].map(function(id){return petSvg(id,68)}).join('');
   var bannerSaleEnded=false;function petLaunchTick(){var el=document.getElementById('petLaunchTimer');if(!el)return;var left=Math.max(0,PET_SALE_END-Date.now()),h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),z=Math.floor(left%60000/1000);el.textContent=left?'⏰ '+h+'시간 '+String(m).padStart(2,'0')+':'+String(z).padStart(2,'0'):'특가 종료';if(!left&&!bannerSaleEnded){bannerSaleEnded=true;if(shopTab==='pet'&&!document.getElementById('shopOv').hidden)renderShop();}}
   if(petBanner)petBanner.onclick=function(){shopTab='pet';openShop();};petLaunchTick();setInterval(petLaunchTick,1000);
