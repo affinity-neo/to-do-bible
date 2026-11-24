@@ -3181,7 +3181,7 @@ var VIDEOS = {
     var d = document.createElement('div');
     if (tab === 'theme') d.innerHTML = '<div class="swatch" style="background:' + it.c[0] + ';border-color:' + it.c[2] + '"><i style="background:' + it.c[2] + '"></i><b style="color:' + it.c[1] + '">가나다</b></div>';
     else if (tab === 'font') d.innerHTML = '<div class="fsw" style="font-family:' + it.ff + '">말씀</div>';
-    else if (tab === 'pet') { d.className='pet-preview'; d.style.cssText='height:92px;display:grid;place-items:center;flex:none'; d.innerHTML=it.id ? petSvg(it.id,64) : '<span style="font-size:30px;color:#aaa">＋</span>'; return d; }
+    else if (tab === 'pet') { d.className='pet-preview'; d.style.cssText='height:70px;display:grid;place-items:center;flex:none'; d.innerHTML=it.id ? petSvg(it.id,64) : '<span style="font-size:30px;color:#aaa">＋</span>'; return d; }
     else { var eq = Object.assign({}, P.eq); if (tab !== 'ch') eq[tab] = it.v; return previewEl(tab === 'ch' ? it : heroChar(), eq); }
     return d.firstChild;
   }
