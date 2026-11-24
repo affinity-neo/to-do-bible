@@ -3170,7 +3170,7 @@ var VIDEOS = {
   var loginOpen = false;
   function startPetSaleTimer() {
     if (window.__petSaleTimer) clearInterval(window.__petSaleTimer);
-    function tick(){var el=document.getElementById('petSaleTimer');if(!el)return;var left=Math.max(0,PET_SALE_END-Date.now()),h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);el.textContent=left>0?'⏳ '+h+'시간 '+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'):'세일 종료';if(!left&&shopTab==='pet')renderShop();}
+    var ended=false;function tick(){var el=document.getElementById('petSaleTimer');if(!el){clearInterval(window.__petSaleTimer);return;}var left=Math.max(0,PET_SALE_END-Date.now()),h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);el.textContent=left>0?'⏳ '+h+'시간 '+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'):'세일 종료';if(!left&&!ended){ended=true;clearInterval(window.__petSaleTimer);window.__petSaleTimer=null;renderShop();}}
     tick();window.__petSaleTimer=setInterval(tick,1000);
   }
   function syncWalkabout(data) {
@@ -3625,7 +3625,7 @@ var VIDEOS = {
     });
     var INFO = { ch: '영웅·전설 캐릭터는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', theme: '영웅·전설 테마는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', font: '등급에 따라 구매 코인이 달라져요.', pet: '내 캐릭터 곁을 졸졸 따라다니는 전신 반려동물이에요. 구매 후 캐릭터와 함께 말씀·TO-DO 화면에 나타나요.', ach: '업적을 달성하면 레벨이 올라요.', rank: '현재 보유한 코인 수를 기준으로 실시간으로 바뀌는 순위예요.' };
     var infoEl = document.getElementById('sinfo');
-    infoEl.innerHTML = shopTab === 'pet' ? '<div class="pet-sale"><span class="pet-new">NEW</span><b>🐾 반려동물 초특가 세일</b><span>오늘부터 단 3일 · 최대 80% 할인</span><strong id="petSaleTimer">남은 시간 계산 중…</strong></div><div style="margin-top:8px">'+INFO.pet+'</div>' : (INFO[shopTab] || '영웅·전설 등급은 완료 코인으로 구매해요. 예수님은 특별 전설 캐릭터입니다. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.');
+    infoEl.innerHTML = shopTab === 'pet' ? '<div class="pet-sale"><b>🐾 오픈 특가 · 80% OFF</b><strong id="petSaleTimer">남은 시간 계산 중…</strong></div><div style="margin-top:8px">'+INFO.pet+'</div>' : (INFO[shopTab] || '영웅·전설 등급은 완료 코인으로 구매해요. 예수님은 특별 전설 캐릭터입니다. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.');
     if (shopTab === 'pet') startPetSaleTimer();
     var grid = document.getElementById('sgrid'), board = document.getElementById('sboard'), sc = document.getElementById('scol');
     if (shopTab === 'rank' || shopTab === 'ach') { sc.hidden = true; grid.hidden = true; board.hidden = false; if (shopTab === 'rank') renderBoard(); else renderAch(); return; }
@@ -3684,7 +3684,7 @@ var VIDEOS = {
   document.getElementById('shopBtn').onclick = openShop;
   var petBanner=document.getElementById('petLaunchBanner');
   var petFriends=document.querySelector('.pet-poster-friends');if(petFriends)petFriends.innerHTML=['pet_fox','pet_lamb','pet_bunny','pet_puppy'].map(function(id){return petSvg(id,68)}).join('');
-  function petLaunchTick(){var el=document.getElementById('petLaunchTimer');if(!el)return;var left=Math.max(0,PET_SALE_END-Date.now()),h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),z=Math.floor(left%60000/1000);el.textContent=left?'⏰ '+h+'시간 '+String(m).padStart(2,'0')+':'+String(z).padStart(2,'0'):'특가 종료';if(!left&&shopTab==='pet'&&!document.getElementById('shopOv').hidden)renderShop();}
+  var bannerSaleEnded=false;function petLaunchTick(){var el=document.getElementById('petLaunchTimer');if(!el)return;var left=Math.max(0,PET_SALE_END-Date.now()),h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),z=Math.floor(left%60000/1000);el.textContent=left?'⏰ '+h+'시간 '+String(m).padStart(2,'0')+':'+String(z).padStart(2,'0'):'특가 종료';if(!left&&!bannerSaleEnded){bannerSaleEnded=true;if(shopTab==='pet'&&!document.getElementById('shopOv').hidden)renderShop();}}
   if(petBanner)petBanner.onclick=function(){shopTab='pet';openShop();};petLaunchTick();setInterval(petLaunchTick,1000);
   document.getElementById('shopX').onclick = closeShop;
   document.getElementById('shopOv').addEventListener('pointerdown', function (e) { if (e.target === this) closeShop(); });
