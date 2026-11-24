@@ -2707,7 +2707,7 @@ var VIDEOS = {
   }
   function grantNamedCharacterOwnershipOnce() {
     if (!P) return false;
-    var who = String(user || '').replace(/\\s+/g, '');
+    var who = String(user || '').replace(/\s+/g, '');
     var marker = who === '지민' ? 'jimin_rabbit_character_grant_20261125_v1' : who === '선혜' ? 'sunhye_rabbit_david_character_grant_20261125_v1' : '';
     if (!marker) return false;
     P.gr = Array.isArray(P.gr) ? P.gr : [];
