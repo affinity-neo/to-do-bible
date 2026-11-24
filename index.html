@@ -2490,24 +2490,14 @@ var VIDEOS = {
     {id:'pet_turtle',n:'느긋 거북이',p:65,kind:'turtle'}, {id:'pet_bird',n:'짹짹 새',p:75,kind:'bird'},
     {id:'pet_penguin',n:'꼬마 펭귄',p:85,kind:'penguin'},
     {id:'pet_cat',n:'식빵 고양이',p:45,kind:'cat'}, {id:'pet_puppy',n:'복슬 강아지',p:55,kind:'puppy'},
-    {id:'pet_bunny',n:'당근 토끼',p:65,kind:'bunny'}, {id:'pet_panda',n:'아기 판다',p:75,kind:'panda'},
+    {id:'pet_bunny',n:'당근 토끼',p:65,kind:'bunny'},
     {id:'pet_deer',n:'숲속 아기 사슴',p:90,kind:'deer'}
   ];
   var PET_SALE_END = new Date('2026-11-26T12:00:00+09:00').getTime();
   function petSvg(id, size) {
  var n=size||68,w=n,h=Math.round(n*1.03),o='#bd7843',stroke=o,ink='#38271d',blush='#ffc9c2';
  var art={
- pet_cat:`
- <path d="M112 87Q153 96 139 132Q127 158 94 143Q81 136 94 122Q105 111 117 124Q130 120 121 105Z" fill="#ffc36f" stroke="#bd7843" stroke-width="5" stroke-linejoin="round"/>
- <path d="M119 105q10 8 5 18m-9-4q7 3 8 10" fill="none" stroke="#e99b4e" stroke-width="5" stroke-linecap="round"/>
- <path d="M33 75Q27 33 49 15Q62 7 76 42Q92 6 111 16Q132 31 126 77Q145 92 128 119Q117 136 76 135Q33 136 24 111Q14 88 33 75Z" fill="#ffc875" stroke="#bd7843" stroke-width="5" stroke-linejoin="round"/>
- <path d="M42 49Q43 25 52 23Q64 27 66 49M99 49Q104 24 114 23Q123 30 119 51" fill="#fff8e9"/>
- <path d="M69 20l-3 17m16-17-1 16m9-15-1 13" stroke="#e69a4b" stroke-width="5" stroke-linecap="round"/>
- <path d="M27 83q18-1 34-12m69 12q-16-1-30-12" fill="none" stroke="#e99c50" stroke-width="4" stroke-linecap="round"/>
- <circle cx="59" cy="81" r="6" fill="#39271c"/><circle cx="101" cy="81" r="6" fill="#39271c"/><ellipse cx="80" cy="86" rx="3" ry="2" fill="#d77c54"/>
- <path d="M80 89q-7 9-15 2m15-2q7 9 15 2" fill="none" stroke="#bd7843" stroke-width="3" stroke-linecap="round"/>
- <path d="M43 119Q60 128 80 128Q103 128 117 117" fill="#fffdf8" stroke="#bd7843" stroke-width="4" stroke-linecap="round"/>
- `,
+ pet_cat:`<path d="M34 68Q24 29 42 16Q57 12 72 48Q88 12 106 16Q126 29 116 68Q138 83 128 117Q118 143 76 143Q34 143 24 117Q14 83 34 68Z" fill="#f6bd70" stroke="#9b6544" stroke-width="5" stroke-linejoin="round"/><path d="M40 48Q43 27 51 27Q61 32 65 52M95 52Q100 31 110 27Q118 28 111 49" fill="#fff5e5"/><path d="M39 105Q20 117 25 137Q35 151 54 137" fill="none" stroke="#9b6544" stroke-width="6" stroke-linecap="round"/><path d="M52 23l-3 15m17-17-2 16m28-14 3 14" stroke="#e59a50" stroke-width="4" stroke-linecap="round"/><ellipse cx="58" cy="82" rx="5" ry="7" fill="#38271d"/><ellipse cx="94" cy="82" rx="5" ry="7" fill="#38271d"/><ellipse cx="42" cy="96" rx="10" ry="6" fill="#f6a9a2" opacity=".75"/><ellipse cx="110" cy="96" rx="10" ry="6" fill="#f6a9a2" opacity=".75"/><path d="M72 91q4 5 8 0q-4-5-8 0Z" fill="#bd765a"/><path d="M76 96q-7 9-13 2m13-2q7 9 13 2" fill="none" stroke="#9b6544" stroke-width="3" stroke-linecap="round"/><path d="M46 124Q76 139 106 124" fill="#fff7e9" stroke="#9b6544" stroke-width="4" stroke-linecap="round"/>`,
  pet_fox:`
         <path d="M38 68Q24 27 42 16Q61 19 75 52Q94 25 117 17Q135 29 119 70Z" fill="#f6a65f" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>
         <path d="M42 37Q53 38 61 57L48 52ZM112 37Q101 38 92 57L107 52Z" fill="#fff1df"/>
@@ -2540,14 +2530,7 @@ var VIDEOS = {
         <path d="M69 85Q78 78 87 85Q82 98 78 98Q73 97 69 85Z" fill="#ffbd4e"/>
         <path d="M55 148q-12 10-23 2m69-2q12 10 23 2" fill="none" stroke="#e7b55f" stroke-width="7" stroke-linecap="round"/>
       `,
- pet_puppy:`
- <path d="M31 74Q10 49 18 33Q28 15 46 34Q57 44 55 58M103 58Q101 39 119 28Q139 19 145 42Q150 65 125 79" fill="#eeb47d" stroke="#c98555" stroke-width="5" stroke-linecap="round"/>
- <path d="M26 76Q17 50 39 40Q52 32 67 40Q84 29 102 41Q127 38 134 62Q144 85 126 103Q129 131 104 136Q79 147 56 135Q31 139 26 116Q12 99 26 76Z" fill="#f7bd82" stroke="#c98555" stroke-width="5" stroke-linejoin="round"/>
- <g fill="#f4c994"><circle cx="42" cy="50" r="17"/><circle cx="61" cy="38" r="19"/><circle cx="83" cy="37" r="20"/><circle cx="105" cy="47" r="18"/><circle cx="122" cy="65" r="16"/><circle cx="31" cy="77" r="15"/></g>
- <ellipse cx="64" cy="87" rx="4" ry="5" fill="#8b5131"/><ellipse cx="96" cy="87" rx="4" ry="5" fill="#8b5131"/><ellipse cx="80" cy="91" rx="3" ry="2" fill="#8b5131"/>
- <path d="M72 98q8 7 16 0" fill="none" stroke="#c98555" stroke-width="4" stroke-linecap="round"/>
- <path d="M48 126q-5 13 9 13m41-13q5 13-9 13" fill="none" stroke="#c98555" stroke-width="5" stroke-linecap="round"/>
- `,
+ pet_puppy:`<path d="M39 61Q16 32 27 19Q43 7 61 48L68 54M99 54Q117 9 136 23Q148 42 117 69" fill="#c98b59" stroke="#87583f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 76Q23 49 48 43Q65 28 82 42Q106 29 124 51Q141 75 125 103Q132 133 103 140Q77 150 54 139Q27 143 24 115Q15 94 30 76Z" fill="#f1c18e" stroke="#87583f" stroke-width="5" stroke-linejoin="round"/><path d="M39 55Q30 32 39 30Q49 32 57 54M106 54Q119 30 130 35Q135 44 117 62" fill="#b97b50"/><path d="M52 94Q57 77 77 83Q98 76 106 95Q104 119 79 122Q54 119 52 94Z" fill="#fff0d9"/><ellipse cx="62" cy="82" rx="5" ry="6" fill="#38271d"/><ellipse cx="96" cy="82" rx="5" ry="6" fill="#38271d"/><ellipse cx="45" cy="100" rx="10" ry="6" fill="#f5aaa0" opacity=".75"/><ellipse cx="112" cy="100" rx="10" ry="6" fill="#f5aaa0" opacity=".75"/><ellipse cx="79" cy="94" rx="7" ry="5" fill="#654332"/><path d="M79 99q-7 9-14 2m14-2q7 9 14 2" fill="none" stroke="#87583f" stroke-width="3" stroke-linecap="round"/><path d="M49 130q-7 8 5 10m50-10q7 8-5 10" fill="none" stroke="#87583f" stroke-width="5" stroke-linecap="round"/>`,
  pet_deer:`
         <path d="M54 52Q28 24 28 8M40 27 23 23M37 22 43 8M101 52Q127 24 127 8M115 27l17-4m-20-1-6-14" fill="none" stroke="#8e6549" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M42 65Q19 43 13 62Q12 83 43 91M114 65Q137 43 143 62Q144 83 113 91" fill="#dca778" stroke="${stroke}" stroke-width="5"/>
@@ -2568,13 +2551,7 @@ var VIDEOS = {
  <circle cx="45" cy="63" r="27" fill="#cce5a1" stroke="#607c52" stroke-width="5"/>
  <circle cx="37" cy="61" r="3.5" fill="#35412d"/><circle cx="54" cy="61" r="3.5" fill="#35412d"/><path d="M41 71q5 5 10 0" fill="none" stroke="#607c52" stroke-width="3" stroke-linecap="round"/>
  `,
- pet_bird:`
- <path d="M25 114Q16 92 33 80Q34 49 64 47Q81 26 103 47Q130 47 130 76Q148 89 133 113L126 124H31Z" fill="#fff9ee" stroke="#a66a52" stroke-width="5" stroke-linejoin="round"/>
- <path d="M31 104Q27 76 53 70Q66 43 88 57Q111 51 119 76Q138 85 125 108Q111 123 91 111Q75 126 58 112Q42 122 31 104Z" fill="#ffd77d" stroke="#c98651" stroke-width="5" stroke-linejoin="round"/>
- <path d="M65 82q5-5 10 0m17 0q5-5 10 0" fill="none" stroke="#8b5739" stroke-width="4" stroke-linecap="round"/>
- <path d="M78 91l9 7 9-7q-8-8-18 0Z" fill="#d88945" stroke="#a66a52" stroke-width="3" stroke-linejoin="round"/>
- <path d="M34 111Q73 143 124 111" fill="none" stroke="#a66a52" stroke-width="4"/>
- `
+ pet_bird:`<path d="M33 109Q15 93 29 76Q25 48 54 43Q73 20 96 42Q126 42 130 72Q148 92 128 111Q117 137 78 137Q43 137 33 109Z" fill="#ffd875" stroke="#a66d4d" stroke-width="5" stroke-linejoin="round"/><path d="M47 55Q58 37 73 45Q85 31 101 49Q119 52 119 72Q109 83 96 75Q82 87 67 75Q53 83 42 72Z" fill="#fff0c6" opacity=".8"/><path d="M30 91Q11 80 16 103Q24 117 39 111" fill="#f3bd62" stroke="#a66d4d" stroke-width="4" stroke-linejoin="round"/><path d="M119 91Q141 79 140 101Q136 115 121 112" fill="#f3bd62" stroke="#a66d4d" stroke-width="4" stroke-linejoin="round"/><circle cx="61" cy="83" r="5" fill="#493328"/><circle cx="96" cy="83" r="5" fill="#493328"/><ellipse cx="48" cy="96" rx="9" ry="6" fill="#f6a9a2" opacity=".75"/><ellipse cx="109" cy="96" rx="9" ry="6" fill="#f6a9a2" opacity=".75"/><path d="M72 91Q79 85 86 91L79 101Z" fill="#e58d43" stroke="#a66d4d" stroke-width="2"/><path d="M63 134l-4 7m31-7 4 7" stroke="#a66d4d" stroke-width="4" stroke-linecap="round"/>`
  ,
  pet_panda:`
  <circle cx="43" cy="39" r="20" fill="#171717"/><circle cx="113" cy="39" r="20" fill="#171717"/>
