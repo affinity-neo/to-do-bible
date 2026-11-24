@@ -479,6 +479,18 @@
 html.shop-only,html.shop-only body{background:transparent!important;margin:0!important;padding:0!important;min-height:100vh!important}.shop-only #app,.shop-only main{display:none!important}.shop-only .shop-ov{display:flex!important;position:fixed!important;inset:0!important;z-index:99999!important;overflow:auto!important;background:radial-gradient(80% 60% at 50% 30%,rgba(120,80,40,.5),rgba(18,10,5,.85))!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important;padding:14px 10px!important}.shop-only .shop-ov[hidden]{display:flex!important}
 </style>
 <script>if(new URLSearchParams(location.search).get("shop")==="1"){document.documentElement.classList.add("shop-only");document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("shop-only");});}</script>
+
+<style id="walkabout-and-pet-sale">
+#bibleWalkabout{position:fixed;right:18px;bottom:22px;z-index:30;display:none;align-items:flex-end;gap:0;pointer-events:none;animation:walkBob 2.8s ease-in-out infinite}
+#bibleWalkabout .walk-char{width:64px;height:62px;object-fit:contain;filter:drop-shadow(0 2px 2px #0002)}
+#bibleWalkabout .walk-pet{width:44px;height:50px;display:grid;place-items:end center;margin-left:-8px;animation:petHop 1.7s ease-in-out infinite}
+#bibleWalkabout .walk-pet svg{width:44px;height:49px}
+@keyframes walkBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes petHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.pet-new{display:inline-flex;align-items:center;justify-content:center;background:#e53935;color:#fff;font-size:9px;font-weight:900;letter-spacing:.4px;border-radius:4px;padding:2px 5px;margin-left:5px;vertical-align:middle}
+.pet-sale{display:grid;gap:5px;padding:12px 14px;border-radius:12px;background:linear-gradient(110deg,#fff1e7,#ffe0d9);color:#7e2c20;text-align:center}
+.pet-sale b{font-size:15px}.pet-sale span{font-size:12px}.pet-sale strong{font-size:18px;font-variant-numeric:tabular-nums;color:#c62828}
+</style>
 </head>
 <body>
 <main>
@@ -2455,6 +2467,22 @@ var VIDEOS = {
   try { if (window.firebase && FIREBASE_CONFIG.apiKey) { if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); db = firebase.firestore(); auth = firebase.auth(); auth.onAuthStateChanged(function(u){authUser=u||null;if(!u){user='';lsSet('user','');if(typeof loadProfile==='function')loadProfile();return;}db.collection('users').doc(u.uid).get().then(function(s){var d=s.exists?s.data():{};user=(d.name||'');if(!user||user===(u.email||'').split('@')[0])user=((u.email||'').toLowerCase().startsWith('affinityuniverse.neo@')?'선혜':(u.displayName||'').trim()||(u.email||'').split('@')[0]);lsSet('user',user);if(typeof loadProfile==='function')loadProfile();}).catch(function(){user=((u.email||'').toLowerCase().startsWith('affinityuniverse.neo@')?'선혜':(u.displayName||'').trim()||(u.email||'').split('@')[0]);lsSet('user',user);if(typeof loadProfile==='function')loadProfile();});}); } } catch(e) { db=null; auth=null; }
 
   // 캐릭터·테마·글꼴은 코인, 꾸미기 아이템은 말씀 코인으로 삽니다. 가격은 모두 다릅니다.
+  var PETS = [
+    {id:'pet_lamb',n:'몽실 양',p:45,kind:'lamb'}, {id:'pet_fox',n:'꼬리 여우',p:55,kind:'fox'},
+    {id:'pet_turtle',n:'느긋 거북이',p:65,kind:'turtle'}, {id:'pet_bird',n:'짹짹 새',p:75,kind:'bird'},
+    {id:'pet_penguin',n:'꼬마 펭귄',p:85,kind:'penguin'}
+  ];
+  var PET_SALE_END = new Date('2026-11-28T23:59:59+09:00').getTime();
+  function petSvg(id, size) {
+    var body = {
+      pet_lamb:'<ellipse cx="40" cy="56" rx="22" ry="23" fill="#fff" stroke="#c8c1b6" stroke-width="2"/><circle cx="40" cy="28" r="15" fill="#fff" stroke="#c8c1b6" stroke-width="2"/><circle cx="27" cy="20" r="7" fill="#fff"/><circle cx="53" cy="20" r="7" fill="#fff"/><ellipse cx="40" cy="31" rx="10" ry="8" fill="#f2c6c5"/><circle cx="35" cy="27" r="2"/><circle cx="45" cy="27" r="2"/><path d="M37 34q3 3 6 0M28 73v8m24-8v8" stroke="#8b746a" stroke-width="4" stroke-linecap="round"/>',
+      pet_fox:'<path d="M55 57q28-5 20 17-10 11-24-1" fill="#ef9b45" stroke="#b9662a" stroke-width="2"/><path d="M20 39 17 12l20 13 7 0 20-13-3 28q-1 29-21 29T20 39" fill="#e98b3c" stroke="#a95b2d" stroke-width="2"/><path d="m20 19 13 9-10 7zm37 0-13 9 10 7" fill="#f8c4b7"/><ellipse cx="40" cy="48" rx="15" ry="12" fill="#fff1df"/><circle cx="34" cy="39" r="2"/><circle cx="47" cy="39" r="2"/><path d="M37 49q3 4 6 0m-14 22-2 9m25-9 2 9" stroke="#8b4a2a" stroke-width="4" stroke-linecap="round"/>',
+      pet_turtle:'<ellipse cx="40" cy="53" rx="25" ry="19" fill="#76a96c" stroke="#426c4a" stroke-width="2"/><path d="M17 52q2-26 23-26t23 26q-22 13-46 0" fill="#8dbb78" stroke="#426c4a" stroke-width="2"/><path d="M25 40 40 31l15 9-4 15H29z" fill="none" stroke="#426c4a" stroke-width="2"/><circle cx="67" cy="49" r="10" fill="#9bc987" stroke="#426c4a" stroke-width="2"/><circle cx="64" cy="46" r="1.8"/><path d="M24 68 19 77m35-9 5 9m-25-2v6m12-6v6" stroke="#426c4a" stroke-width="5" stroke-linecap="round"/>',
+      pet_bird:'<ellipse cx="40" cy="52" rx="22" ry="25" fill="#f3d66c" stroke="#bd9c36" stroke-width="2"/><circle cx="40" cy="26" r="15" fill="#f3d66c" stroke="#bd9c36" stroke-width="2"/><path d="m27 13-3-9 10 7m9 2 7-9 1 13" fill="#f3d66c" stroke="#bd9c36" stroke-width="2"/><path d="m54 27 13 5-13 5" fill="#e88b4c"/><circle cx="35" cy="25" r="2"/><circle cx="46" cy="25" r="2"/><path d="m31 74-3 7m23-7 3 7" stroke="#bd8536" stroke-width="3" stroke-linecap="round"/><path d="M20 50q-13 7-4 20 10-3 15-13" fill="#e8c34e"/>',
+      pet_penguin:'<ellipse cx="40" cy="52" rx="24" ry="29" fill="#46586b"/><ellipse cx="40" cy="57" rx="16" ry="20" fill="#fff"/><circle cx="40" cy="24" r="17" fill="#46586b"/><ellipse cx="40" cy="29" rx="12" ry="10" fill="#fff"/><circle cx="35" cy="23" r="2"/><circle cx="45" cy="23" r="2"/><path d="m36 31 4 5 4-5" fill="#e9a34d"/><path d="M17 48 5 60l16 4m38-16 12 12-16 4" fill="#46586b"/><path d="m29 78-4 5m26-5 4 5" stroke="#e9a34d" stroke-width="4" stroke-linecap="round"/>'
+    }[id] || '';
+    return '<svg viewBox="0 0 80 88" width="'+(size||72)+'" height="'+Math.round((size||72)*1.1)+'" aria-hidden="true">'+body+'</svg>';
+  }
   var ANAMES = ['곰', '토끼', '고양이', '펭귄', '아기 돼지', '병아리', '판다', '개구리', '여우', '양', '오리', '강아지', '코알라', '하마', '기린', '호랑이', '햄스터', '파랑새', '올빼미', '비둘기', '낙타', '당나귀', '염소', '코끼리', '사슴', '너구리', '거북이', '사자'];
   var APRICE = [0, 8, 10, 12, 14, 16, 18, 20, 22, 0, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 60];
   var CHARS = KINDS.map(function (K, i) { var n = parseInt(K.id.slice(1), 10); return { id: K.id, k: i, n: ANAMES[n], p: APRICE[n] }; });
@@ -2500,7 +2528,6 @@ var VIDEOS = {
     { id: 'h_phones', s: 'hat', v: 'phones', n: '헤드폰', p: 34 }, { id: 'h_cowboy', s: 'hat', v: 'cowboy', n: '카우보이 모자', p: 36 },
     { id: 'h_chef', s: 'hat', v: 'chef', n: '요리사 모자', p: 38 }, { id: 'h_tophat', s: 'hat', v: 'tophat', n: '신사 모자', p: 42 },
     { id: 'h_flowerc', s: 'hat', v: 'flowerc', n: '꽃 화관', p: 44 }, { id: 'h_grad', s: 'hat', v: 'grad', n: '졸업 모자', p: 48 },
-    { id: 'h_pirate', s: 'hat', v: 'pirate', n: '해적 모자', p: 60 },
     { id: 'h_olive', s: 'hat', v: 'olive', n: '올리브 가지관', p: 92 },
     // --- 얼굴 ---
     { id: 'f_band', s: 'face', v: 'bandaid', n: '코 반창고', p: 12 }, { id: 'f_freck', s: 'face', v: 'freck', n: '주근깨', p: 15 },
@@ -2512,7 +2539,7 @@ var VIDEOS = {
     { id: 'f_fbeard', s: 'face', v: 'fbeard', n: '풍성한 수염', p: 42 },
     // --- 목 ---
     { id: 'n_lanyard', s: 'neck', v: 'lanyard', n: '명찰 목걸이', p: 20 }, { id: 'n_bandana', s: 'neck', v: 'bandana', n: '파랑 반다나', p: 22 },
-    { id: 'n_choker', s: 'neck', v: 'choker', n: '리본 초커', p: 28 }, { id: 'n_ntie', s: 'neck', v: 'ntie', n: '빨간 넥타이', p: 30 },
+    { id: 'n_ntie', s: 'neck', v: 'ntie', n: '빨간 넥타이', p: 30 },
     { id: 'n_starp', s: 'neck', v: 'starp', n: '별 목걸이', p: 36 },
     { id: 'n_pearl', s: 'neck', v: 'pearl', n: '진주 목걸이', p: 44 },
     { id: 'n_chain', s: 'neck', v: 'chain', n: '금목걸이', p: 58 },
@@ -2574,7 +2601,8 @@ var VIDEOS = {
     P.stat = P.stat || {}; P.ach = P.ach || [];
     if (P.eq.hat === 'laurel') P.eq.hat = ''; if (P.eq.neck === 'tie') P.eq.neck = ''; if (P.eq.face === 'beard') P.eq.face = ''; if (P.eq.face === 'patch') P.eq.face = '';
     if (['bunny','catears','wizard','viking'].indexOf(P.eq.hat) >= 0) P.eq.hat = '';
-    if (['hphone','rainbow','fish'].indexOf(P.eq.neck) >= 0) P.eq.neck = '';
+    if (['hphone','rainbow','fish','choker'].indexOf(P.eq.neck) >= 0) P.eq.neck = '';
+    if (P.eq.hat === 'pirate') P.eq.hat = '';
   }
   function blank() { return { wc: 0, gc: 0, sc: 0, tot: 0, wtot: 0, gtot: 0, stot: 0, own: [], sunhyeOwnedChars: [], sunhyeLegacyOwnBackup: [], eq: { ch: 'c0', hat: '', face: '', neck: '', theme: 'auto', font: 'default' }, wk: [], gr: [], stat: {}, ach: [] }; }
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -2836,10 +2864,15 @@ var VIDEOS = {
     if (P.gr.indexOf(SC_FIX_MARKER) < 0) P.gr.push(SC_FIX_MARKER);
     saveLocal();
   }
+  function grantSunhyeRestoredPurchasesOnce() {
+    if(!P || String(user||'').replace(/\s+/g,'')!=='선혜')return false;
+    var marker='sunhye_restore_theme_fonts_20261125_v1';P.gr=Array.isArray(P.gr)?P.gr:[];if(P.gr.indexOf(marker)>=0)return false;
+    P.own=Array.isArray(P.own)?P.own:[];['t_parch','f_gaegu','f_melody'].forEach(function(id){if(P.own.indexOf(id)<0)P.own.push(id);});P.gr.push(marker);saveLocal();cloud({own:P.own,gr:union(marker)});return true;
+  }
   function loadProfile() {
     if (!P) { loadLocal(); restoreRequestedProfile(); }
     applyTheme(); renderAcct(); renderShop();
-    if (!db || !user) { grantNamedCharacterOwnershipOnce(); repairSunhyeCharacterOwnership(); initAch(); renderAcct(); renderShop(); return; }
+    if (!db || !user) { grantNamedCharacterOwnershipOnce(); grantSunhyeRestoredPurchasesOnce(); repairSunhyeCharacterOwnership(); initAch(); renderAcct(); renderShop(); return; }
     var ref = db.collection('users').doc(uid(user));
     var isCoinCleanupAccount = String(user || '').replace(/\s+/g, '') === '최선혜';
     if (String(user || '').replace(/\s+/g, '') === '최선혜') {
@@ -2871,7 +2904,7 @@ var VIDEOS = {
         var localEq = P && P.eq ? Object.assign({}, P.eq) : null;
         var localAlreadyFixed = Array.isArray(P.gr) && P.gr.indexOf(SC_FIX_MARKER) >= 0;
         var cloudAlreadyFixed = Array.isArray(d.gr) && d.gr.indexOf(SC_FIX_MARKER) >= 0;
-        P = mergeProfile(P, d); normEq(); grantNamedCharacterOwnershipOnce(); repairSunhyeCharacterOwnership();
+        P = mergeProfile(P, d); normEq(); grantNamedCharacterOwnershipOnce(); grantSunhyeRestoredPurchasesOnce(); repairSunhyeCharacterOwnership();
 
         if (d.bibleCoinResetV1 !== true) { P.bibleCoinResetV1=true; cloud({bibleCoinResetV1:true}); }
         if (localEq && localEq.ch && localEq.ch !== 'c0') P.eq.ch = localEq.ch;
@@ -2901,7 +2934,7 @@ var VIDEOS = {
         ref.set(hydratePayload, { merge: true }).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
       } else {
         if (isCoinCleanupAccount && P.gr.indexOf(SC_FIX_MARKER) < 0) removeAccidentalSuccessCoins();
-        grantNamedCharacterOwnershipOnce(); repairSunhyeCharacterOwnership();
+        grantNamedCharacterOwnershipOnce(); grantSunhyeRestoredPurchasesOnce(); repairSunhyeCharacterOwnership();
         grantSunhyeWordCoinsOnce();
         grantJiminGiftOnce();
         ref.set(Object.assign({ wc: P.wc, gc: P.gc, sc: P.sc, coins: P.gc, completeCoins: P.sc, tot: P.tot, wtot: P.wtot, gtot: P.gtot, stot: P.stot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, bibleCoinResetV1:true, coinSyncRepairV1:true }, P)).then(function(){return ensureCoinRankAndNamedGifts(ref);}).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
@@ -2972,10 +3005,10 @@ var VIDEOS = {
   // ---- 수집 · 레벨 · 업적 · 등급 (성취감) ----
   function dayStr(d) { d = d || new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
   function slotItems(t) { return ITEMS.filter(function (i) { return i.s === t; }); }
-  function tabList(t) { return t === 'ch' ? CHARS : t === 'theme' ? THEMES : t === 'font' ? FONTS : slotItems(t); }
-  function curOf(t) { return (t === 'ch' || t === 'theme' || t === 'font') ? 'gc' : 'wc'; }
+  function tabList(t) { return t === 'ch' ? CHARS : t === 'theme' ? THEMES : t === 'font' ? FONTS : t === 'pet' ? PETS : slotItems(t); }
+  function curOf(t) { return (t === 'ch' || t === 'theme' || t === 'font' || t === 'pet') ? 'gc' : 'wc'; }
   function tabCount(t) { var h = 0, n = 0; tabList(t).forEach(function (it) { if (it.p > 0) { n++; if (P.own.indexOf(it.id) >= 0) h++; } }); return [h, n]; }
-  function collTotal() { var h = 0, n = 0; ['ch', 'hat', 'face', 'neck', 'theme', 'font'].forEach(function (t) { var c = tabCount(t); h += c[0]; n += c[1]; }); return [h, n]; }
+  function collTotal() { var h = 0, n = 0; ['ch', 'hat', 'face', 'neck', 'theme', 'font', 'pet'].forEach(function (t) { var c = tabCount(t); h += c[0]; n += c[1]; }); return [h, n]; }
   function collPct() { var c = collTotal(); return c[1] ? Math.floor(c[0] / c[1] * 100) : 0; }
   var HEROES = CHARS.filter(function (c) { return c.h; }).length;
   function ownedHeroes() { return CHARS.filter(function (c) { return c.h && P.own.indexOf(c.id) >= 0; }).length; }
@@ -2988,7 +3021,7 @@ var VIDEOS = {
   function rarity(it, cur) { if (!it.p) return ''; var T = cur === 'gc' ? [80, 150, 260] : [25, 55, 90]; return it.p >= T[2] ? 'leg' : it.p >= T[1] ? 'epic' : it.p >= T[0] ? 'rare' : 'com'; }
   function countRar(rs) {
     var n = 0;
-    [[CHARS, 'gc'], [THEMES, 'gc'], [FONTS, 'gc'], [ITEMS, 'wc']].forEach(function (g) {
+    [[CHARS, 'gc'], [THEMES, 'gc'], [FONTS, 'gc'], [PETS, 'gc'], [ITEMS, 'wc']].forEach(function (g) {
       g[0].forEach(function (it) { if (it.p > 0 && P.own.indexOf(it.id) >= 0 && rs.indexOf(rarity(it, g[1])) >= 0) n++; });
     });
     return n;
@@ -3077,6 +3110,7 @@ var VIDEOS = {
     var d = document.createElement('div');
     if (tab === 'theme') d.innerHTML = '<div class="swatch" style="background:' + it.c[0] + ';border-color:' + it.c[2] + '"><i style="background:' + it.c[2] + '"></i><b style="color:' + it.c[1] + '">가나다</b></div>';
     else if (tab === 'font') d.innerHTML = '<div class="fsw" style="font-family:' + it.ff + '">말씀</div>';
+    else if (tab === 'pet') { d.style.cssText='height:92px;display:grid;place-items:center'; d.innerHTML=it.id ? petSvg(it.id,76) : '<span style="font-size:30px;color:#aaa">＋</span>'; return d; }
     else { var eq = Object.assign({}, P.eq); if (tab !== 'ch') eq[tab] = it.v; return previewEl(tab === 'ch' ? it : heroChar(), eq); }
     return d.firstChild;
   }
@@ -3093,6 +3127,18 @@ var VIDEOS = {
   }
 
   var loginOpen = false;
+  function startPetSaleTimer() {
+    if (window.__petSaleTimer) clearInterval(window.__petSaleTimer);
+    function tick(){var el=document.getElementById('petSaleTimer');if(!el)return;var left=Math.max(0,PET_SALE_END-Date.now());var d=Math.floor(left/86400000),h=Math.floor(left%86400000/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);el.textContent=left>0?'⏳ 마감까지 '+d+'일 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'):'세일 종료';}
+    tick();window.__petSaleTimer=setInterval(tick,1000);
+  }
+  function syncWalkabout(data) {
+    if(!P)return;
+    try{if(data){localStorage.setItem('bible-avatar:'+user,data);}}catch(e){}
+    var el=document.getElementById('bibleWalkabout');if(!el){el=document.createElement('div');el.id='bibleWalkabout';el.innerHTML='<img class="walk-char" alt="내 캐릭터"><div class="walk-pet"></div>';document.body.appendChild(el);}
+    var im=el.querySelector('img');if(data){im.src=data;im.style.display='block';}else im.style.display='none';
+    var pet=el.querySelector('.walk-pet');pet.innerHTML=P.eq&&P.eq.pet?petSvg(P.eq.pet,44):'';el.style.display=(data||P.eq&&P.eq.pet)?'flex':'none';
+  }
   function renderAcct() {
     var a = document.getElementById('shopAcct'); if (!a || !P) return;
     var h = profHtml() + '<div class="acrow"><span class="chip">' + IC.book + '말씀 코인 <b>' + P.wc.toLocaleString() + '</b></span><span class="chip">' + IC.game + '코인 <b>' + P.gc.toLocaleString() + '</b></span><span class="chip">' + IC.trophy + '완료 코인 <b>' + (P.sc || 0).toLocaleString() + '</b></span><span class="grow"></span>';
@@ -3102,7 +3148,7 @@ var VIDEOS = {
     if (!user && loginOpen) h += '<div class="acrow"><div class="acform" style="display:grid;gap:8px"><input id="acName" maxlength="40" placeholder="이름" autocomplete="username"><input id="acPassword" type="password" placeholder="비밀번호" autocomplete="current-password"><input id="acEmail" type="email" placeholder="회원가입할 때만 이메일 입력" autocomplete="email"><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="acOk">이름으로 로그인</button><button id="acSignUp">회원가입</button><button id="acNo" style="background:#efe5d2;color:#4a3b2e">취소</button></div><p id="acError" class="acnote"></p></div></div>';
     if (!user) h += '<div class="acnote">기존 회원은 이름과 비밀번호만 입력하세요. 회원가입할 때는 이름·이메일·비밀번호가 필요합니다.</div>';
     a.innerHTML = h;
-    var pvh = document.getElementById('profPv'); if (pvh) { var avatarCanvas=previewEl(heroChar(),P.eq); pvh.appendChild(avatarCanvas); try { var avatarData=avatarCanvas.toDataURL('image/png'); if(P.avatarData!==avatarData){P.avatarData=avatarData;saveLocal();cloud({avatarData:avatarData});} } catch(e) {} }
+    var pvh = document.getElementById('profPv'); if (pvh) { var avatarCanvas=previewEl(heroChar(),P.eq); pvh.appendChild(avatarCanvas); try { var avatarData=avatarCanvas.toDataURL('image/png'); if(P.avatarData!==avatarData){P.avatarData=avatarData;saveLocal();cloud({avatarData:avatarData});} syncWalkabout(avatarData); } catch(e) {} }
     var q = function (id, f) { var e = document.getElementById(id); if (e) e.onclick = f; };
     q('acIn', function () { loginOpen = true; renderAcct(); });
     q('acNo', function () { loginOpen = false; renderAcct(); });
@@ -3486,7 +3532,7 @@ var VIDEOS = {
 
   // ---- 꾸미기 상점 (나무 상점 팝업) ----
   var shopTab = 'ch', pend = '', boardType = 'wc', boardTok = 0, boardWatch = null;
-  var TABS = [['ch', '캐릭터'], ['hat', '모자'], ['face', '얼굴'], ['neck', '목'], ['theme', '테마'], ['font', '글꼴'], ['ach', '업적'], ['rank', '순위']];
+  var TABS = [['ch', '캐릭터'], ['pet', '반려동물 <span class="pet-new">NEW</span>'], ['hat', '모자'], ['face', '얼굴'], ['neck', '목'], ['theme', '테마'], ['font', '글꼴'], ['ach', '업적'], ['rank', '순위']];
   function openShop() {
     var ov = document.getElementById('shopOv'); if (!ov) return;
     if (!P) { loadProfile(); window.setTimeout(openShop, 300); return; }
@@ -3499,7 +3545,7 @@ var VIDEOS = {
       if (body) body.innerHTML = '<p style="padding:16px;text-align:center">상점을 불러오는 중 문제가 발생했어요. 닫았다가 다시 열어 주세요.</p>';
     }
   }
-  function closeShop() { if (boardWatch) { boardWatch(); boardWatch = null; } if (new URLSearchParams(location.search).get('shop') === '1') { try { window.parent.postMessage('close-tree-shop', '*'); } catch(e) {} return; } document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
+  function closeShop() { if (boardWatch) { boardWatch(); boardWatch = null; } if (window.__petSaleTimer) {clearInterval(window.__petSaleTimer);window.__petSaleTimer=null;} if (new URLSearchParams(location.search).get('shop') === '1') { try { window.parent.postMessage('close-tree-shop', '*'); } catch(e) {} return; } document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
   function renderBoard() {
     if (boardWatch) { boardWatch(); boardWatch = null; }
     var b = document.getElementById('sboard'), tok = ++boardTok;
@@ -3533,8 +3579,10 @@ var VIDEOS = {
       b.innerHTML = t[1] + (c ? '<span class="tc">' + c + '</span>' : ''); if (t[0] === shopTab) b.className = 'on';
       b.onclick = function () { shopTab = t[0]; pend = ''; meMsg(''); renderShop(); }; tb.appendChild(b);
     });
-    var INFO = { ch: '영웅·전설 캐릭터는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', theme: '영웅·전설 테마는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', font: '등급에 따라 구매 코인이 달라져요.', ach: '업적을 달성하면 레벨이 올라요.', rank: '현재 보유한 코인 수를 기준으로 실시간으로 바뀌는 순위예요.' };
-    document.getElementById('sinfo').textContent = INFO[shopTab] || '영웅·전설 등급은 완료 코인으로 구매해요. 예수님은 특별 전설 캐릭터입니다. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.';
+    var INFO = { ch: '영웅·전설 캐릭터는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', theme: '영웅·전설 테마는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', font: '등급에 따라 구매 코인이 달라져요.', pet: '내 캐릭터 곁을 졸졸 따라다니는 전신 반려동물이에요. 구매 후 캐릭터와 함께 말씀·TO-DO 화면에 나타나요.', ach: '업적을 달성하면 레벨이 올라요.', rank: '현재 보유한 코인 수를 기준으로 실시간으로 바뀌는 순위예요.' };
+    var infoEl = document.getElementById('sinfo');
+    infoEl.innerHTML = shopTab === 'pet' ? '<div class="pet-sale"><span class="pet-new">NEW</span><b>🐾 반려동물 초특가 세일</b><span>오늘부터 단 3일 · 최대 80% 할인</span><strong id="petSaleTimer">남은 시간 계산 중…</strong></div><div style="margin-top:8px">'+INFO.pet+'</div>' : (INFO[shopTab] || '영웅·전설 등급은 완료 코인으로 구매해요. 예수님은 특별 전설 캐릭터입니다. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.');
+    if (shopTab === 'pet') startPetSaleTimer();
     var grid = document.getElementById('sgrid'), board = document.getElementById('sboard'), sc = document.getElementById('scol');
     if (shopTab === 'rank' || shopTab === 'ach') { sc.hidden = true; grid.hidden = true; board.hidden = false; if (shopTab === 'rank') renderBoard(); else renderAch(); return; }
     var cc = tabCount(shopTab), pc = cc[1] ? Math.round(cc[0] / cc[1] * 100) : 0, full = cc[1] > 0 && cc[0] >= cc[1];
@@ -3544,12 +3592,13 @@ var VIDEOS = {
     var list;
     if (shopTab === 'ch') list = CHARS.filter(function (c) { return !c.h; }).concat(CHARS.filter(function (c) { return c.h; }).sort(function (a, b) { return a.p - b.p; }));
     else if (shopTab === 'theme') list = THEMES; else if (shopTab === 'font') list = FONTS;
+    else if (shopTab === 'pet') list = [{id:'',kind:'',n:'없음',p:0}].concat(PETS);
     else list = [{ id: '', v: '', n: '없음', p: 0 }].concat(ITEMS.filter(function (i) { return i.s === shopTab; }));
     // 이전 커밋 방식: 각 상점 탭에서 무료 상품을 제외한 첫 유료 상품 3개에 입문 가격을 적용합니다.
     var introPrices = [5, 8, 10], introCount = 0;
     list = list.map(function (item) {
       var copy = Object.assign({}, item);
-      if (copy.p > 0 && introCount < introPrices.length) {
+      if (shopTab !== 'pet' && copy.p > 0 && introCount < introPrices.length) {
         copy.p = introPrices[introCount];
         copy.introDeal = true;
         introCount++;
@@ -3562,12 +3611,13 @@ var VIDEOS = {
       var premiumIndex = premiumChars.findIndex(function (c) { return c.id === it.id; });
       var introPrices = [5, 8, 10];
       var successPrice = shopTab === 'ch' && premiumIndex >= 0 ? (premiumIndex < 3 ? introPrices[premiumIndex] : premiumIndex === premiumChars.length - 1 ? 31 : premiumIndex === 3 ? 6 : premiumIndex === 4 ? 7 : premiumIndex === 5 ? 9 : premiumIndex + 5) : (rk === 'leg' ? 25 : rk === 'epic' ? 8 : 0);
-      var payType = successPrice ? 'sc' : cur, payPrice = successPrice || it.p;
-      var on = shopTab === 'ch' ? P.eq.ch === it.id : shopTab === 'theme' ? (P.eq.theme || 'auto') === it.t : shopTab === 'font' ? (P.eq.font || 'default') === it.f : P.eq[shopTab] === it.v;
+      var payType = successPrice ? 'sc' : cur, payPrice = shopTab === 'pet' && Date.now() < PET_SALE_END ? Math.max(1, Math.floor(it.p * 0.2)) : (successPrice || it.p);
+      var on = shopTab === 'ch' ? P.eq.ch === it.id : shopTab === 'theme' ? (P.eq.theme || 'auto') === it.t : shopTab === 'font' ? (P.eq.font || 'default') === it.f : shopTab === 'pet' ? (P.eq.pet || '') === it.id : P.eq[shopTab] === it.v;
       var card = document.createElement('div'); card.className = 'sc' + (on ? ' on' : '') + (owned && it.p > 0 ? ' owned' : '') + (rk ? ' r-' + rk : '');
       card.appendChild(pvNode(it, shopTab));
+      if (shopTab === 'pet' && it.id) card.insertAdjacentHTML('afterbegin','<span class="pet-new">NEW</span>');
       if (rk) card.insertAdjacentHTML('afterbegin', '<span class="rb">' + RLAB[rk] + '</span>');
-      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '') + '</div>');
+      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + (shopTab === 'pet' && it.id ? '<span style="display:block;font-size:10px;color:#c43b35;margin-top:2px"><s>'+it.p+' 코인</s> · 80% 세일</span>' : ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : '')) + '</div>');
       var b = document.createElement('button');
       b.innerHTML = on ? '사용 중' : owned ? '사용하기' : (pend && pend === it.id ? '한 번 더!' : payPrice + (payType === 'sc' ? IC.trophy : (payType === 'gc' ? IC.game : IC.book))); b.disabled = on;
       b.className = (pend && pend === it.id) ? 'conf' : (owned && it.p > 0 ? 'own' : '');
@@ -3579,7 +3629,7 @@ var VIDEOS = {
           pend = ''; P[payType] -= payPrice; P.own.push(it.id); var f = { own: union(it.id) }; if (shopTab === 'ch' && String(user || '').replace(/\s+/g,'') === '선혜') { P.sunhyeOwnedChars = Array.isArray(P.sunhyeOwnedChars) ? P.sunhyeOwnedChars : ['c0']; if (P.sunhyeOwnedChars.indexOf(it.id) < 0) P.sunhyeOwnedChars.push(it.id); f.sunhyeOwnedChars = union(it.id); } f[payType] = inc(-payPrice); if (payType === 'gc') f.coins = inc(-payPrice); if (payType === 'sc') f.completeCoins = inc(-payPrice); cloud(f);
           meMsg(it.n + ' 구매 완료!'); bought = true;
         }
-        if (shopTab === 'ch') P.eq.ch = it.id; else if (shopTab === 'theme') P.eq.theme = it.t; else if (shopTab === 'font') P.eq.font = it.f; else P.eq[shopTab] = it.v;
+        if (shopTab === 'ch') P.eq.ch = it.id; else if (shopTab === 'theme') P.eq.theme = it.t; else if (shopTab === 'font') P.eq.font = it.f; else if (shopTab === 'pet') P.eq.pet = it.id; else P.eq[shopTab] = it.v;
         saveLocal(); cloud({ eq: P.eq }); applyTheme(); renderAcct(); renderShop();
         if (bought) celebrate(it, pvNode(it, shopTab), rk);
         checkAch();
