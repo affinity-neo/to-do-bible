@@ -3623,7 +3623,7 @@ var VIDEOS = {
       b.innerHTML = t[1] + (c ? '<span class="tc">' + c + '</span>' : ''); if (t[0] === shopTab) b.className = 'on';
       b.onclick = function () { shopTab = t[0]; pend = ''; meMsg(''); renderShop(); }; tb.appendChild(b);
     });
-    var INFO = { ch: '영웅·전설 캐릭터는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', theme: '영웅·전설 테마는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', font: '등급에 따라 구매 코인이 달라져요.', pet: '내 캐릭터 곁을 졸졸 따라다니는 전신 반려동물이에요. 구매 후 캐릭터와 함께 말씀·TO-DO 화면에 나타나요.', ach: '업적을 달성하면 레벨이 올라요.', rank: '현재 보유한 코인 수를 기준으로 실시간으로 바뀌는 순위예요.' };
+    var INFO = { ch: '영웅·전설 캐릭터는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', theme: '영웅·전설 테마는 완료 코인으로 구매해요. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.', font: '등급에 따라 구매 코인이 달라져요.', pet: '내 캐릭터 곁을 졸졸 따라다니는 전신 반려동물이에요. 말씀 화면과 TO-DO 프로필에서 함께 보여요.', ach: '업적을 달성하면 레벨이 올라요.', rank: '현재 보유한 코인 수를 기준으로 실시간으로 바뀌는 순위예요.' };
     var infoEl = document.getElementById('sinfo');
     infoEl.innerHTML = shopTab === 'pet' ? '<div class="pet-sale"><b>🐾 오픈 특가 · 80% OFF</b><strong id="petSaleTimer">남은 시간 계산 중…</strong></div><div style="margin-top:8px">'+INFO.pet+'</div>' : (INFO[shopTab] || '영웅·전설 등급은 완료 코인으로 구매해요. 예수님은 특별 전설 캐릭터입니다. 서로 다른 게임 3종을 성공할 때마다 완료 코인 1개를 받아요.');
     if (shopTab === 'pet') startPetSaleTimer();
