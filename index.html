@@ -2896,7 +2896,7 @@ var VIDEOS = {
     if (changed) {
       saveLocal();
       // arrayUnion을 사용해 다른 기기에서 새로 구매한 캐릭터를 덮어쓰지 않습니다.
-      if (db && user) cloud({own:union(ids[0]),gr:union(marker)});
+      if (db && user) cloud({own:db ? firebase.firestore.FieldValue.arrayUnion.apply(null,ids) : ids,gr:union(marker)});
     }
     return changed;
   }
@@ -3079,7 +3079,7 @@ var VIDEOS = {
         grantSunhyeWordCoinsOnce();
         grantJiminGiftOnce();
         saveLocal();
-        var hydratePayload = { wc: P.wc, wtot: P.wtot, tot: P.tot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, coinSyncRepairV1: true }; if (String(user || '').replace(/\s+/g,'') === '선혜') { hydratePayload.sunhyeOwnedChars = P.sunhyeOwnedChars || ['c0']; hydratePayload.sunhyeLegacyOwnBackup = P.sunhyeLegacyOwnBackup || []; }
+        var hydratePayload = { wc: P.wc, wtot: P.wtot, tot: P.tot, own: P.own, eq: P.eq, wk: P.wk, gr: P.gr, stat: P.stat, ach: P.ach, coinSyncRepairV1: true }; var hydrateWho = String(user || '').replace(/\s+/g,''); if (db && hydrateWho !== '선혜' && hydrateWho !== '최선혜' && hydrateWho !== '최선희' && P.own.length) hydratePayload.own = firebase.firestore.FieldValue.arrayUnion.apply(null,P.own); if (hydrateWho === '선혜') { hydratePayload.sunhyeOwnedChars = P.sunhyeOwnedChars || ['c0']; hydratePayload.sunhyeLegacyOwnBackup = P.sunhyeLegacyOwnBackup || []; }
         if (repairedCoinBalance) { hydratePayload.gc=P.gc; hydratePayload.coins=P.gc; hydratePayload.sc=P.sc; hydratePayload.completeCoins=P.sc; }
         ref.set(hydratePayload, { merge: true }).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
       } else {
