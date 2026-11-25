@@ -2877,6 +2877,18 @@ var VIDEOS = {
     saveLocal();
     return true;
   }
+  function setJiyunWordCoins45Once() {
+    if (!P || String(user || '').replace(/\s+/g, '') !== '지윤') return false;
+    var marker = 'jiyun_word_coins_set_45_20261125_v1';
+    P.gr = Array.isArray(P.gr) ? P.gr : [];
+    if (P.gr.indexOf(marker) >= 0) return false;
+    // 현재 말씀 코인 잔액만 45개로 설정하고 누적 통계는 임의로 바꾸지 않습니다.
+    P.wc = 45;
+    P.gr.push(marker);
+    saveLocal();
+    if (db && user) cloud({wc:45,gr:union(marker)});
+    return true;
+  }
   function grantNamedCharacterOwnershipOnce() {
     if (!P) return false;
     var who = String(user || '').replace(/\s+/g, '');
@@ -3021,7 +3033,7 @@ var VIDEOS = {
   function loadProfile() {
     if (!P) { loadLocal(); restoreRequestedProfile(); }
     applyTheme(); renderAcct(); renderShop();
-    if (!db || !user) { grantNamedCharacterOwnershipOnce(); grantSunhyeRestoredPurchasesOnce(); repairSunhyeCharacterOwnership(); initAch(); renderAcct(); renderShop(); return; }
+    if (!db || !user) { setJiyunWordCoins45Once(); grantNamedCharacterOwnershipOnce(); grantSunhyeRestoredPurchasesOnce(); repairSunhyeCharacterOwnership(); initAch(); renderAcct(); renderShop(); return; }
     var ref = db.collection('users').doc(uid(user));
     var isCoinCleanupAccount = String(user || '').replace(/\s+/g, '') === '최선혜';
     if (String(user || '').replace(/\s+/g, '') === '최선혜') {
@@ -3053,7 +3065,7 @@ var VIDEOS = {
         var localEq = P && P.eq ? Object.assign({}, P.eq) : null;
         var localAlreadyFixed = Array.isArray(P.gr) && P.gr.indexOf(SC_FIX_MARKER) >= 0;
         var cloudAlreadyFixed = Array.isArray(d.gr) && d.gr.indexOf(SC_FIX_MARKER) >= 0;
-        P = mergeProfile(P, d); normEq(); grantNamedCharacterOwnershipOnce(); grantSunhyeRestoredPurchasesOnce(); repairSunhyeCharacterOwnership();
+        P = mergeProfile(P, d); normEq(); setJiyunWordCoins45Once(); grantNamedCharacterOwnershipOnce(); grantSunhyeRestoredPurchasesOnce(); repairSunhyeCharacterOwnership();
 
         if (d.bibleCoinResetV1 !== true) { P.bibleCoinResetV1=true; cloud({bibleCoinResetV1:true}); }
         if (localEq && localEq.ch && localEq.ch !== 'c0') P.eq.ch = localEq.ch;
@@ -3084,7 +3096,7 @@ var VIDEOS = {
         ref.set(hydratePayload, { merge: true }).then(function () { watchProfile(ref); }).catch(function () { watchProfile(ref); });
       } else {
         if (isCoinCleanupAccount && P.gr.indexOf(SC_FIX_MARKER) < 0) removeAccidentalSuccessCoins();
-        grantNamedCharacterOwnershipOnce(); grantSunhyeRestoredPurchasesOnce(); repairSunhyeCharacterOwnership();
+        setJiyunWordCoins45Once(); grantNamedCharacterOwnershipOnce(); grantSunhyeRestoredPurchasesOnce(); repairSunhyeCharacterOwnership();
         grantWinterThemeForPets();
         grantSunhyeWordCoinsOnce();
         grantJiminGiftOnce();
