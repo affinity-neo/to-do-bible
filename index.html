@@ -2880,20 +2880,25 @@ var VIDEOS = {
   function grantNamedCharacterOwnershipOnce() {
     if (!P) return false;
     var who = String(user || '').replace(/\s+/g, '');
-    var marker = who === '지민' ? 'jimin_rabbit_character_grant_20261125_v1' : who === '선혜' ? 'sunhye_rabbit_david_character_grant_20261125_v1' : '';
+    var marker = who === '지민' ? 'jimin_rabbit_character_grant_20261125_v1' : who === '선혜' ? 'sunhye_rabbit_david_character_grant_20261125_v1' : who === '지윤' ? 'jiyun_ruth_character_grant_20261125_v1' : '';
     if (!marker) return false;
     P.gr = Array.isArray(P.gr) ? P.gr : [];
-    if (P.gr.indexOf(marker) >= 0) return false;
     P.own = Array.isArray(P.own) ? P.own : [];
-    var ids = who === '지민' ? ['c1'] : ['c1','h0'];
-    ids.forEach(function(id) { if (P.own.indexOf(id) < 0) P.own.push(id); });
+    var ids = who === '지민' ? ['c1'] : who === '선혜' ? ['c1','h0'] : ['h3'];
+    var changed = false;
+    // 지급 마커가 이미 있어도 보유 목록에서 빠졌다면 다시 복구합니다.
+    ids.forEach(function(id) { if (P.own.indexOf(id) < 0) { P.own.push(id); changed = true; } });
     if (who === '선혜') {
       P.sunhyeOwnedChars = Array.isArray(P.sunhyeOwnedChars) ? P.sunhyeOwnedChars : ['c0'];
-      ids.forEach(function(id) { if (P.sunhyeOwnedChars.indexOf(id) < 0) P.sunhyeOwnedChars.push(id); });
+      ids.forEach(function(id) { if (P.sunhyeOwnedChars.indexOf(id) < 0) { P.sunhyeOwnedChars.push(id); changed = true; } });
     }
-    P.gr.push(marker);
-    saveLocal();
-    return true;
+    if (P.gr.indexOf(marker) < 0) { P.gr.push(marker); changed = true; }
+    if (changed) {
+      saveLocal();
+      // arrayUnion을 사용해 다른 기기에서 새로 구매한 캐릭터를 덮어쓰지 않습니다.
+      if (db && user) cloud({own:union(ids[0]),gr:union(marker)});
+    }
+    return changed;
   }
   function uid(n) { return authUser ? authUser.uid : n.replace(/[\/\\.#$\[\]\s]+/g, '_').slice(0, 20); }
   function cloud(f) {
