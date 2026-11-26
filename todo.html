@@ -68,12 +68,12 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 </style><style id="seasonal-todo-themes">
 :root[data-t=winter]{--bg:#eaf5ff;--fg:#29415a;--mu:#7695af;--pill:#f5fbff;--line:#d0e5f5;--card:#fff;--acc:#4d91c9;--accfg:#fff}
 #seasonalFx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-#seasonalFx .flakes{position:absolute;inset:-18% 0 0;background-image:radial-gradient(#fff 3px,transparent 4px),radial-gradient(#fff 2px,transparent 3px),radial-gradient(#fff 5px,transparent 6px),radial-gradient(#fff 1px,transparent 2px);background-size:49px 57px,27px 33px,83px 91px,17px 21px;animation:todoSnow 4.8s linear infinite;filter:drop-shadow(0 0 4px #fff)}
-#seasonalFx .snowbank{position:absolute;bottom:-12px;left:-5%;width:110%;height:90px;background:radial-gradient(ellipse at 10% 100%,#fff 0 65%,transparent 67%),radial-gradient(ellipse at 36% 100%,#fafdff 0 66%,transparent 68%),radial-gradient(ellipse at 68% 100%,#fff 0 66%,transparent 68%),radial-gradient(ellipse at 94% 100%,#fafdff 0 65%,transparent 67%);filter:drop-shadow(0 -7px 13px #8bb9dd77)}
-#seasonalFx .ice-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,#c6e7ff77,transparent 55%),radial-gradient(ellipse at 100% 100%,#d9efff44,transparent 40%)}
+#seasonalFx .ice-glow{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 0%,#d7edff 0%,transparent 54%),linear-gradient(180deg,#e7f4ff 0%,#f9fdff 70%,#e2f1fc 100%)}
+#seasonalFx .flakes{position:absolute;inset:-18vh -4vw 0;z-index:1;opacity:.95;background-image:radial-gradient(4px 4px at 5% 8%,#fff 98%,transparent),radial-gradient(2px 2px at 12% 44%,#fff 98%,transparent),radial-gradient(5px 5px at 19% 73%,#fff 98%,transparent),radial-gradient(3px 3px at 27% 20%,#fff 98%,transparent),radial-gradient(2px 2px at 35% 61%,#fff 98%,transparent),radial-gradient(4px 4px at 43% 35%,#fff 98%,transparent),radial-gradient(2px 2px at 51% 82%,#fff 98%,transparent),radial-gradient(5px 5px at 60% 12%,#fff 98%,transparent),radial-gradient(3px 3px at 68% 52%,#fff 98%,transparent),radial-gradient(2px 2px at 76% 29%,#fff 98%,transparent),radial-gradient(4px 4px at 84% 76%,#fff 98%,transparent),radial-gradient(3px 3px at 93% 17%,#fff 98%,transparent);background-size:170px 190px;animation:winterSnow 5.5s linear infinite;filter:drop-shadow(0 0 4px #fff)}
+#seasonalFx .snowbank{position:absolute;left:-5vw;right:-5vw;bottom:-8px;height:116px;z-index:2;background:radial-gradient(110px 36px at 5% 100%,#fff 98%,transparent 100%),radial-gradient(160px 48px at 24% 100%,#fafdff 98%,transparent 100%),radial-gradient(130px 43px at 45% 100%,#fff 98%,transparent 100%),radial-gradient(180px 52px at 70% 100%,#fafdff 98%,transparent 100%),radial-gradient(140px 40px at 94% 100%,#fff 98%,transparent 100%),linear-gradient(to bottom,transparent 25%,#fafdff 26%);filter:drop-shadow(0 -8px 14px #8bb9dd77)}
 #app,.nav,#todoWalkabout{position:relative;z-index:1}
-@keyframes todoSnow{to{transform:translateY(22vh)}}
-@media(prefers-reduced-motion:reduce){#seasonalFx *{animation:none!important}}
+@keyframes winterSnow{from{transform:translateY(-10vh)}to{transform:translateY(22vh)}}
+@media(prefers-reduced-motion:reduce){#seasonalFx .flakes{animation:none!important}}
 </style></head><body>
 <div id="app"></div><div id="md"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
