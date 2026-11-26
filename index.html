@@ -2980,6 +2980,10 @@ var VIDEOS = {
         if (name === '지윤' && d.jiyunCoin3V1 !== true) {
           gameAdded += 3; totalAdded += 3; patch.jiyunCoin3V1 = true;
         }
+        // 2026-11-26 선혜 계정 게임 코인 5개 추가 지급 (1회성)
+        if (name === '선혜' && d.sunhyeGameCoinGift20261126V1 !== true) {
+          gameAdded += 5; totalAdded += 5; patch.sunhyeGameCoinGift20261126V1 = true;
+        }
         var gifts = {
           '지민': { game: 5, complete: 1, words: 3 },
           '이서엘': { game: 0, complete: 1, words: 2 },
