@@ -67,13 +67,15 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 @media(min-width:761px){#todoWalkabout{right:32px;bottom:24px;width:164px;height:164px}#todoWalkabout .buddy-char{width:132px;height:132px}#todoWalkabout .buddy-pet{width:94px;height:102px}#todoWalkabout .buddy-pet svg{width:94px!important;height:102px!important}}
 </style><style id="seasonal-todo-themes">
 :root[data-t=winter]{--bg:#eaf5ff;--fg:#29415a;--mu:#7695af;--pill:#f5fbff;--line:#d0e5f5;--card:#fff;--acc:#4d91c9;--accfg:#fff}
-#seasonalFx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-#seasonalFx .ice-glow{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 0%,#d7edff 0%,transparent 54%),linear-gradient(180deg,#e7f4ff 0%,#f9fdff 70%,#e2f1fc 100%)}
-#seasonalFx .flakes{position:absolute;inset:-18vh -4vw 0;z-index:1;opacity:.95;background-image:radial-gradient(4px 4px at 5% 8%,#fff 98%,transparent),radial-gradient(2px 2px at 12% 44%,#fff 98%,transparent),radial-gradient(5px 5px at 19% 73%,#fff 98%,transparent),radial-gradient(3px 3px at 27% 20%,#fff 98%,transparent),radial-gradient(2px 2px at 35% 61%,#fff 98%,transparent),radial-gradient(4px 4px at 43% 35%,#fff 98%,transparent),radial-gradient(2px 2px at 51% 82%,#fff 98%,transparent),radial-gradient(5px 5px at 60% 12%,#fff 98%,transparent),radial-gradient(3px 3px at 68% 52%,#fff 98%,transparent),radial-gradient(2px 2px at 76% 29%,#fff 98%,transparent),radial-gradient(4px 4px at 84% 76%,#fff 98%,transparent),radial-gradient(3px 3px at 93% 17%,#fff 98%,transparent);background-size:170px 190px;animation:winterSnow 5.5s linear infinite;filter:drop-shadow(0 0 4px #fff)}
-#seasonalFx .snowbank{position:absolute;left:-5vw;right:-5vw;bottom:-8px;height:116px;z-index:2;background:radial-gradient(110px 36px at 5% 100%,#fff 98%,transparent 100%),radial-gradient(160px 48px at 24% 100%,#fafdff 98%,transparent 100%),radial-gradient(130px 43px at 45% 100%,#fff 98%,transparent 100%),radial-gradient(180px 52px at 70% 100%,#fafdff 98%,transparent 100%),radial-gradient(140px 40px at 94% 100%,#fff 98%,transparent 100%),linear-gradient(to bottom,transparent 25%,#fafdff 26%);filter:drop-shadow(0 -8px 14px #8bb9dd77)}
-#app,.nav,#todoWalkabout{position:relative;z-index:1}
+body{position:relative;isolation:isolate}
+body::before,body::after{content:"";position:fixed;pointer-events:none;z-index:0;display:block}
+#app{position:relative;z-index:1}
+.nav{z-index:5}
+:root[data-t=winter] body::before{inset:-18vh -4vw 0;opacity:.95;background-image:radial-gradient(4px 4px at 5% 8%,#fff 98%,transparent),radial-gradient(2px 2px at 12% 44%,#fff 98%,transparent),radial-gradient(5px 5px at 19% 73%,#fff 98%,transparent),radial-gradient(3px 3px at 27% 20%,#fff 98%,transparent),radial-gradient(2px 2px at 35% 61%,#fff 98%,transparent),radial-gradient(4px 4px at 43% 35%,#fff 98%,transparent),radial-gradient(2px 2px at 51% 82%,#fff 98%,transparent),radial-gradient(5px 5px at 60% 12%,#fff 98%,transparent),radial-gradient(3px 3px at 68% 52%,#fff 98%,transparent),radial-gradient(2px 2px at 76% 29%,#fff 98%,transparent),radial-gradient(4px 4px at 84% 76%,#fff 98%,transparent),radial-gradient(3px 3px at 93% 17%,#fff 98%,transparent);background-size:170px 190px;animation:winterSnow 5.5s linear infinite;filter:drop-shadow(0 0 4px #fff)}
+:root[data-t=winter] body::after{left:-5vw;right:-5vw;bottom:-8px;height:116px;z-index:2;background:radial-gradient(110px 36px at 5% 100%,#fff 98%,transparent 100%),radial-gradient(160px 48px at 24% 100%,#fafdff 98%,transparent 100%),radial-gradient(130px 43px at 45% 100%,#fff 98%,transparent 100%),radial-gradient(180px 52px at 70% 100%,#fafdff 98%,transparent 100%),radial-gradient(140px 40px at 94% 100%,#fff 98%,transparent 100%),linear-gradient(to bottom,transparent 25%,#fafdff 26%) ;filter:drop-shadow(0 -8px 14px #8bb9dd77)}
 @keyframes winterSnow{from{transform:translateY(-10vh)}to{transform:translateY(22vh)}}
-@media(prefers-reduced-motion:reduce){#seasonalFx .flakes{animation:none!important}}
+:root[data-t=winter] body{background-image:radial-gradient(ellipse at 50% 0%,#d7edff 0%,transparent 54%),linear-gradient(180deg,#e7f4ff 0%,#f9fdff 70%,#e2f1fc 100%);background-attachment:fixed}
+@media(prefers-reduced-motion:reduce){:root[data-t=winter] body::before{animation:none}}
 </style></head><body>
 <div id="app"></div><div id="md"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
@@ -371,10 +373,8 @@ auth.onAuthStateChanged(u=>{U.forEach(f=>f());U=[];UC();UC=()=>{};ME=u;S.ready=0
 function applySeasonalTodoTheme(){
  let theme='auto';try{theme=localStorage.getItem('affinity-season-theme')||'auto';if(theme==='auto'){const raw=localStorage.getItem('prof:'+((D&&D.name)||''));if(raw){const p=JSON.parse(raw);theme=p.eq?.theme||'auto'}}}catch(e){}
  if(theme!=='winter')theme='auto';
- if(theme==='auto'){document.documentElement.removeAttribute('data-t');const old=document.getElementById('seasonalFx');if(old)old.remove();return}
+ if(theme==='auto'){document.documentElement.removeAttribute('data-t');return}
  document.documentElement.dataset.t='winter';
- let fx=document.getElementById('seasonalFx');if(!fx){fx=document.createElement('div');fx.id='seasonalFx';document.body.appendChild(fx)}
- fx.innerHTML='<div class="ice-glow"></div><div class="flakes"></div><div class="snowbank"></div>';
 }
 window.addEventListener('storage',e=>{if(e.key==='affinity-season-theme'||(e.key||'').startsWith('prof:'))applySeasonalTodoTheme()});
 function render(){applySeasonalTodoTheme();D.cats=(D.cats||[]).map(c=>({...c,priv:0}));D.rewards=D.rewards||[];D.badges=D.badges||[];document.documentElement.dataset.t=D.theme;const app=document.getElementById('app');
