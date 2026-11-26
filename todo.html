@@ -22,7 +22,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .chip.on{background:var(--acc);color:var(--accfg)}
 .coin{display:flex;align-items:center;gap:6px;background:var(--pill);border-radius:99px;padding:8px 14px;font-weight:700;flex:none}.coin svg{width:18px;height:18px;color:#d9a521}
 .av{width:32px;height:32px;border-radius:50%;background:var(--acc);opacity:.85;color:var(--accfg);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}.av.l{width:60px;height:60px;font-size:21px}
-.av.has-buddy{position:relative;overflow:hidden;opacity:1;background:var(--pill);border-radius:50%;isolation:isolate}.av.has-buddy>img{display:block;width:100%;height:100%;object-fit:contain;border-radius:50%}.av-pet{position:absolute;right:2px;bottom:2px;top:auto;width:19px;height:19px;z-index:2;display:grid;place-items:center;overflow:hidden;border-radius:50%;background:rgba(255,255,255,.9);filter:drop-shadow(0 1px 1px #0002);pointer-events:none}.av-pet svg{display:block;width:100%;height:100%;overflow:hidden;object-fit:contain}@keyframes profilePetPeek{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}.av.l .av-pet{width:23px;height:23px;right:3px;bottom:3px;top:auto}
+.av.has-buddy{position:relative;overflow:hidden;opacity:1;background:var(--pill);border-radius:50%;isolation:isolate}.av.has-buddy>img{display:block;width:100%;height:100%;object-fit:contain;border-radius:50%}.av-pet{position:absolute;right:1px;bottom:1px;top:auto;width:15px;height:15px;z-index:2;display:grid;place-items:center;overflow:hidden;border-radius:50%;background:#fff;border:1px solid #dceaf3;box-shadow:0 1px 3px #29415a33;pointer-events:none;padding:1px}.av-pet svg{display:block;width:100%;height:100%;overflow:visible;object-fit:contain}.av.l .av-pet{width:19px;height:19px;right:2px;bottom:2px;top:auto}
 .cols{display:grid;grid-template-columns:350px 1fr;gap:44px}@media(max-width:760px){.cols{grid-template-columns:1fr;gap:26px}}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:8px 0;text-align:center;margin-top:14px;font-size:11px}.cal .h{color:var(--mu);font-size:12px;padding-bottom:4px}
 .d{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--mu)}
@@ -66,16 +66,18 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 @keyframes todoPetHop{0%,100%{transform:translate(0,0) rotate(4deg)}30%{transform:translate(5px,-12px) rotate(9deg)}60%{transform:translate(-3px,-4px) rotate(-5deg)}}
 @media(min-width:761px){#todoWalkabout{right:32px;bottom:24px;width:164px;height:164px}#todoWalkabout .buddy-char{width:132px;height:132px}#todoWalkabout .buddy-pet{width:94px;height:102px}#todoWalkabout .buddy-pet svg{width:94px!important;height:102px!important}}
 </style><style id="seasonal-todo-themes">
-:root[data-t=winter]{--bg:#eaf5ff;--fg:#29415a;--mu:#7695af;--pill:#f5fbff;--line:#d0e5f5;--card:#fff;--acc:#4d91c9;--accfg:#fff}
+/* 말씀 화면과 같은 겨울 테마 변수 및 눈 레이어 */
+:root[data-theme="winter"]{--bg:#eaf5ff;--fg:#29415a;--mu:#7695af;--pill:#f5fbff;--line:#d0e5f5;--card:#fafdff;--acc:#4d91c9;--accfg:#fff;color-scheme:light}
 body{position:relative;isolation:isolate}
 body::before,body::after{content:"";position:fixed;pointer-events:none;z-index:0;display:block}
 #app{position:relative;z-index:1}
-.nav{z-index:5}
-:root[data-t=winter] body::before{inset:-18vh -4vw 0;opacity:.95;background-image:radial-gradient(4px 4px at 5% 8%,#fff 98%,transparent),radial-gradient(2px 2px at 12% 44%,#fff 98%,transparent),radial-gradient(5px 5px at 19% 73%,#fff 98%,transparent),radial-gradient(3px 3px at 27% 20%,#fff 98%,transparent),radial-gradient(2px 2px at 35% 61%,#fff 98%,transparent),radial-gradient(4px 4px at 43% 35%,#fff 98%,transparent),radial-gradient(2px 2px at 51% 82%,#fff 98%,transparent),radial-gradient(5px 5px at 60% 12%,#fff 98%,transparent),radial-gradient(3px 3px at 68% 52%,#fff 98%,transparent),radial-gradient(2px 2px at 76% 29%,#fff 98%,transparent),radial-gradient(4px 4px at 84% 76%,#fff 98%,transparent),radial-gradient(3px 3px at 93% 17%,#fff 98%,transparent);background-size:170px 190px;animation:winterSnow 5.5s linear infinite;filter:drop-shadow(0 0 4px #fff)}
-:root[data-t=winter] body::after{left:-5vw;right:-5vw;bottom:-8px;height:116px;z-index:2;background:radial-gradient(110px 36px at 5% 100%,#fff 98%,transparent 100%),radial-gradient(160px 48px at 24% 100%,#fafdff 98%,transparent 100%),radial-gradient(130px 43px at 45% 100%,#fff 98%,transparent 100%),radial-gradient(180px 52px at 70% 100%,#fafdff 98%,transparent 100%),radial-gradient(140px 40px at 94% 100%,#fff 98%,transparent 100%),linear-gradient(to bottom,transparent 25%,#fafdff 26%) ;filter:drop-shadow(0 -8px 14px #8bb9dd77)}
+:root[data-theme="winter"] body::before{inset:-18vh -4vw 0;opacity:.95;background-image:radial-gradient(4px 4px at 5% 8%,#fff 98%,transparent),radial-gradient(2px 2px at 12% 44%,#fff 98%,transparent),radial-gradient(5px 5px at 19% 73%,#fff 98%,transparent),radial-gradient(3px 3px at 27% 20%,#fff 98%,transparent),radial-gradient(2px 2px at 35% 61%,#fff 98%,transparent),radial-gradient(4px 4px at 43% 35%,#fff 98%,transparent),radial-gradient(2px 2px at 51% 82%,#fff 98%,transparent),radial-gradient(5px 5px at 60% 12%,#fff 98%,transparent),radial-gradient(3px 3px at 68% 52%,#fff 98%,transparent),radial-gradient(2px 2px at 76% 29%,#fff 98%,transparent),radial-gradient(4px 4px at 84% 76%,#fff 98%,transparent),radial-gradient(3px 3px at 93% 17%,#fff 98%,transparent);background-size:170px 190px;animation:winterSnow 5.5s linear infinite;filter:drop-shadow(0 0 4px #fff)}
+:root[data-theme="winter"] body::after{left:-5vw;right:-5vw;bottom:-8px;height:116px;z-index:2;background:radial-gradient(110px 36px at 5% 100%,#fff 98%,transparent 100%),radial-gradient(160px 48px at 24% 100%,#fafdff 98%,transparent 100%),radial-gradient(130px 43px at 45% 100%,#fff 98%,transparent 100%),radial-gradient(180px 52px at 70% 100%,#fafdff 98%,transparent 100%),radial-gradient(140px 40px at 94% 100%,#fff 98%,transparent 100%),linear-gradient(to bottom,transparent 25%,#fafdff 26%);filter:drop-shadow(0 -8px 14px #8bb9dd77)}
 @keyframes winterSnow{from{transform:translateY(-10vh)}to{transform:translateY(22vh)}}
-:root[data-t=winter] body{background-image:radial-gradient(ellipse at 50% 0%,#d7edff 0%,transparent 54%),linear-gradient(180deg,#e7f4ff 0%,#f9fdff 70%,#e2f1fc 100%);background-attachment:fixed}
-@media(prefers-reduced-motion:reduce){:root[data-t=winter] body::before{animation:none}}
+:root[data-theme="winter"] body{background-image:radial-gradient(ellipse at 50% 0%,#d7edff 0%,transparent 54%),linear-gradient(180deg,#e7f4ff 0%,#f9fdff 70%,#e2f1fc 100%);background-attachment:fixed}
+:root[data-theme="winter"] #app .w{background:linear-gradient(180deg,#ffffffa8,#f6fbffb8);border-left:1px solid #fff9;border-right:1px solid #fff9;box-shadow:0 0 70px #a6cce522;min-height:calc(100vh - 68px)}
+:root[data-theme="winter"] .nav{background:rgba(234,245,255,.78);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+@media(prefers-reduced-motion:reduce){:root[data-theme="winter"] body::before{animation:none}}
 </style></head><body>
 <div id="app"></div><div id="md"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
@@ -371,10 +373,16 @@ auth.onAuthStateChanged(u=>{U.forEach(f=>f());U=[];UC();UC=()=>{};ME=u;S.ready=0
  U.push(db.collection('users').onSnapshot(s=>{US={};s.docs.forEach(d=>US[d.id]=d.data());render()}));
  U.push(db.collection('crews').onSnapshot(s=>{S.crews=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts||0)-(a.ts||0));render()}))});
 function applySeasonalTodoTheme(){
- let theme='auto';try{theme=localStorage.getItem('affinity-season-theme')||'auto';if(theme==='auto'){const raw=localStorage.getItem('prof:'+((D&&D.name)||''));if(raw){const p=JSON.parse(raw);theme=p.eq?.theme||'auto'}}}catch(e){}
- if(theme!=='winter')theme='auto';
- if(theme==='auto'){document.documentElement.removeAttribute('data-t');return}
- document.documentElement.dataset.t='winter';
+ let theme='auto';
+ try{
+  theme=localStorage.getItem('affinity-season-theme')||'auto';
+  if(theme==='auto'){
+   const raw=localStorage.getItem('prof:'+((D&&D.name)||''));
+   if(raw){const profile=JSON.parse(raw);theme=profile.eq?.theme||'auto'}
+  }
+ }catch(e){}
+ if(theme==='auto') document.documentElement.removeAttribute('data-theme');
+ else document.documentElement.setAttribute('data-theme',theme);
 }
 window.addEventListener('storage',e=>{if(e.key==='affinity-season-theme'||(e.key||'').startsWith('prof:'))applySeasonalTodoTheme()});
 function render(){applySeasonalTodoTheme();D.cats=(D.cats||[]).map(c=>({...c,priv:0}));D.rewards=D.rewards||[];D.badges=D.badges||[];document.documentElement.dataset.t=D.theme;const app=document.getElementById('app');
