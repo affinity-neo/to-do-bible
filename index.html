@@ -3186,7 +3186,8 @@ var VIDEOS = {
   // 레벨: 모은 아이템, 달성한 업적, 들은 말씀 장수로 올라요
   var LV = [0, 40, 100, 190, 320, 500, 740, 1050, 1450];
   var LVT = ['말씀 씨앗', '돋아난 새싹', '푸른 잎사귀', '자라는 나무', '열매 맺는 나무', '시냇가에 심은 나무', '든든한 참나무', '말씀의 숲지기', '생명나무'];
-  function xpOf() { return P.own.length * 10 + P.ach.length * 25 + wordCount() * 5 + Number((P.stat || {}).recoveryXP || 0); }
+  function activeAchCount() { return (P.ach || []).filter(function (id) { return ACH.some(function (a) { return a.id === id; }); }).length; }
+  function xpOf() { return P.own.length * 10 + activeAchCount() * 25 + wordCount() * 5 + Number((P.stat || {}).recoveryXP || 0); }
   function levelOf() {
     var x = xpOf(), l = 0, i;
     for (i = 0; i < LV.length; i++) if (x >= LV[i]) l = i;
@@ -3212,8 +3213,6 @@ var VIDEOS = {
     { id: 'a_str3', n: '3일 연속', d: '3일 연속으로 말씀 듣기', m: 3, v: function () { return P.stat.best || 0; } },
     { id: 'a_str7', n: '일주일 개근', d: '7일 연속으로 말씀 듣기', m: 7, v: function () { return P.stat.best || 0; }, r: ['wc', 2] },
     { id: 'a_quiz', n: '말씀 퀴즈 정답', d: '말씀 퀴즈 맞히기', m: 1, v: quizCount },
-    { id: 'a_game10', n: '놀이 시작', d: '미니 게임 10번 하기', m: 10, v: function () { return P.stat.games || 0; }, r: ['gc', 5] },
-    { id: 'a_game50', n: '게임 달인', d: '미니 게임 50번 하기', m: 50, v: function () { return P.stat.games || 0; }, r: ['gc', 10] },
     { id: 'a_comp', n: '한 분류 완성', d: '캐릭터 · 모자 · 얼굴 · 목 · 테마 · 글꼴 중 한 분류를 전부 모으기', m: 1, v: function () { return ['ch', 'hat', 'face', 'neck', 'theme', 'font'].filter(function (t) { var c = tabCount(t); return c[1] > 0 && c[0] >= c[1]; }).length; }, r: ['wc', 3] },
     { id: 'a_half', n: '반이나 모았어요', d: '전체 수집률 50% 달성', m: 50, v: collPct },
     { id: 'a_done', n: '완전 정복', d: '모든 아이템 수집', m: 100, v: collPct, r: ['wc', 5] }
@@ -3274,7 +3273,7 @@ var VIDEOS = {
   }
   function renderAch() {
     var b = document.getElementById('sboard'), cs = curStreak(), h = '';
-    h += '<div class="ahead"><span>달성 <b>' + P.ach.length + '/' + ACH.length + '</b></span><span>' + (cs ? '연속 ' + cs + '일째 · ' : '') + '최고 연속 ' + (P.stat.best || 0) + '일</span></div>';
+    h += '<div class="ahead"><span>달성 <b>' + activeAchCount() + '/' + ACH.length + '</b></span><span>' + (cs ? '연속 ' + cs + '일째 · ' : '') + '최고 연속 ' + (P.stat.best || 0) + '일</span></div>';
     ACH.forEach(function (a) {
       var done = P.ach.indexOf(a.id) >= 0, val = Math.min(a.v(), a.m), pc = Math.round(val / a.m * 100);
       h += '<div class="arow' + (done ? ' done' : '') + '"><div class="ai">' + IC.trophy + '</div><div class="at"><b>' + a.n + '</b><span>' + a.d + '</span>' +
@@ -3688,7 +3687,7 @@ var VIDEOS = {
 
   // ---- 꾸미기 상점 (나무 상점 팝업) ----
   var shopTab = 'ch', pend = '', boardType = 'wc', boardTok = 0, boardWatch = null;
-  var TABS = [['ch', '캐릭터'], ['pet', '반려동물 <span class="pet-new">NEW</span>'], ['hat', '모자'], ['face', '얼굴'], ['neck', '목'], ['theme', '테마'], ['font', '글꼴'], ['ach', '업적'], ['rank', '순위']];
+  var TABS = [['ch', '캐릭터'], ['pet', '반려동물'], ['hat', '모자'], ['face', '얼굴'], ['neck', '목'], ['theme', '테마'], ['font', '글꼴'], ['ach', '업적'], ['rank', '순위']];
   function openShop() {
     var ov = document.getElementById('shopOv'); if (!ov) return;
     if (!P) { loadProfile(); window.setTimeout(openShop, 300); return; }
@@ -3731,7 +3730,7 @@ var VIDEOS = {
     var tb = document.getElementById('stabs'); tb.innerHTML = '';
     TABS.forEach(function (t) {
       var b = document.createElement('button'), c = '';
-      if (t[0] === 'ach') c = P.ach.length + '/' + ACH.length; else if (t[0] !== 'rank') { var q = tabCount(t[0]); c = q[0] + '/' + q[1]; }
+      if (t[0] === 'ach') c = activeAchCount() + '/' + ACH.length; else if (t[0] !== 'rank') { var q = tabCount(t[0]); c = q[0] + '/' + q[1]; }
       b.innerHTML = t[1] + (c ? '<span class="tc">' + c + '</span>' : ''); if (t[0] === shopTab) b.className = 'on';
       b.onclick = function () { shopTab = t[0]; pend = ''; meMsg(''); renderShop(); }; tb.appendChild(b);
     });
@@ -3766,14 +3765,13 @@ var VIDEOS = {
       var premiumChars = CHARS.filter(function (c) { return !!c.h; }).sort(function (a, b) { if (a.id === 'h6') return 1; if (b.id === 'h6') return -1; return CHARS.indexOf(a) - CHARS.indexOf(b); });
       var premiumIndex = premiumChars.findIndex(function (c) { return c.id === it.id; });
       var introPrices = [5, 8, 10];
-      var successPrice = shopTab === 'ch' && premiumIndex >= 0 ? (premiumIndex < 3 ? introPrices[premiumIndex] : premiumIndex === premiumChars.length - 1 ? 31 : premiumIndex === 3 ? 6 : premiumIndex === 4 ? 7 : premiumIndex === 5 ? 9 : premiumIndex + 5) : (rk === 'leg' ? 25 : rk === 'epic' ? 8 : 0);
+      var successPrice = shopTab === 'pet' ? (rk === 'rare' ? 5 : rk === 'epic' ? 12 : rk === 'leg' ? 20 : 0) : (shopTab === 'ch' && premiumIndex >= 0 ? (premiumIndex < 3 ? introPrices[premiumIndex] : premiumIndex === premiumChars.length - 1 ? 31 : premiumIndex === 3 ? 6 : premiumIndex === 4 ? 7 : premiumIndex === 5 ? 9 : premiumIndex + 5) : (rk === 'leg' ? 25 : rk === 'epic' ? 8 : 0));
       var payType = shopTab === 'pet' ? (rk === 'com' ? 'gc' : 'sc') : (successPrice ? 'sc' : cur), payPrice = successPrice || it.p;
       var on = shopTab === 'ch' ? P.eq.ch === it.id : shopTab === 'theme' ? (P.eq.theme || 'auto') === it.t : shopTab === 'font' ? (P.eq.font || 'default') === it.f : shopTab === 'pet' ? (P.eq.pet || '') === it.id : P.eq[shopTab] === it.v;
       var card = document.createElement('div'); card.className = 'sc' + (on ? ' on' : '') + (owned && it.p > 0 ? ' owned' : '') + (rk ? ' r-' + rk : '');
       card.appendChild(pvNode(it, shopTab));
-      if (shopTab === 'pet' && it.id) card.insertAdjacentHTML('afterbegin','<span class="pet-new">NEW</span>');
       if (rk) card.insertAdjacentHTML('afterbegin', '<span class="rb">' + RLAB[rk] + '</span>');
-      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + (winterReward ? '<span style="display:block;font-size:10px;color:#3577a8;margin-top:3px;font-weight:800">' + (owned ? '🎁 반려동물 수집 보상' : '반려동물 ' + Math.min(2,PETS.filter(function(p){return P.own.indexOf(p.id)>=0}).length) + '/2마리 수집 시 지급') + '</span>' : (shopTab === 'pet' && it.id ? '<span style="display:block;font-size:10px;color:#888;margin-top:2px">'+(payType==='sc'?'완료 코인':'코인')+'</span>' : ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : ''))) + '</div>');
+      card.insertAdjacentHTML('beforeend', '<div class="sn">' + it.n + (winterReward ? '<span style="display:block;font-size:10px;color:#3577a8;margin-top:3px;font-weight:800">' + (owned ? '🎁 반려동물 수집 보상' : '반려동물 ' + Math.min(2,PETS.filter(function(p){return P.own.indexOf(p.id)>=0}).length) + '/2마리 수집 시 지급') + '</span>' : (shopTab === 'pet' && it.id ? '' : ((it.introDeal || (shopTab === 'ch' && premiumIndex >= 0 && premiumIndex < 3)) ? '<span style="display:block;font-size:10px;color:#b7791f;margin-top:2px">입문 할인</span>' : ''))) + '</div>');
       var b = document.createElement('button');
       b.innerHTML = winterReward && !owned ? '반려동물 2마리 모으면 지급' : on ? '사용 중' : owned ? '사용하기' : (pend && pend === it.id ? '한 번 더!' : payPrice + (payType === 'sc' ? IC.trophy : (payType === 'gc' ? IC.game : IC.book))); b.disabled = on || (winterReward && !owned);
       b.className = (pend && pend === it.id) ? 'conf' : (owned && it.p > 0 ? 'own' : '');
