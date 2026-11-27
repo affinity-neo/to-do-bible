@@ -501,25 +501,6 @@ main{position:relative;z-index:1}
 #bibleWalkabout .walk-pet svg{width:78px!important;height:86px!important;filter:drop-shadow(0 3px 2px #0003)}
 @keyframes walkBob{0%,100%{transform:translate(0,0)}18%{transform:translate(-10px,-4px)}36%{transform:translate(-18px,0)}55%{transform:translate(-9px,-5px)}72%{transform:translate(3px,0)}}
 @keyframes petPeek{0%,100%{transform:translate(0,0) rotate(4deg)}25%{transform:translate(5px,-12px) rotate(10deg)}50%{transform:translate(0,-3px) rotate(-4deg)}75%{transform:translate(-4px,-10px) rotate(3deg)}}
-#petLaunchBanner{width:100%;min-height:150px;display:flex;align-items:center;justify-content:space-between;gap:8px;overflow:hidden;margin:18px 0 24px;padding:13px 18px;border:1px solid #e6b978;border-radius:16px;text-align:left;color:#5a2818;background:linear-gradient(105deg,#fff4dc 0%,#f8dfc4 55%,#f3c9b0 100%);box-shadow:0 4px 0 #9e6843,0 9px 18px #7b452522;cursor:pointer;position:relative}
-#petLaunchBanner .pet-poster-copy{display:grid;align-content:center;gap:3px;position:relative;z-index:1;min-width:0}
-#petLaunchBanner small{font:900 9px system-ui;letter-spacing:1.4px;color:#a04c32}
-#petLaunchBanner strong{font:900 clamp(15px,3vw,21px)/1.25 system-ui;color:#5c3527;white-space:nowrap}
-#petLaunchBanner .pet-poster-copy>b{font:1000 clamp(36px,7vw,52px)/.95 system-ui;letter-spacing:-2px;color:#c93d32}
-#petLaunchBanner em{font-style:normal;font-size:.52em;letter-spacing:-1px}
-#petLaunchBanner .pet-poster-copy>i{font:800 10px system-ui;color:#8b5c43;font-style:normal}
-#petLaunchBanner .pet-poster-copy>span{font:800 12px system-ui;color:#a6382e;font-variant-numeric:tabular-nums}
-#petLaunchBanner .pet-poster-friends{height:122px;flex:1;min-width:0;display:flex;align-items:end;justify-content:flex-end;gap:0;position:relative}
-#petLaunchBanner .pet-poster-friends svg{width:clamp(40px,10vw,76px);height:clamp(48px,11vw,84px);overflow:visible;margin-left:-10px;filter:drop-shadow(0 3px 2px #71472c33)}
-#petLaunchBanner .pet-poster-friends svg:nth-child(2){transform:translateY(-12px) rotate(-7deg)}
-#petLaunchBanner .pet-poster-friends svg:nth-child(3){transform:translateY(2px) rotate(5deg)}
-#petLaunchBanner .pet-poster-friends svg:nth-child(4){transform:translateY(-7px)}
-@keyframes petBannerPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-@media(min-width:700px){#bibleWalkabout{right:34px;bottom:28px;width:174px;height:174px}#bibleWalkabout .walk-char{width:140px;height:140px;left:18px}#bibleWalkabout .walk-pet{width:96px;height:104px}#bibleWalkabout .walk-pet svg{width:96px!important;height:104px!important}}
-.pet-new{display:inline-flex;align-items:center;justify-content:center;background:#e53935;color:#fff;font-size:9px;font-weight:900;letter-spacing:.4px;border-radius:4px;padding:2px 5px;margin-left:5px;vertical-align:middle}
-.pet-sale{display:grid;gap:5px;padding:12px 14px;border-radius:12px;background:linear-gradient(110deg,#fff1e7,#ffe0d9);color:#7e2c20;text-align:center}
-.pet-sale b{font-size:15px}.pet-sale span{font-size:12px}.pet-sale strong{font-size:18px;font-variant-numeric:tabular-nums;color:#c62828}
-
 #winterLaunchBanner{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-10px 0 24px;padding:14px 16px;border:1px solid #9bc9e8;border-radius:16px;text-align:left;color:#16466b;background:radial-gradient(circle at 90% 10%,#fff 0 2px,transparent 3px),radial-gradient(circle at 78% 80%,#fff 0 3px,transparent 4px),linear-gradient(115deg,#f3fbff,#d9efff 55%,#b8dcf5);box-shadow:0 4px 0 #80b5d8,0 9px 18px #3c83b522;cursor:pointer;position:relative;overflow:hidden;font-family:var(--ui)}
 #winterLaunchBanner .winter-promo-copy{display:grid;gap:4px;position:relative;z-index:1;min-width:0}
 #winterLaunchBanner small{font-size:9px;font-weight:900;letter-spacing:1.3px;color:#397ca7}
@@ -2538,7 +2519,6 @@ var VIDEOS = {
     {id:'pet_bunny',n:'당근 토끼',p:65,kind:'bunny'},
     {id:'pet_deer',n:'숲속 아기 사슴',p:90,kind:'deer'}
   ];
-  var PET_SALE_END = 0; // 반려동물 특가 종료: 정가 적용
   function petSvg(id, size) {
  var n=size||68,w=n,h=Math.round(n*1.03),o='#bd7843',stroke=o,ink='#38271d',blush='#ffc9c2';
  var art={
@@ -3721,7 +3701,7 @@ var VIDEOS = {
       if (body) body.innerHTML = '<p style="padding:16px;text-align:center">상점을 불러오는 중 문제가 발생했어요. 닫았다가 다시 열어 주세요.</p>';
     }
   }
-  function closeShop() { if (boardWatch) { boardWatch(); boardWatch = null; } if (window.__petSaleTimer) {clearInterval(window.__petSaleTimer);window.__petSaleTimer=null;} if (new URLSearchParams(location.search).get('shop') === '1') { try { window.parent.postMessage('close-tree-shop', '*'); } catch(e) {} return; } document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
+  function closeShop() { if (boardWatch) { boardWatch(); boardWatch = null; } if (new URLSearchParams(location.search).get('shop') === '1') { try { window.parent.postMessage('close-tree-shop', '*'); } catch(e) {} return; } document.getElementById('shopOv').hidden = true; document.body.style.overflow = ''; }
   function renderBoard() {
     if (boardWatch) { boardWatch(); boardWatch = null; }
     var b = document.getElementById('sboard'), tok = ++boardTok;
