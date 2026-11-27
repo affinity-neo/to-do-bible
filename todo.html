@@ -271,7 +271,7 @@ const back=(t,to)=>`<div class="row" style="margin-bottom:18px"><button onclick=
 function localBuddyFor(u){
  let profile=null,companion=null;
  if(u&&D&&u.name===D.name){try{profile=JSON.parse(localStorage.getItem('prof:'+u.name)||'null');companion=JSON.parse(localStorage.getItem('bible-companion:'+u.name)||'null')}catch(e){}}
- return {avatar:(u&&u.avatarData)||(companion&&companion.avatarData)||(profile&&profile.avatarData)||'',pet:(companion&&companion.pet)||(profile&&profile.eq&&profile.eq.pet)||''};
+ return {avatar:(u&&u.avatarData)||(companion&&companion.avatarData)||(profile&&profile.avatarData)||'',pet:(u&&u.eq&&u.eq.pet)||(companion&&companion.pet)||(profile&&profile.eq&&profile.eq.pet)||''};
 }
 const avt=(u,s)=>{const buddy=localBuddyFor(u),img=buddy.avatar,pet=buddy.pet;return '<div class="av'+(s?' l':'')+(img?' has-buddy':'')+'">'+(img?'<img src="'+img+'" alt="">':esc((u?.name||'?')[0]))+(img&&pet?'<span class="av-pet">'+petBuddySvg(pet)+'</span>':'')+'</div>'};
 
@@ -298,7 +298,7 @@ function renderTodoWalkabout(){
  if(!ME||!D||!D.name)return;
  let profile=null,companion=null;try{profile=JSON.parse(localStorage.getItem('prof:'+D.name)||'null');companion=JSON.parse(localStorage.getItem('bible-companion:'+D.name)||'null')}catch(e){}
  const data=(companion&&companion.avatarData)||(profile&&profile.avatarData)||(()=>{try{return localStorage.getItem('bible-avatar:'+D.name)}catch(e){return null}})();
- const pet=(companion&&companion.pet)||(profile&&profile.eq&&profile.eq.pet)||'';
+ const pet=(D.eq&&D.eq.pet)||(companion&&companion.pet)||(profile&&profile.eq&&profile.eq.pet)||'';
  let el=document.getElementById('todoWalkabout');
  if(!el){el=document.createElement('div');el.id='todoWalkabout';el.innerHTML='<img class="buddy-char" alt=""><div class="buddy-pet"></div>';document.body.appendChild(el);}
  const img=el.querySelector('img'),petBox=el.querySelector('.buddy-pet');
